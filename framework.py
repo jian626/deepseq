@@ -38,10 +38,10 @@ batch_size = 400
 basic_info_cnt = 0 
 ec_level = 4 
 compare_level = 2 
-train_model = False 
+train_model = True 
 drop_na = True
 drop_multilabel = False 
-multi_task = False 
+multi_task = True 
 apply_dummy_label = False 
 dense_net = False
 minority_threshold = 5
@@ -384,7 +384,6 @@ if train_model:
     loss = model.evaluate(x_test, test_target)
     print('loss:',loss)
     y_pred = model.predict(x_test)
-    print(y_pred)
     if multi_task:
         for i in range(ec_level):
             pred = (y_pred[i] > 0.5)
