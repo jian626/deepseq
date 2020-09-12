@@ -28,8 +28,8 @@ hidden1Dim = 256
 hidden2Dim = 256
 strides = 1 
 pool_size = 2 
-layerLen = 5 
-convLen = 5 
+layerLen = 1  
+convLen = 1 
 poolLen = 1 
 epochs = 1000 
 max_len = 1000
@@ -38,14 +38,16 @@ batch_size = 400
 basic_info_cnt = 0 
 ec_level = 4 
 compare_level = 2 
-main_task = 3 
-train_model = True 
+train_model = False 
 drop_na = True
 drop_multilabel = False 
 multi_task = False 
 apply_dummy_label = False 
+dense_net = False
 minority_threshold = 5
-ngram = 3 
+ngram = 1 
+print_statistics = True
+verbose = False
 
 
 class_maps = { 
@@ -58,14 +60,15 @@ class_maps = {
 
 def print_basic_info(df, title="basic info", info=False, print_head=False):
     global basic_info_cnt
-    print("==================%s==========cnt:%d============" % (title, basic_info_cnt))
-    if info:
-        print('info:', df.info())
-    print('shape:',df.shape)
-    if print_head:
-        print(df.head(10))
-    print("==============================================")
-    basic_info_cnt += 1
+    if verbose:
+        print("==================%s==========info num:%d============" % (title, basic_info_cnt))
+        if info:
+            print('info:', df.info())
+        print('shape:',df.shape)
+        if print_head:
+            print(df.head(10))
+        print("==============================================")
+        basic_info_cnt += 1
 
 def get_ec_list(ec):
     if ec:
@@ -196,54 +199,61 @@ def get_data_and_label(data_set):
 
 def create_public_net(input_layer, hidden_dense_len):
     lastLayer = input_layer
-    
-    lastLayer_1 = lastLayer
-    lastLayer_2 = lastLayer
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Dropout(0.2)(lastLayer_1)
-    lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Dropout(0.2)(lastLayer_1)
-    lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Dropout(0.2)(lastLayer_1)
-    lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Conv1D(16, kernelSize, padding='same', activation='relu')(lastLayer_1)
-    lastLayer_1 = Dropout(0.2)(lastLayer_1)
-    lastLayer_1 = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
-    mainLayer = tf.keras.layers.Add()([lastLayer_1, lastLayer_2])
-    lastLayer_3 = mainLayer
-    mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(mainLayer)
-    mainLayer = Dropout(0.2)(mainLayer)
-    mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
-    mainLayer = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(mainLayer)
-    mainLayer = Dropout(0.2)(mainLayer)
-    lastLayer = tf.keras.layers.Concatenate()([mainLayer, lastLayer_3])
-    
-    lastLayer = Dropout(0.2)(lastLayer)
-    lastLayer = Flatten()(lastLayer)
-    lastLayer = Dense(256)(lastLayer)
-    lastLayer = Dropout(0.2)(lastLayer)
+    if dense_net:
+        lastLayer_1 = lastLayer
+        lastLayer_2 = lastLayer
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Dropout(0.2)(lastLayer_1)
+        lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Dropout(0.2)(lastLayer_1)
+        lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Dropout(0.2)(lastLayer_1)
+        lastLayer_1 = AveragePooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(48, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(64, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Conv1D(16, kernelSize, padding='same', activation='relu')(lastLayer_1)
+        lastLayer_1 = Dropout(0.2)(lastLayer_1)
+        lastLayer_1 = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer_1)
+        mainLayer = tf.keras.layers.Add()([lastLayer_1, lastLayer_2])
+        lastLayer_3 = mainLayer
+        mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(mainLayer)
+        mainLayer = Dropout(0.2)(mainLayer)
+        mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(48, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = Conv1D(64, kernelSize, padding='same', activation='relu')(mainLayer)
+        mainLayer = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(mainLayer)
+        mainLayer = Dropout(0.2)(mainLayer)
+        lastLayer = tf.keras.layers.Concatenate()([mainLayer, lastLayer_3])
+        
+        lastLayer = Dropout(0.2)(lastLayer)
+        lastLayer = Flatten()(lastLayer)
+        lastLayer = Dense(256)(lastLayer)
+        lastLayer = Dropout(0.2)(lastLayer)
+    else:
+        for i in range(layerLen): 
+            for j in range(convLen):
+                lastLayer = Conv1D(48, kernelSize + j * delta, padding='same', activation='relu')(lastLayer)
+                if j % 2 == 0:
+                    lastLayer = MaxPooling1D(pool_size=pool_size, strides=strides, padding='same')(lastLayer)
+        lastLayer = Flatten()(lastLayer)
     return lastLayer
 
 level_map_to_number = {}            
@@ -287,8 +297,6 @@ for i in range(ec_level):
     df = get_level_labels(df, i)
     print_basic_info(df, 'after select to level %d' % i, print_head = True)
 
-sorted_k = {k: v for k, v in sorted(class_maps[ec_level-1].items(), key=lambda item: item[1])}
-print(sorted_k)
 
 
 max_category = []
@@ -297,6 +305,25 @@ for i in range(ec_level):
     max_category.append(temp_max_category)
     print_basic_info(df, 'after create task label to level %d' % i, print_head = True)
 print('max_category:', max_category)
+
+if print_statistics:
+    print('following statistics information is based on data to use.')
+    for index in range(ec_level):
+        sorted_k = {k: v for k, v in sorted(class_maps[index].items(), key=lambda item: item[1])}
+        cnt = 0
+        map_cnt = {}
+        for k in sorted_k: 
+            if not sorted_k[k] in map_cnt:
+                map_cnt[sorted_k[k]] = 1
+            else:
+                map_cnt[sorted_k[k]] += 1
+
+        less_than_10 = 0
+        for i in range(10):
+            if i in map_cnt:
+                less_than_10 += map_cnt[i]
+        print('level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / max_category[index], max_category[index]))
+
 
 df = df.sample(frac=fraction)
 print_basic_info(df, 'after sampling frac=%f' % fraction)
@@ -345,16 +372,12 @@ if train_model:
     
     optimizer = Adam()
     model = Model(inputs=input_embedding_layer, outputs=output)
-    #model = Model(inputs=input_embedding_layer, outputs=lastLayer)
-    #model.compile(optimizer=optimizer, loss=['categorical_crossentropy'] * task_loss_num , metrics=['categorical_accuracy'])
     model.compile(optimizer=optimizer, loss=['binary_crossentropy'] * task_loss_num, metrics=['categorical_accuracy'])
-    #model.compile(optimizer=optimizer, loss=['categorical_crossentropy'] * ec_level , metrics=['categorical_accuracy'])
     print(model.summary())
     
     callback = tf.keras.callbacks.EarlyStopping(monitor=['val_categorical_accuracy'], restore_best_weights=True, patience=5, verbose=1)
     
     history = model.fit(x_train, train_target, epochs=20,  batch_size=batch_size, validation_split=1/6)
-    #history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=1/6, callbacks=[callback])
     model.save_weights('model.h5')
     
     print('==============history=============')
@@ -363,16 +386,17 @@ if train_model:
     y_pred = model.predict(x_test)
     print(y_pred)
     if multi_task:
-        y_pred = (y_pred[compare_level - 1] > 0.5)
-        test_target = test_target[compare_level-1]
+        for i in range(ec_level):
+            pred = (y_pred[i] > 0.5)
+            target = test_target[i]
+            report = classification_report(target, pred)
+            print('report level %d' % i)
+            print(report)
     else:
         y_pred = (y_pred > 0.5)
-    print('y_pred:')
-    print(y_pred)
-    print('y_pred shape:', y_pred.shape)
-    report = classification_report(test_target, y_pred)
-    print('report:')
-    print(report)
+        report = classification_report(test_target, y_pred)
+        print('report level %d' % ec_level)
+        print(report)
     
     end = datetime.now()
     current_time = end.strftime("%H:%M:%S")
