@@ -49,7 +49,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 40 
+    estmator_config['epochs'] = 20 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
 

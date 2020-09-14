@@ -92,7 +92,6 @@ def print_debug_info(df, title="basic info", info=False, print_head=False):
         basic_info_cnt += 1
 
 def switch_key_value(a_dict):
-    print(a_dict)
     return {v:k for k, v in a_dict.items()}
 
 def map_label_to_class(map_table, label):
@@ -111,13 +110,25 @@ def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
+def strict_identical_compare(L1, L2):
+    v = L1 == L2
+    return bool(v.all())
+    
+def strict_compare_report(label_set1, label_set2, length):
+    res = 0
+    for i in range(length):
+        if strict_identical_compare(label_set1[i], label_set2[i]):
+            res += 1
+    return res
+            
+        
+    
+    
+
 
 if __name__ == '__main__':
-    a = {'a':0, 'b':1, 'c':2}
-    t = switch_key_value(a)
-    print(t)
-    res = map_label_to_class(t, [0, 1, 1])
-    print(res)
+    pass
 		
 		
 		 
+

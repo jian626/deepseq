@@ -317,6 +317,8 @@ class model_estimator:
                 if self.config['print_report']:
                     print('report level %d' % i)
                     print(report)
+                    res = utili.strict_compare_report(target, pred, len(x_test))
+                    print('strict accuracy is %d of %d, %f%%' % (res, len(x_test), float(res) * 100.0 / len(x_test)))
                 temp = []
                 for y_ in pred:
                     temp.append(utili.map_label_to_class(map_table[i], y_))
@@ -340,4 +342,6 @@ class model_estimator:
             if self.config['print_report']:
                 print('report level %d' % ec_level)
                 print(report)
+                res = utili.strict_compare_report(y_test_target, y_pred, len(x_test))
+                print('strict accuracy is %d% of %d, %f%%' % (res, len(x_test), float(res)*1000/len(x_test)))
         return report
