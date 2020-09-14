@@ -113,7 +113,7 @@ def get_data_and_label(data_set, config):
 
 def get_part_level(ec, level):
     l = ec.split('.')
-    if level < len(l):
+    if level <= len(l):
         r = '.'.join(l[:level])
         if not 'unknown' in r:
             return r
@@ -131,6 +131,13 @@ def is_conflict(long_level, short_level, compare_level):
         if part_level:
             test_map_s.append(part_level) 
     return (set(test_map_l).difference(set(test_map_s)))
+
+if __name__ == '__main__':
+    long_level = ['1.2.2.unknown', '2.2.3.4', '2.2.3.1']
+    short_level = ['1.2.2', '2.2.3', ]
+    s = is_conflict(long_level, short_level, 3)
+    print(s)
+    print(bool(s))
             
             
             

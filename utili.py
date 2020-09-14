@@ -1,8 +1,16 @@
 import numpy as np
+import pickle
 
 n_gram_map = {}
 
 ordinal_map = {}
+
+debug = True 
+
+basic_info_cnt = 0
+
+def set_debug_flag(flag):
+    debug = flag
 
 def GetOridinalEncoding(seq, featureList, n):
     aaHash = None 
@@ -71,13 +79,45 @@ def GetNGramEncoding(seq, featureList, n, max_len):
     ngram_list = GetNGrams(featureList, n)
     return GetOridinalEncoding(seq, ngram_list, max_len)
 
+def print_debug_info(df, title="basic info", info=False, print_head=False):
+    global basic_info_cnt 
+    if debug:
+        print("==================%s==========info num:%d============" % (title, basic_info_cnt))
+        if info:
+            print('info:', df.info())
+        print('shape:',df.shape)
+        if print_head:
+            print(df.head(10))
+        print("==============================================")
+        basic_info_cnt += 1
+
+def switch_key_value(a_dict):
+    print(a_dict)
+    return {v:k for k, v in a_dict.items()}
+
+def map_label_to_class(map_table, label):
+    ret = [] 
+    for i in range(len(label)):
+        if label[i]:
+            ret.append(map_table[i])
+    return ret
+    
+
+def save_obj(obj,name):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+
+
 if __name__ == '__main__':
-    #r = GetOneHotEncoding('ACE')
-    in_str = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-    res = []
-    r = _GetInnerGrams(res, in_str, 4)
-    print(r, len(r), len(in_str))
-		
+    a = {'a':0, 'b':1, 'c':2}
+    t = switch_key_value(a)
+    print(t)
+    res = map_label_to_class(t, [0, 1, 1])
+    print(res)
 		
 		
 		 
