@@ -83,7 +83,7 @@ def create_label_from_field(df, class_maps, field_name, label_name, i):
     values = list(class_maps[i].keys())
     field_map_to_number = create_map(values)
     df[label_name] = df[field_name].apply(lambda x:map_ec_to_value(x, field_map_to_number))
-    return df,len(field_map_to_number) 
+    return df,len(field_map_to_number), field_map_to_number
 
 def create_input_embedding(max_len, max_features, embedding_dims):
     inputLayer = Input(shape=(max_len,))
@@ -110,3 +110,31 @@ def get_data_and_label(data_set, config):
         temp = map_number_to_label(data_set['task%d' % i], config['max_category'][i], config['drop_multilabel'])
         y.append(temp)
     return x, y
+
+def get_part_level(ec, level):
+    l = ec.split('.')
+    if level < len(l):
+        r = '.'.join(l[:level])
+        if not 'unknown' in r:
+            return r
+
+def is_conflict(long_level, short_level, compare_level):
+    test_map_l = [] 
+    test_map_s = [] 
+    for e in long_level:
+        part_level = get_part_level(e, compare_level)
+        if part_level:
+            test_map_l.append(part_level) 
+
+    for e in short_level:
+        part_level = get_part_level(e, compare_level)
+        if part_level:
+            test_map_s.append(part_level) 
+    return (set(test_map_l).difference(set(test_map_s)))
+            
+            
+            
+    
+        
+
+        

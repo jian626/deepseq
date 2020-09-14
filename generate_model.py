@@ -14,15 +14,16 @@ from datetime import datetime
 from sklearn.metrics import classification_report
 import framework
 
-if __name__ == '__main__':
-
+def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
+    transfor_learning= False
+    utili.set_debug_flag(False)
     framdata_config = {}
     data_config = {}
     data_config['file_path'] = 'uniprot-reviewed_yes.tab'
     data_config['drop_multilabel'] = False
     data_config['apply_dummy_label'] = False 
     data_config['max_len'] = 1000
-    data_config['ec_level'] = 4
+    data_config['ec_level'] = 4 
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
     data_config['ngram'] = 2
@@ -32,28 +33,46 @@ if __name__ == '__main__':
     model_config['embedding_dims'] = 16 
     model_config['hidden1Dim'] = 256 
     model_config['hidden2Dim'] = 256 
-    model_config['multi_task'] = False 
-    model_config['dense_net'] = True
+    model_config['multi_task'] = True 
+    model_config['dense_net'] = True 
     model_config['cov_kernel_size'] = 3 
+    model_config['layer_len'] = 1
+    model_config['cov_len'] = 1
     model_config['filter_delta'] = 16
-    model_config['pool_size'] = 2
-    model_config['pooling_strides'] = 1
-    model_config['save_model_name'] = 'model.h5'
+    model_config['pool_size'] = 2 
+    model_config['pooling_strides'] = 1 
+    model_config['save_model_name'] = 'my_model'
+    model_config['save_path'] = './models/'
 
-    dp = framework.data_processor(data_config)
-    x_train, y_train, x_test, y_test = dp.get_data()
-    mc = framework.model_creator(data_config, model_config)
-    mc.create_model()
     estmator_config = {}
     estmator_config['print_summary'] = True
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 1 
+    estmator_config['epochs'] = 200
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
+
+    for k in input_data_config:
+        data_config[k] = input_data_config[k]
+
+    for k in input_model_config:
+        model_config[k] = input_model_config[k]
+
+    for k in input_estmator_config:
+        estmator_config[k] = input_estmator_config[k]
+
+    dp = framework.data_processor(data_config)
+    x_train, y_train, x_test, y_test = dp.get_data()
+    mc = framework.model_creator(data_config, model_config)
+    mc.create_model()
     me = framework.model_estimator(estmator_config, dp, mc)
     me.evaluate()
+        
+
+if __name__ == '__main__':
+    run()
+
     
     
     
