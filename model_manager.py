@@ -128,6 +128,6 @@ class model_creator:
             config = {
                 'specific':self.data_manager.get_specific_info(),
                 'task_num':self.data_manager.get_task_num(),
-                'field_map_to_number':self.data_manager.get_feature_mapping()
+                'field_map_to_number':self.data_manager.get_feature_mapping(),
             }
             utili.save_obj(config, save_name)

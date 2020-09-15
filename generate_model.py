@@ -12,7 +12,7 @@ import utili
 import BioDefine
 from datetime import datetime
 from sklearn.metrics import classification_report
-import framework
+import estimator_manager 
 import data_manager 
 import model_manager 
 
@@ -68,13 +68,13 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     for k in input_estmator_config:
         estmator_config[k] = input_estmator_config[k]
 
-    dp = data_processors.enzyme_data_processor(data_config)
+    dp = data_manager.enzyme_data_processor(data_config)
     x_train, y_train, x_test, y_test = dp.get_data(sep='\t')
     train_model = True 
     if train_model:
-        mc = model_creates.model_creator(dp, model_config)
+        mc = model_manager.model_creator(dp, model_config)
         mc.create_model()
-        me = framework.model_estimator(estmator_config, dp, mc)
+        me = estimator_manager.model_estimator(estmator_config, dp, mc)
         me.evaluate()
         
 
