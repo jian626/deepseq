@@ -31,8 +31,8 @@ class data_processor:
                 3:{}
             }
 
-    def get_data(self):
-        df = pd.read_csv(self.config['file_path'],sep='\t')
+    def get_data(self, sep=','):
+        df = pd.read_csv(self.config['file_path'],sep=sep)
         utili.print_debug_info(df, info=True)
         
         df = df.dropna()
@@ -254,21 +254,36 @@ class model_estimator:
         self.config = config
         self.data_processor = data_processor 
         self.model_creator = model_creator 
-
     def evaluate(self):
+        epochs = self.config['epochs']
+        batch_round = utili.get_table_value(self.config, 'batch_round')
+
         model = self.model_creator.get_model()
         x_train, y_train = self.data_processor.get_training_data()
         x_test, y_test = self.data_processor.get_test_data()
+
         multi_task = self.model_creator.model_config['multi_task'] 
-        ec_level = self.data_processor.config['ec_level']
         task_loss_num = 1
+        ec_level = self.data_processor.config['ec_level']
         if multi_task:
             task_loss_num = ec_level
-            
+
         optimizer = self.config['optimizer']
         model.compile(optimizer=optimizer, loss=['binary_crossentropy'] * task_loss_num, metrics=['categorical_accuracy'])
+
         if self.config['print_summary']:
             print(model.summary())
+        if batch_round:
+            round_size = utili.get_table_value(self.config, 'round_size', 10)
+            total_size = (epochs + round_size - 1) // round_size
+            for i in range(total_size):
+                self._evaluate(model, ec_level, x_train, y_train, x_test, y_test, round_size, i)
+        else:
+            self._evaluate(model, ec_level, x_train, y_train, x_test, y_test, epochs)
+
+    def _evaluate(self, model, ec_level, x_train, y_train, x_test, y_test, epochs, cur_round = None):
+
+        multi_task = self.model_creator.model_config['multi_task'] 
         
         callbacks = []
         if not multi_task and self.config['early_stopping']:
@@ -283,12 +298,17 @@ class model_estimator:
         else:
             y_train_target = y_train[ec_level-1]
             y_test_target = y_test[ec_level-1]
-        epochs = self.config['epochs']
         batch_size = self.config['batch_size']
             
+        if not cur_round is None:
+            print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
+
         model.fit(x_train, y_train_target, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
         if 'save_model_name' in self.model_creator.model_config:
             save_model_name = self.model_creator.model_config['save_model_name']
+            if not cur_round is None:
+                save_model_name + '_r_' + str(cur_round)
+
             save_path = './'
             if 'save_path' in self.model_creator.model_config:
                 save_path = self.model_creator.model_config['save_path'] 

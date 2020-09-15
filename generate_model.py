@@ -19,10 +19,12 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     utili.set_debug_flag(False)
     framdata_config = {}
     data_config = {}
-    data_config['file_path'] = 'uniprot-reviewed_yes.tab'
+    #data_config['file_path'] = 'uniprot-reviewed_yes.tab'
+    data_config['file_path'] = 'final_result.csv'
+    #data_config['file_path'] = 'final_result_4_5.csv'
     data_config['drop_multilabel'] = False
     data_config['apply_dummy_label'] = False 
-    data_config['max_len'] = 1000
+    data_config['max_len'] = 1500
     data_config['ec_level'] = 4 
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
@@ -49,9 +51,11 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 20 
+    estmator_config['epochs'] = 150 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
+    estmator_config['batch_round'] = True 
+    estmator_config['round_size'] = 20 
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]
@@ -63,11 +67,13 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
         estmator_config[k] = input_estmator_config[k]
 
     dp = framework.data_processor(data_config)
-    x_train, y_train, x_test, y_test = dp.get_data()
-    mc = framework.model_creator(data_config, model_config)
-    mc.create_model()
-    me = framework.model_estimator(estmator_config, dp, mc)
-    me.evaluate()
+    x_train, y_train, x_test, y_test = dp.get_data(sep=',')
+    train_model = True 
+    if train_model:
+        mc = framework.model_creator(data_config, model_config)
+        mc.create_model()
+        me = framework.model_estimator(estmator_config, dp, mc)
+        me.evaluate()
         
 
 if __name__ == '__main__':

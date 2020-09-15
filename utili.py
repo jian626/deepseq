@@ -120,6 +120,14 @@ def strict_compare_report(label_set1, label_set2, length):
         if strict_identical_compare(label_set1[i], label_set2[i]):
             res += 1
     return res
+
+def get_table_value(table, key, default=None):
+    ret = None
+    if key in table:
+        ret = table[key]
+    else:
+        ret = default
+    return ret
             
         
     
