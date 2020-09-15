@@ -15,6 +15,7 @@ from sklearn.metrics import classification_report
 import estimator_manager 
 import data_manager 
 import model_manager 
+import estimator 
 
 def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     transfor_learning= False
@@ -30,7 +31,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['fraction'] = 1 
     data_config['ngram'] = 2
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 1 
+    data_config['task_num'] = 4 
     data_config['label_key'] = 'EC number'
     
     
@@ -68,13 +69,16 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     for k in input_estmator_config:
         estmator_config[k] = input_estmator_config[k]
 
-    dp = data_manager.enzyme_data_processor(data_config)
-    x_train, y_train, x_test, y_test = dp.get_data(sep='\t')
+    dm = data_manager.enzyme_data_processor(data_config)
+    x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
     train_model = True 
     if train_model:
-        mc = model_manager.model_creator(dp, model_config)
+        mc = model_manager.model_creator(dm, model_config)
         mc.create_model()
-        me = estimator_manager.model_estimator(estmator_config, dp, mc)
+        ee = estimator.enzyme_estimator(dm)
+        estimator_list = []
+        estimator_list.append(ee)
+        me = estimator_manager.estimator_manager(estmator_config, dm, mc, estimator_list)
         me.evaluate()
         
 

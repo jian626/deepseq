@@ -9,16 +9,14 @@ from tensorflow.keras.callbacks import EarlyStopping
 import numpy as np
 import pandas as pd
 import utili
-import BioDefine
 from datetime import datetime
-from sklearn.metrics import classification_report
-import process_enzyme
     
-class model_estimator:
-    def __init__(self, config, data_manager, model_manager):
+class estimator_manager:
+    def __init__(self, config, data_manager, model_manager, estimators):
         self.config = config
         self.data_manager = data_manager 
         self.model_manager = model_manager 
+        self.estimators = estimators
 
     def evaluate(self):
         epochs = self.config['epochs']
@@ -54,14 +52,13 @@ class model_estimator:
             early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=40, verbose=1)
             callbacks.append(early_stopping_callback)
         
-        y_train_target = y_train
-        y_test_target = y_test
+        y_train = y_train
         batch_size = self.config['batch_size']
             
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        model.fit(x_train, y_train_target, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        model.fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
 
         suffix = ''
         if not cur_round is None:
@@ -71,44 +68,6 @@ class model_estimator:
             
         y_pred = model.predict(x_test)
 
-        if task_num == 1:
-            y_pred = [y_pred]
-
-        field_map_to_number = self.data_manager.get_feature_mapping()
-        map_table = {} 
-        class_res = {
-        }
-        
-
-        for i in range(task_num):
-            pred = (y_pred[i] > 0.5)
-            target = y_test_target[i]
-            report = classification_report(target, pred)
-            map_table[i] = utili.switch_key_value(field_map_to_number[i])
-
-            if self.config['print_report']:
-                print('report level %d' % i)
-                print(report)
-                res = utili.strict_compare_report(target, pred, len(x_test))
-                print('strict accuracy is %d of %d, %f%%' % (res, len(x_test), float(res) * 100.0 / len(x_test)))
-
-            temp = []
-            for y_ in pred:
-                temp.append(utili.map_label_to_class(map_table[i], y_))
-            class_res[i] = temp
-
-            res = {
-                0:0, 
-                1:0,
-                2:0,
-            }
-
-        for i in range(len(x_test)):
-            for j in range(task_num-1):
-                if process_enzyme.is_conflict(class_res[j+1][i], class_res[j][i], j+1):
-                    res[j] += 1
-
-        for i in range(task_num-1):
-            print('comflict between level %d and level %d is %d, %f%% of %d.' % (i+1, i+2, res[i], float(res[i]) * 100.0 /float(len(x_test)), len(x_test)))
-                
-        return report
+        for estimator in self.estimators:
+            estimator.estimate(y_pred, y_test, len(x_test), self.config['print_report'])
+        return 
