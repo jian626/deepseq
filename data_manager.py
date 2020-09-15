@@ -1,0 +1,150 @@
+import numpy as np
+import pandas as pd
+import utili
+import process_enzyme
+import BioDefine
+class enzyme_data_processor:
+    def __init__(self, config):
+        self.config = config
+        self.label_key = config['label_key']
+        self.config['class_maps'] = { 
+                0:{},
+                1:{},
+                2:{},
+                3:{}
+           } 
+
+        self.config['field_map_to_number'] = {
+                0:{},
+                1:{},
+                2:{},
+                3:{}
+            }
+
+    def get_data(self, sep=','):
+        df = pd.read_csv(self.config['file_path'],sep=sep)
+        utili.print_debug_info(df, info=True)
+        df = df.dropna()
+        
+        df[self.label_key] = df[self.label_key].astype(str)
+        utili.print_debug_info(df, 'after drop na', print_head = True)
+        ec_level = self.config['ec_level']
+        
+        if self.config['drop_multilabel']:
+            df = df[df[self.label_key].apply(lambda x:process_enzyme.not_multilabel_enzyme(x))]
+            utili.print_debug_info(df, 'after drop multilabel')
+            if not self.config['apply_dummy_label']:
+                utili.print_debug_info(df, 'before drop dummy')
+                df = df[df[self.label_key].apply(lambda x:process_enzyme.has_level(ec_level, x))]
+                utili.print_debug_info(df, 'after drop dummy')
+        else:
+            if not self.config['apply_dummy_label']:
+                df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_level_list(x, ec_level))
+                df = df[df[self.label_key].apply(lambda x:len(x)>0)]
+            else:
+                df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_list(x))
+                
+            df['EC count'] = df[self.label_key].apply(lambda x:len(x))
+        
+        if self.config['max_len'] > 0:
+            df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
+            utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
+        
+        for i in range(ec_level):
+            df = process_enzyme.get_level_labels(df, i, self.config['class_maps'])
+            utili.print_debug_info(df, 'after select to level %d' % i, print_head = True)
+        
+        self.config['max_category'] = []
+        for i in range(ec_level):
+            df, temp_max_category, temp_field_map_to_number = process_enzyme.create_label_from_field(df, self.config['class_maps'],'level%d' % i, 'task%d' % i, i)
+            self.config['max_category'].append(temp_max_category)
+            self.config['field_map_to_number'][i] = temp_field_map_to_number
+            utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
+        print('max_category:', self.config['max_category'])
+        
+        if self.config['print_statistics']:
+            print('following statistics information is based on data to use.')
+            for index in range(ec_level):
+                sorted_k = {k: v for k, v in sorted(self.config['class_maps'][index].items(), key=lambda item: item[1])}
+                cnt = 0
+                map_cnt = {}
+                for k in sorted_k: 
+                    if not sorted_k[k] in map_cnt:
+                        map_cnt[sorted_k[k]] = 1
+                    else:
+                        map_cnt[sorted_k[k]] += 1
+        
+                less_than_10 = 0
+                for i in range(10):
+                    if i in map_cnt:
+                        less_than_10 += map_cnt[i]
+                print('level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
+        
+        
+        df = df.sample(frac=self.config['fraction'])
+        utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
+        self.config['using_set_num'] = df.shape[0]
+        df = df.reindex(np.random.permutation(df.index))
+        
+        self.config['max_len'] = 0
+        def set_max_len(x):
+            if self.config['max_len'] <len(x):
+                self.config['max_len'] = len(x)
+            
+        df['Sequence'].apply(lambda x:set_max_len(x))
+        print('max_len:', self.config['max_len'])
+        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
+        self.config['max_features'] = len(feature_list) + 1
+        df['Encode'] = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+        
+        
+        print('train_percent:%f' % self.config['train_percent'])
+        training_set = df.iloc[:int(self.config['using_set_num'] * self.config['train_percent'])]
+        test_set = df.iloc[training_set.shape[0]:]
+        utili.print_debug_info(training_set, "training set", print_head=True)
+        utili.print_debug_info(test_set, "test set", print_head=True)
+        
+        x_train, y_train = process_enzyme.get_data_and_label(training_set, self.config)
+        x_test, y_test = process_enzyme.get_data_and_label(test_set, self.config)
+
+        task_num = self.get_task_num() 
+        if task_num == 1:
+            y_train = [y_train[ec_level - 1]]
+            y_test = [y_test[ec_level - 1]]
+
+        self.x_train = x_train
+        self.y_train = y_train
+        self.x_test = x_test
+        self.y_test = y_test
+
+        return x_train, y_train, x_test, y_test
+
+    def get_training_data(self):
+        return self.x_train, self.y_train
+    
+    def get_test_data(self):
+        return self.x_test, self.y_test
+
+    def get_task_num(self):
+        return self.config['task_num']
+
+    def get_max_category(self):
+        ret = self.config['max_category']
+        if self.config['task_num'] == 1:
+            ret = [self.config['max_category'][self.config['ec_level']-1]]
+        return ret
+
+    def get_max_feature(self):
+        return self.config['max_features']
+
+    def get_max_len(self):
+        return self.config['max_len']
+
+    def get_feature_mapping(self):
+        return self.config['field_map_to_number']
+
+    def get_specific_info(self):
+        ret = {
+            'ec_level':self.config['ec_level']
+        }
+        return ret
