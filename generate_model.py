@@ -13,8 +13,8 @@ import BioDefine
 from datetime import datetime
 from sklearn.metrics import classification_report
 import framework
-import data_processors
-import model_creates
+import data_manager 
+import model_manager 
 
 def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     transfor_learning= False
