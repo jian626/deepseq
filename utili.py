@@ -128,11 +128,6 @@ def get_table_value(table, key, default=None):
     else:
         ret = default
     return ret
-            
-        
-    
-    
-
 
 if __name__ == '__main__':
     pass
