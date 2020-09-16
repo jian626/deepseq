@@ -13,24 +13,23 @@ class enzyme_estimator:
 
         field_map_to_number = self.data_manager.get_feature_mapping()
         map_table = {} 
-        class_res = {}
+
+        one_hot_labels = []
+        for i in range(task_num):
+            one_hot_labels.append(y_pred[i] > 0.5)
+
+        class_res = self.data_manager.decode(one_hot_labels)
 
         for i in range(task_num):
-            pred = (y_pred[i] > 0.5)
+            pred = one_hot_labels[i] 
             target = y_test[i]
             report = classification_report(target, pred)
-            map_table[i] = utili.switch_key_value(field_map_to_number[i])
 
             if print_report:
                 print('report level %d' % i)
                 print(report)
                 res = utili.strict_compare_report(target, pred, length)
                 print('strict accuracy is %d of %d, %f%%' % (res, length, float(res) * 100.0 / length))
-
-            temp = []
-            for y_ in pred:
-                temp.append(utili.map_label_to_class(map_table[i], y_))
-            class_res[i] = temp
 
             res = {
                 0:0, 

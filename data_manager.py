@@ -7,19 +7,25 @@ class enzyme_data_processor:
     def __init__(self, config):
         self.config = config
         self.label_key = config['label_key']
-        self.config['class_maps'] = { 
-                0:{},
-                1:{},
-                2:{},
-                3:{}
-           } 
+        if not 'class_maps' in self.config:
+            self.config['class_maps'] = { 
+                    0:{},
+                    1:{},
+                    2:{},
+                    3:{}
+               } 
+    
+        if not 'field_map_to_number' in self.config:
+            self.config['field_map_to_number'] = {
+                    0:{},
+                    1:{},
+                    2:{},
+                    3:{}
+                }
 
-        self.config['field_map_to_number'] = {
-                0:{},
-                1:{},
-                2:{},
-                3:{}
-            }
+        if not 'number_to_field' in self.config:
+            self.config['number_to_field'] = {
+                }
 
     def get_data(self, sep=','):
         df = pd.read_csv(self.config['file_path'],sep=sep)
@@ -143,8 +149,33 @@ class enzyme_data_processor:
     def get_feature_mapping(self):
         return self.config['field_map_to_number']
 
-    def get_specific_info(self):
-        ret = {
-            'ec_level':self.config['ec_level']
-        }
+    def _decode(self, labels, ec_level, map_table):
+        category_num = self.config['max_category'][ec_level-1]
+        res = []
+        for label in labels:
+            temp = []
+            for index, element in enumerate(label): 
+                if element:
+                    temp.append(map_table[index])
+                res.append(temp)
+        return res
+
+    def decode(self, y):
+        task_num = self.config['task_num']
+        number_to_field = self.config['number_to_field']
+        ret = []
+        if task_num == 4: 
+            for i in range(task_num):
+                if not i in number_to_field:
+                    number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
+                ret.append(self._decode(y[i], i+1, number_to_field[i]))
+        else:
+            ec_level = self.config['ec_level']
+            i = ec_level - 1
+            if not i in number_to_field:
+                number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
+            ret.append(self._decode(y[0], ec_level, number_to_field[i]))
         return ret
+
+    def get_decode_info(self):
+        return self.config

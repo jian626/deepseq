@@ -106,7 +106,6 @@ class model_creator:
             output.append(task_lastLayer)
         model = Model(inputs=input_layer, outputs=output)
         return model
-        
 
     def create_model(self):
         input_embedding_layer, lastLayer = self.create_input()
@@ -126,8 +125,7 @@ class model_creator:
             save_name = save_path + '/' + save_model_name 
             self.model.save_weights(save_name+ '.h5')
             config = {
-                'specific':self.data_manager.get_specific_info(),
+                'decode_info':self.data_manager.get_decode_info(),
                 'task_num':self.data_manager.get_task_num(),
-                'field_map_to_number':self.data_manager.get_feature_mapping(),
             }
             utili.save_obj(config, save_name)

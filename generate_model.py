@@ -54,11 +54,11 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 1 
+    estmator_config['epochs'] = 5 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
-    estmator_config['batch_round'] = False 
-    estmator_config['round_size'] = 20 
+    estmator_config['batch_round'] = True 
+    estmator_config['round_size'] = 2 
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]
