@@ -157,7 +157,7 @@ class enzyme_data_processor:
             for index, element in enumerate(label): 
                 if element:
                     temp.append(map_table[index])
-                res.append(temp)
+            res.append(temp)
         return res
 
     def decode(self, y):
@@ -168,7 +168,8 @@ class enzyme_data_processor:
             for i in range(task_num):
                 if not i in number_to_field:
                     number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
-                ret.append(self._decode(y[i], i+1, number_to_field[i]))
+                labels = self._decode(y[i], i+1, number_to_field[i])
+                ret.append(labels)
         else:
             ec_level = self.config['ec_level']
             i = ec_level - 1
@@ -179,3 +180,15 @@ class enzyme_data_processor:
 
     def get_decode_info(self):
         return self.config
+
+    def get_class_map(self):
+        return self.config['class_maps']
+
+    def get_class_statistic(self, c):
+        class_maps = self.config['class_maps']
+        for k in class_maps:
+            if c in class_maps[k]:
+                cnt = class_maps[k][c]
+                return cnt, k+1
+                 
+

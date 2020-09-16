@@ -118,7 +118,7 @@ def get_part_level(ec, level):
         if not 'unknown' in r:
             return r
 
-def is_conflict(long_level, short_level, compare_level):
+def get_conflict(long_level, short_level, compare_level):
     test_map_l = [] 
     test_map_s = [] 
     for e in long_level:
@@ -130,7 +130,7 @@ def is_conflict(long_level, short_level, compare_level):
         part_level = get_part_level(e, compare_level)
         if part_level:
             test_map_s.append(part_level) 
-    return (set(test_map_l).difference(set(test_map_s)))
+    return set(test_map_l).difference(set(test_map_s))
 
 if __name__ == '__main__':
     long_level = ['1.2.2.unknown', '2.2.3.4', '2.2.3.1']
