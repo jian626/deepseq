@@ -27,6 +27,54 @@ class enzyme_data_processor:
             self.config['number_to_field'] = {
                 }
 
+    def _apply_threshold(self, df, level, threshold):
+        temp = {}
+        def count_class_example(ec_list):
+            if ec_list is None:
+                return
+
+            for ec in ec_list: 
+                ec = process_enzyme.get_ec_to_level(ec, level)
+                if ec in temp:
+                    temp[ec] += 1
+                else:
+                    temp[ec] = 1
+            
+        
+        def delete_class(ec_list, threshold):
+            if ec_list is None:
+                return
+
+            res = []
+            for ec in ec_list:
+                ec = process_enzyme.get_ec_to_level(ec, level)
+                if temp[ec] >  threshold:
+                    res.append(ec)
+            if res:
+                return res
+            else:
+                return None
+
+        df[self.label_key].apply(lambda e:count_class_example(e))  
+
+        return df[self.label_key].apply(lambda e:delete_class(e, threshold))
+
+
+    def apply_threshold(self, df):
+        size = df.shape[0]
+        ec_level = self.config['ec_level']
+        while True:
+            for i in range(ec_level-1, -1, -1):
+                df[self.label_key] = self._apply_threshold(df, i, self.config['class_example_threshhold'])
+            #df = df[df[self.label_key].apply(lambda e:len(e)>0)]
+            df.dropna(inplace = True)
+
+            if size == df.shape[0]: 
+                break
+            else:
+                size = df.shape[0]
+
+
     def get_data(self, sep=','):
         df = pd.read_csv(self.config['file_path'],sep=sep)
         utili.print_debug_info(df, info=True)
@@ -35,26 +83,29 @@ class enzyme_data_processor:
         df[self.label_key] = df[self.label_key].astype(str)
         utili.print_debug_info(df, 'after drop na', print_head = True)
         ec_level = self.config['ec_level']
+
+        
         
         if self.config['drop_multilabel']:
             df = df[df[self.label_key].apply(lambda x:process_enzyme.not_multilabel_enzyme(x))]
-            utili.print_debug_info(df, 'after drop multilabel')
-            if not self.config['apply_dummy_label']:
-                utili.print_debug_info(df, 'before drop dummy')
-                df = df[df[self.label_key].apply(lambda x:process_enzyme.has_level(ec_level, x))]
-                utili.print_debug_info(df, 'after drop dummy')
+
+        if not self.config['apply_dummy_label']:
+            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_level_list(x, ec_level))
+            df = df[df[self.label_key].apply(lambda x:len(x)>0)]
         else:
-            if not self.config['apply_dummy_label']:
-                df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_level_list(x, ec_level))
-                df = df[df[self.label_key].apply(lambda x:len(x)>0)]
-            else:
-                df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_list(x))
-                
-            df['EC count'] = df[self.label_key].apply(lambda x:len(x))
+            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_list(x))
+            
+        df['EC count'] = df[self.label_key].apply(lambda x:len(x))
+
+
         
         if self.config['max_len'] > 0:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
+
+        self.apply_threshold(df)
+
+        utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
         for i in range(ec_level):
             df = process_enzyme.get_level_labels(df, i, self.config['class_maps'])

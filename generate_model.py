@@ -23,7 +23,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     framdata_config = {}
     data_config = {}
     data_config['file_path'] = 'uniprot-reviewed_yes.tab'
-    data_config['drop_multilabel'] = False
+    data_config['drop_multilabel'] = True 
     data_config['apply_dummy_label'] = False 
     data_config['max_len'] = 1000
     data_config['ec_level'] = 4 
@@ -33,6 +33,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['train_percent'] = 0.7
     data_config['task_num'] = 4 
     data_config['label_key'] = 'EC number'
+    data_config['class_example_threshhold'] = 10 
     
     
     model_config = {}
@@ -71,7 +72,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
 
     dm = data_manager.enzyme_data_processor(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
-    train_model = True 
+    train_model = False 
     if train_model:
         mc = model_manager.model_creator(dm, model_config)
         mc.create_model()

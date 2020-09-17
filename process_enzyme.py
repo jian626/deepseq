@@ -14,7 +14,13 @@ def get_ec_level_list(ec, level):
         if has_level(level, e): 
             ret.append(e)
     return ret
-    
+
+def get_ec_to_level(ec, level):
+    l = ec.split('.')
+    if len(l) < level:
+        l += ['-'] * (level - len(l))
+    return '.'.join(l)
+
 
 def get_ec(ec, level, class_maps):
     ret = None
@@ -91,15 +97,12 @@ def create_input_embedding(max_len, max_features, embedding_dims):
                         embedding_dims,
                         input_length=max_len)(inputLayer)
 
-def map_number_to_label(ec_set, num_classes, drop_multilabel):
+def map_number_to_label(ec_set, num_classes):
     ret = None
-    if not drop_multilabel:
-        ret = np.zeros((len(ec_set), num_classes)) 
-        for index, ec in enumerate(ec_set):
-            for e in ec:
-                ret[index][e] = 1
-    else:
-        ret = to_categorical(ec_set, num_classes=num_classes)
+    ret = np.zeros((len(ec_set), num_classes)) 
+    for index, ec in enumerate(ec_set):
+        for e in ec:
+            ret[index][e] = 1
     return ret
 
 def get_data_and_label(data_set, config):
@@ -107,7 +110,7 @@ def get_data_and_label(data_set, config):
     x = sequence.pad_sequences(x, maxlen=config['max_len'], padding='post')
     y = []
     for i in range(config['ec_level']):
-        temp = map_number_to_label(data_set['task%d' % i], config['max_category'][i], config['drop_multilabel'])
+        temp = map_number_to_label(data_set['task%d' % i], config['max_category'][i])
         y.append(temp)
     return x, y
 
