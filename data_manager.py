@@ -83,8 +83,6 @@ class enzyme_data_processor:
         df[self.label_key] = df[self.label_key].astype(str)
         utili.print_debug_info(df, 'after drop na', print_head = True)
         ec_level = self.config['ec_level']
-
-        
         
         if self.config['drop_multilabel']:
             df = df[df[self.label_key].apply(lambda x:process_enzyme.not_multilabel_enzyme(x))]

@@ -31,7 +31,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['fraction'] = 1 
     data_config['ngram'] = 2
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 4 
+    data_config['task_num'] = 1 
     data_config['label_key'] = 'EC number'
     data_config['class_example_threshhold'] = 10 
     
@@ -46,7 +46,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     model_config['cov_len'] = 1
     model_config['filter_delta'] = 16
     model_config['pool_size'] = 2 
-    model_config['pooling_strides'] = 16 
+    model_config['pooling_strides'] = 1 
     model_config['save_model_name'] = 'my_model'
     model_config['save_path'] = './models/'
 
@@ -55,10 +55,10 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 2 
+    estmator_config['epochs'] = 20 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
-    estmator_config['batch_round'] = True 
+    estmator_config['batch_round'] = False 
     estmator_config['round_size'] = 1 
 
     for k in input_data_config:
@@ -72,7 +72,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
 
     dm = data_manager.enzyme_data_processor(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
-    train_model = False 
+    train_model = True 
     if train_model:
         mc = model_manager.model_creator(dm, model_config)
         mc.create_model()

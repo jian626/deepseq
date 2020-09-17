@@ -100,7 +100,6 @@ def map_label_to_class(map_table, label):
         if label[i]:
             ret.append(map_table[i])
     return ret
-    
 
 def save_obj(obj,name):
     with open(name + '.pkl', 'wb') as f:
