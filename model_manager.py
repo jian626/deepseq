@@ -101,7 +101,7 @@ class model_creator:
         train_target = None 
         test_target = None 
         for i in range(self.data_manager.get_task_num()):
-            task_lastLayer = Dense(self.config['hidden2Dim'])(lastLayer)
+            task_lastLayer = Dense(self.config['hidden_width'])(lastLayer)
             task_lastLayer = Dense(self.data_manager.get_max_category()[i], activation='sigmoid', name="task_%d_1" % i)(task_lastLayer)
             output.append(task_lastLayer)
         model = Model(inputs=input_layer, outputs=output)

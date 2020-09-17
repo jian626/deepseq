@@ -35,12 +35,10 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['label_key'] = 'EC number'
     data_config['class_example_threshhold'] = 10 
     
-    
     model_config = {}
     model_config['embedding_dims'] = 16 
-    model_config['hidden1Dim'] = 256 
-    model_config['hidden2Dim'] = 256 
-    model_config['dense_net'] = False 
+    model_config['hidden_width'] = 256 
+    model_config['dense_net'] = True 
     model_config['cov_kernel_size'] = 3 
     model_config['layer_len'] = 1
     model_config['cov_len'] = 1
@@ -55,7 +53,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 20 
+    estmator_config['epochs'] = 200 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
     estmator_config['batch_round'] = False 

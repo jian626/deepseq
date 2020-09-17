@@ -30,9 +30,6 @@ class enzyme_data_processor:
     def _apply_threshold(self, df, level, threshold):
         temp = {}
         def count_class_example(ec_list):
-            if ec_list is None:
-                return
-
             for ec in ec_list: 
                 ec = process_enzyme.get_ec_to_level(ec, level)
                 if ec in temp:
@@ -42,18 +39,12 @@ class enzyme_data_processor:
             
         
         def delete_class(ec_list, threshold):
-            if ec_list is None:
-                return
-
             res = []
             for ec in ec_list:
                 ec = process_enzyme.get_ec_to_level(ec, level)
                 if temp[ec] >  threshold:
                     res.append(ec)
-            if res:
-                return res
-            else:
-                return None
+            return res
 
         df[self.label_key].apply(lambda e:count_class_example(e))  
 
@@ -61,13 +52,13 @@ class enzyme_data_processor:
 
 
     def apply_threshold(self, df):
+        class_example_threshhold = self.config['class_example_threshhold']
         size = df.shape[0]
         ec_level = self.config['ec_level']
         while True:
             for i in range(ec_level-1, -1, -1):
-                df[self.label_key] = self._apply_threshold(df, i, self.config['class_example_threshhold'])
-            #df = df[df[self.label_key].apply(lambda e:len(e)>0)]
-            df.dropna(inplace = True)
+                df[self.label_key] = self._apply_threshold(df, i, class_example_threshhold)
+            df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
             if size == df.shape[0]: 
                 break
