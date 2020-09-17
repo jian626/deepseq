@@ -70,7 +70,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
 
     dm = data_manager.enzyme_data_processor(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
-    train_model = True 
+    train_model = False 
     if train_model:
         mc = model_manager.model_creator(dm, model_config)
         mc.create_model()

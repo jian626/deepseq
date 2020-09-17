@@ -64,6 +64,7 @@ class enzyme_data_processor:
                 break
             else:
                 size = df.shape[0]
+        return df
 
 
     def get_data(self, sep=','):
@@ -92,7 +93,7 @@ class enzyme_data_processor:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
 
-        self.apply_threshold(df)
+        df = self.apply_threshold(df)
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
