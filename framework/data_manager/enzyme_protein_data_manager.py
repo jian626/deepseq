@@ -5,7 +5,8 @@ from framework.bio import BioDefine
 import tensorflow as tf
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.utils import to_categorical
-class enzyme_protein_data_processor:
+class enzyme_protein_data_manager:
+    name = 'enzyme_protein_data_manager'
     def __init__(self, config):
         self.config = config
         self.config['max_category'] = 2

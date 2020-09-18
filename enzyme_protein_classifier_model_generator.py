@@ -1,9 +1,9 @@
 from datetime import datetime
 from framework import utili
 from framework.estimator_manager import estimator_manager 
-from framework.model_manager import model_manager
+from framework.model_manager import model_manager_creator
 from framework.estimator import enzyme_protein_estimator as estimator 
-from framework.data_manager import enzyme_protein_data_manager as data_manager
+from framework.data_manager import data_manager_creator 
 from tensorflow.keras.optimizers import Adam
 
 
@@ -12,6 +12,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     utili.set_debug_flag(False)
     framdata_config = {}
     data_config = {}
+    data_config['name'] = 'enzyme_protein_data_manager'
     data_config['file_path'] = 'uniprot-reviewed_yes.tab'
     data_config['max_len'] = 1000
     data_config['print_statistics'] = True
@@ -41,7 +42,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     estmator_config['print_summary'] = True
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
-    estmator_config['epochs'] = 2 
+    estmator_config['epochs'] = 20 
     estmator_config['batch_size'] = 400
     estmator_config['print_report'] = True
     estmator_config['batch_round'] = False 
@@ -56,11 +57,11 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     for k in input_estmator_config:
         estmator_config[k] = input_estmator_config[k]
 
-    dm = data_manager.enzyme_protein_data_processor(data_config)
+    dm = data_manager_creator.create(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
     train_model = True 
     if train_model:
-        mc = model_manager.model_creator(dm, model_config)
+        mc = model_manager_creator.create(dm, model_config)
         mc.create_model()
         ee = estimator.enzyme_protein_estimator(dm)
         estimator_list = []

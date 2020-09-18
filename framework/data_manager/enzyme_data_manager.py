@@ -4,9 +4,12 @@ from framework import utili
 from framework.bio import process_enzyme
 from framework.bio import BioDefine
 from tensorflow.keras.preprocessing import sequence
-class enzyme_data_processor:
+
+class enzyme_data_manager:
+    name = 'enzyme_data_manager'
     def __init__(self, config):
         self.config = config
+        self.config['name'] = 'enzyme_data_manager'
         self.label_key = config['label_key']
         if not 'class_maps' in self.config:
             self.config['class_maps'] = { 
@@ -28,7 +31,7 @@ class enzyme_data_processor:
             self.config['number_to_field'] = {
                 }
 
-    def _apply_threshold(self, df, level, threshold):
+    def ___apply_threshold(self, df, level, threshold):
         temp = {}
         def count_class_example(ec_list):
             for ec in ec_list: 
@@ -52,13 +55,13 @@ class enzyme_data_processor:
         return df[self.label_key].apply(lambda e:delete_class(e, threshold))
 
 
-    def apply_threshold(self, df):
+    def _apply_threshold(self, df):
         class_example_threshhold = self.config['class_example_threshhold']
         size = df.shape[0]
         ec_level = self.config['ec_level']
         while True:
             for i in range(ec_level-1, -1, -1):
-                df[self.label_key] = self._apply_threshold(df, i, class_example_threshhold)
+                df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
             df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
             if size == df.shape[0]: 
@@ -92,7 +95,7 @@ class enzyme_data_processor:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
 
-        df = self.apply_threshold(df)
+        df = self._apply_threshold(df)
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
@@ -238,4 +241,4 @@ class enzyme_data_processor:
 
     def load_x_from_file(self, file_name):
         df = pd.read_csv(file_name, sep='\t')
-        return self.get_x(df)
+        return self.get_x(df), df['Entry name']

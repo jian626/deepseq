@@ -8,11 +8,16 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.models import load_model
 from framework import utili
+from framework.data_manager import data_manager_creator
 
-class model_creator:
+        
+    
+
+class model_common_manager:
     def __init__(self, data_manager, config):
         self.data_manager = data_manager
         self.config = config
+        self.config['name'] = 'model_common_manager'
         self.context = {} 
 
     def _create_input(self):
@@ -128,7 +133,6 @@ class model_creator:
 
     def predict(self, x_):
         return self.model.predict(x_)
-        
 
     def get_summary(self):
         return self.get_model().summary()
@@ -147,7 +151,9 @@ class model_creator:
             model = self.context['model']
             self.context['model'] = None
             store = {
-                'obj':self
+                'config':self.config,
+                'data_manager_info':self.data_manager.get_encode_info(),
+                'name':self.config['name']
             }
             utili.save_obj(store, save_name)
             self.context['model'] = model
@@ -155,13 +161,10 @@ class model_creator:
     def set_model(self, model):
         self.context['model'] = model
 
-    def load_model(name):
+    def load_model(self, name):
         model_name = name + '.h5'
         model = load_model(model_name)
-        store = utili.load_obj(name)
-        model_creator = store['obj']
-        model_creator.set_model(model)
-        return model_creator
+        self.set_model(model)
 
     def get_data_manager(self):
         return self.data_manager
@@ -170,5 +173,5 @@ class model_creator:
         return self.context['model'].predict(x_data)
 
     def predict_on_file(self, load_file):
-        data = self.data_manager.load_x_from_file(load_file)
-        return self.predict(data)
+        data, entry_name = self.data_manager.load_x_from_file(load_file)
+        return self.predict(data), entry_name
