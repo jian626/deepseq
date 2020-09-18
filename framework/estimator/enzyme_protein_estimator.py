@@ -1,7 +1,7 @@
 
 from sklearn.metrics import classification_report
-import utili
-import process_enzyme
+from framework import utili
+from framework.bio import process_enzyme
 
 class enzyme_protein_estimator:
     def __init__(self, data_manager):

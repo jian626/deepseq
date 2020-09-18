@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
-import utili
-import process_enzyme
-import BioDefine
+from framework import utili
+from framework.bio import process_enzyme
+from framework.bio import BioDefine
+from tensorflow.keras.preprocessing import sequence
 class enzyme_data_processor:
     def __init__(self, config):
         self.config = config
@@ -87,8 +88,6 @@ class enzyme_data_processor:
             
         df['EC count'] = df[self.label_key].apply(lambda x:len(x))
 
-
-        
         if self.config['max_len'] > 0:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
@@ -177,7 +176,7 @@ class enzyme_data_processor:
 
     def get_max_category(self):
         ret = self.config['max_category']
-        if self.config['task_num'] == 1:
+        if self.get_task_num() == 1:
             ret = [self.config['max_category'][self.config['ec_level']-1]]
         return ret
 
@@ -187,11 +186,8 @@ class enzyme_data_processor:
     def get_max_len(self):
         return self.config['max_len']
 
-    def get_feature_mapping(self):
-        return self.config['field_map_to_number']
-
-    def _decode(self, labels, ec_level, map_table):
-        category_num = self.config['max_category'][ec_level-1]
+    def _one_hot_to_labels(self, labels, task_id, map_table):
+        category_num = self.config['max_category'][task_id]
         res = []
         for label in labels:
             temp = []
@@ -201,29 +197,26 @@ class enzyme_data_processor:
             res.append(temp)
         return res
 
-    def decode(self, y):
-        task_num = self.config['task_num']
+    def one_hot_to_labels(self, y):
+        task_num = self.get_task_num()
         number_to_field = self.config['number_to_field']
         ret = []
         if task_num == 4: 
             for i in range(task_num):
                 if not i in number_to_field:
                     number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
-                labels = self._decode(y[i], i+1, number_to_field[i])
+                labels = self._one_hot_to_labels(y[i], i, number_to_field[i])
                 ret.append(labels)
         else:
             ec_level = self.config['ec_level']
             i = ec_level - 1
             if not i in number_to_field:
                 number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
-            ret.append(self._decode(y[0], ec_level, number_to_field[i]))
+            ret.append(self._one_hot_to_labels(y[0], i, number_to_field[i]))
         return ret
 
-    def get_decode_info(self):
+    def get_encode_info(self):
         return self.config
-
-    def get_class_map(self):
-        return self.config['class_maps']
 
     def get_class_statistic(self, c):
         class_maps = self.config['class_maps']
@@ -232,4 +225,17 @@ class enzyme_data_processor:
                 cnt = class_maps[k][c]
                 return cnt, k+1
                  
+    def get_x(self, df):
+        max_len = self.config['max_len']
+        def check_len(seq):
+            if len(seq) > max_len:
+                raise Exception('len %d beyone max_len:%s' % (len(seq), seq))
+        df = df[df['Sequence'].apply(lambda x:len(x)<max_len)]
+        df['Sequence'].apply(check_len)
+        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
+        x = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+        return sequence.pad_sequences(x, maxlen=max_len, padding='post')
 
+    def load_x_from_file(self, file_name):
+        df = pd.read_csv(file_name, sep='\t')
+        return self.get_x(df)

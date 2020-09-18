@@ -1,8 +1,7 @@
-import data_manager
 import pandas as pd
 import numpy as np
-import utili 
-import BioDefine
+from framework import utili 
+from framework.bio import BioDefine
 import tensorflow as tf
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.utils import to_categorical

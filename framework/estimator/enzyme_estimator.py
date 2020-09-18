@@ -1,6 +1,6 @@
 from sklearn.metrics import classification_report
-import utili
-import process_enzyme
+from framework import utili
+from framework.bio import process_enzyme
 
 class enzyme_estimator:
     def __init__(self, data_manager):
@@ -28,26 +28,23 @@ class enzyme_estimator:
             cnt, level = self.data_manager.get_class_statistic(c)
             stat.append((c, cnt, level)) 
         sorted(stat, reverse=True, key=lambda e:e[2])
-
         return conflict, stat
-            
 
     def estimate(self, y_pred, y_test, length, print_report):
         task_num = self.data_manager.get_task_num()
         if task_num == 1:
             y_pred = [y_pred]
 
-        field_map_to_number = self.data_manager.get_feature_mapping()
         map_table = {} 
 
-        one_hot_labels = []
+        bool_labels = []
         for i in range(task_num):
-            one_hot_labels.append(y_pred[i] > 0.5)
+            bool_labels.append(y_pred[i] > 0.5)
 
-        pred_labels = self.data_manager.decode(one_hot_labels)
+        pred_labels = self.data_manager.one_hot_to_labels(bool_labels)
 
         for i in range(task_num):
-            pred = one_hot_labels[i] 
+            pred = bool_labels[i] 
             target = y_test[i]
             report = classification_report(target, pred)
 

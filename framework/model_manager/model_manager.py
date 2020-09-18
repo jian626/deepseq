@@ -6,17 +6,14 @@ from tensorflow.keras.optimizers import Adam,SGD
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
-import utili
+from tensorflow.keras.models import load_model
+from framework import utili
 
 class model_creator:
     def __init__(self, data_manager, config):
         self.data_manager = data_manager
         self.config = config
-        self.model = None
-        self.x_train = None
-        self.y_train = None
-        self.x_test = None
-        self.y_test = None
+        self.context = {} 
 
     def create_input(self):
         max_len = self.data_manager.get_max_len()
@@ -96,13 +93,14 @@ class model_creator:
         return lastLayer
     
     def create_end(self, input_layer, lastLayer):
+        last_activation = utili.get_table_value(self.config,'last_activation', 'sigmoid')
         output = []
         task_loss_num = 1
         train_target = None 
         test_target = None 
         for i in range(self.data_manager.get_task_num()):
             task_lastLayer = Dense(self.config['hidden_width'])(lastLayer)
-            task_lastLayer = Dense(self.data_manager.get_max_category()[i], activation='sigmoid', name="task_%d_1" % i)(task_lastLayer)
+            task_lastLayer = Dense(self.data_manager.get_max_category()[i], activation=last_activation, name="task_%d_1" % i)(task_lastLayer)
             output.append(task_lastLayer)
         model = Model(inputs=input_layer, outputs=output)
         return model
@@ -110,22 +108,45 @@ class model_creator:
     def create_model(self):
         input_embedding_layer, lastLayer = self.create_input()
         lastLayer = self.create_main_path(lastLayer)
-        self.model = self.create_end(input_embedding_layer, lastLayer)
-        return self.model
+        self.context['model'] = self.create_end(input_embedding_layer, lastLayer)
+        return self.context['model']
     
     def get_model(self):
-        return self.model
+        return self.context['model']
 
-    def save_model(self, suffix):
+    def save_model(self, suffix=""):
         save_model_name = utili.get_table_value(self.config, 'save_model_name')
         if save_model_name: 
             save_model_name + suffix 
 
             save_path = utili.get_table_value(self.config, 'save_path', './')
             save_name = save_path + '/' + save_model_name 
-            self.model.save_weights(save_name+ '.h5')
-            config = {
-                'decode_info':self.data_manager.get_decode_info(),
-                'task_num':self.data_manager.get_task_num(),
+            self.context['model'].save(save_name+ '.h5')
+            model = self.context['model']
+            self.context['model'] = None
+            store = {
+                'obj':self
             }
-            utili.save_obj(config, save_name)
+            utili.save_obj(store, save_name)
+            self.context['model'] = model
+
+    def set_model(self, model):
+        self.context['model'] = model
+
+    def load_model(name):
+        model_name = name + '.h5'
+        model = load_model(model_name)
+        store = utili.load_obj(name)
+        model_creator = store['obj']
+        model_creator.set_model(model)
+        return model_creator
+
+    def get_data_manager(self):
+        return self.data_manager
+
+    def predict(self, x_data):
+        return self.context['model'].predict(x_data)
+
+    def predict_on_file(self, load_file):
+        data = self.data_manager.load_x_from_file(load_file)
+        return self.predict(data)

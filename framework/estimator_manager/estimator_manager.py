@@ -8,7 +8,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
 import numpy as np
 import pandas as pd
-import utili
+from framework import utili
 from datetime import datetime
     
 class estimator_manager:
