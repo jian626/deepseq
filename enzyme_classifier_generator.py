@@ -42,10 +42,14 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     model_config['pooling_strides'] = 1 
     model_config['save_model_name'] = 'enzyme_model'
     model_config['save_path'] = './models/'
+    model_config['optimizer'] = Adam()
+    model_config['loss_function'] = 'binary_crossentropy'
+    model_config['early_stopping'] = False
+    model_config['last_activation'] = 'sigmoid'
+
 
     estmator_config = {}
     estmator_config['print_summary'] = True
-    estmator_config['optimizer'] = Adam()
     estmator_config['early_stopping'] = True
     estmator_config['patience'] = 20
     estmator_config['epochs'] = 20 

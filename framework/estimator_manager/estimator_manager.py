@@ -22,43 +22,33 @@ class estimator_manager:
         epochs = self.config['epochs']
         batch_round = utili.get_table_value(self.config, 'batch_round')
 
-        model = self.model_manager.get_model()
         x_train, y_train = self.data_manager.get_training_data()
         x_test, y_test = self.data_manager.get_test_data()
 
         task_num = self.data_manager.get_task_num()
 
-        optimizer = self.config['optimizer']
-        model.compile(optimizer=optimizer, loss=['binary_crossentropy'] * task_num , metrics=['categorical_accuracy'] * task_num)
+        self.model_manager.compile()
 
         if self.config['print_summary']:
-            print(model.summary())
+            print(self.model_manager.get_summary())
 
         if batch_round:
             round_size = utili.get_table_value(self.config, 'round_size', 10)
             total_size = (epochs + round_size - 1) // round_size
             for i in range(total_size):
-                self._evaluate(model, x_train, y_train, x_test, y_test, round_size, i)
+                self._evaluate(x_train, y_train, x_test, y_test, round_size, i)
         else:
-            self._evaluate(model, x_train, y_train, x_test, y_test, epochs)
+            self._evaluate(x_train, y_train, x_test, y_test, epochs)
 
-    def _evaluate(self, model, x_train, y_train, x_test, y_test, epochs, cur_round = None):
+    def _evaluate(self, x_train, y_train, x_test, y_test, epochs, cur_round = None):
 
         task_num = self.data_manager.get_task_num()
-        
-        callbacks = []
-        if (task_num == 1) and self.config['early_stopping']:
-            patience = self.config['patience']
-            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=40, verbose=1)
-            callbacks.append(early_stopping_callback)
-        
-        y_train = y_train
         batch_size = self.config['batch_size']
             
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        model.fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        self.model_manager.fit(x_train, y_train, epochs, batch_size)
 
         suffix = ''
         if not cur_round is None:
@@ -66,7 +56,7 @@ class estimator_manager:
 
         self.model_manager.save_model(suffix)
             
-        y_pred = model.predict(x_test)
+        y_pred = self.model_manager.predict(x_test)
 
         for estimator in self.estimators:
             estimator.estimate(y_pred, y_test, len(x_test), self.config['print_report'])

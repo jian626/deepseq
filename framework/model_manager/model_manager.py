@@ -15,7 +15,7 @@ class model_creator:
         self.config = config
         self.context = {} 
 
-    def create_input(self):
+    def _create_input(self):
         max_len = self.data_manager.get_max_len()
         max_features = self.data_manager.get_max_feature()
         embedding_dims = self.config['embedding_dims']
@@ -24,7 +24,7 @@ class model_creator:
                             embedding_dims,
                             input_length=max_len)(inputLayer)
 
-    def create_main_path(self, input_layer):
+    def _create_main_path(self, input_layer):
         lastLayer = input_layer
         dense_net = self.config['dense_net']
         pooling_strides = self.config['pooling_strides']
@@ -92,7 +92,7 @@ class model_creator:
             lastLayer = Flatten()(lastLayer)
         return lastLayer
     
-    def create_end(self, input_layer, lastLayer):
+    def _create_end(self, input_layer, lastLayer):
         last_activation = utili.get_table_value(self.config,'last_activation', 'sigmoid')
         output = []
         task_loss_num = 1
@@ -106,10 +106,32 @@ class model_creator:
         return model
 
     def create_model(self):
-        input_embedding_layer, lastLayer = self.create_input()
-        lastLayer = self.create_main_path(lastLayer)
-        self.context['model'] = self.create_end(input_embedding_layer, lastLayer)
+        input_embedding_layer, lastLayer = self._create_input()
+        lastLayer = self._create_main_path(lastLayer)
+        self.context['model'] = self._create_end(input_embedding_layer, lastLayer)
         return self.context['model']
+
+    def compile(self): 
+        task_num = self.data_manager.get_task_num()
+        optimizer = self.config['optimizer']
+        loss_function = self.config['loss_function']
+        self.get_model().compile(optimizer=optimizer, loss=[loss_function] * task_num , metrics=['categorical_accuracy'] * task_num)
+
+    def fit(self, x_train, y_train, epochs, batch_size):  
+        callbacks = []
+        task_num = self.data_manager.get_task_num()
+        if (task_num == 1) and self.config['early_stopping']:
+            patience = self.config['patience']
+            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=40, verbose=1)
+            callbacks.append(early_stopping_callback)
+        self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+
+    def predict(self, x_):
+        return self.model.predict(x_)
+        
+
+    def get_summary(self):
+        return self.get_model().summary()
     
     def get_model(self):
         return self.context['model']
