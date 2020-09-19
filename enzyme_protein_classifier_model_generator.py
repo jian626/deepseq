@@ -1,13 +1,12 @@
 from datetime import datetime
 from framework import utili
-from framework.estimator_manager import estimator_manager 
+from framework.estimator_manager import estimator_manager_creator 
 from framework.model_manager import model_manager_creator
-from framework.estimator import enzyme_protein_estimator as estimator 
+from framework.estimator import estimator_creator 
 from framework.data_manager import data_manager_creator 
-from tensorflow.keras.optimizers import Adam
 
 
-def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
+def run(input_data_config={}, input_model_config={}, input_estimator_manager_config={}):
     transfor_learning= False
     utili.set_debug_flag(False)
     framdata_config = {}
@@ -19,7 +18,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['fraction'] = 1 
     data_config['ngram'] = 1 
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 1 
+    data_config['task_num'] = 1 #currently only 1 is supported for enzyme protein classifier generator
     
     model_config = {}
     model_config['embedding_dims'] = 16 
@@ -36,17 +35,19 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     model_config['last_activation'] = 'softmax'
     model_config['loss_function'] = 'binary_crossentropy'
     model_config['early_stopping'] = False
-    model_config['optimizer'] = Adam()
+    model_config['optimizer'] = 'Adam'
 
-    estmator_config = {}
-    estmator_config['print_summary'] = True
-    estmator_config['early_stopping'] = True
-    estmator_config['patience'] = 20
-    estmator_config['epochs'] = 20 
-    estmator_config['batch_size'] = 400
-    estmator_config['print_report'] = True
-    estmator_config['batch_round'] = False 
-    estmator_config['round_size'] = 1 
+    estimator_manager_config = {}
+    estimator_manager_config['print_summary'] = True
+    estimator_manager_config['early_stopping'] = True
+    estimator_manager_config['patience'] = 20
+    estimator_manager_config['epochs'] = 20 
+    estimator_manager_config['batch_size'] = 400
+    estimator_manager_config['print_report'] = True
+    estimator_manager_config['batch_round'] = False 
+    estimator_manager_config['round_size'] = 1 
+    estimator_manager_config['name'] = 'common_estimator_manager'
+    estimator_manager_config['train_model'] = True
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]
@@ -54,20 +55,18 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     for k in input_model_config:
         model_config[k] = input_model_config[k]
 
-    for k in input_estmator_config:
-        estmator_config[k] = input_estmator_config[k]
+    for k in input_estimator_manager_config:
+        estimator_manager_config[k] = input_estimator_manager_config[k]
 
     dm = data_manager_creator.create(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
-    train_model = True 
-    if train_model:
-        mc = model_manager_creator.create(dm, model_config)
-        mc.create_model()
-        ee = estimator.enzyme_protein_estimator(dm)
-        estimator_list = []
-        estimator_list.append(ee)
-        me = estimator_manager.estimator_manager(estmator_config, dm, mc, estimator_list)
-        me.evaluate()
+    mc = model_manager_creator.create(dm, model_config)
+    mc.create_model()
+    ee = estimator_creator.create('enzyme_protein_estimator',dm)
+    estimator_list = []
+    estimator_list.append(ee)
+    me = estimator_manager_creator.create(estimator_manager_config, dm, mc, estimator_list)
+    me.evaluate()
 
 if __name__ == '__main__':
     run()

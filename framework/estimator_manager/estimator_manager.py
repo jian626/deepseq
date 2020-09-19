@@ -1,17 +1,10 @@
-import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Activation, Embedding, Flatten, BatchNormalization, AveragePooling1D
-from tensorflow.keras.layers import Conv1D, GlobalMaxPooling1D, MaxPooling1D, Input
-from tensorflow.keras.optimizers import Adam,SGD
-from tensorflow.keras.preprocessing import sequence
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.callbacks import EarlyStopping
 import numpy as np
 import pandas as pd
 from framework import utili
 from datetime import datetime
     
-class estimator_manager:
+class common_estimator_manager:
+    name = 'common_estimator_manager'
     def __init__(self, config, data_manager, model_manager, estimators):
         self.config = config
         self.data_manager = data_manager 
@@ -31,6 +24,9 @@ class estimator_manager:
 
         if self.config['print_summary']:
             print(self.model_manager.get_summary())
+
+        if not self.config['train_model']:
+            return
 
         if batch_round:
             round_size = utili.get_table_value(self.config, 'round_size', 10)

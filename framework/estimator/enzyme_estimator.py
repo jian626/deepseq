@@ -2,7 +2,7 @@ from sklearn.metrics import classification_report
 from framework import utili
 from framework.bio import process_enzyme
 
-class enzyme_estimator:
+class estimator:
     def __init__(self, data_manager):
         self.data_manager = data_manager
 

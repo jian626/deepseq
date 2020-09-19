@@ -1,4 +1,5 @@
 import tensorflow as tf
+import os.path
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Embedding, Flatten, BatchNormalization, AveragePooling1D
 from tensorflow.keras.layers import Conv1D, GlobalMaxPooling1D, MaxPooling1D, Input
@@ -16,6 +17,12 @@ from framework.data_manager import data_manager_creator
 class model_common_manager:
     def __init__(self, data_manager, config):
         self.data_manager = data_manager
+        if 'save_path' in config:
+            save_path = config['save_path']
+            dirname = os.path.dirname(save_path)
+            if not os.path.exists(dirname):
+                raise Exception('the path %s does not exist.' % dirname)
+
         self.config = config
         self.config['name'] = 'model_common_manager'
         self.context = {} 
