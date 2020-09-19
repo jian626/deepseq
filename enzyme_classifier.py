@@ -1,12 +1,13 @@
 from framework.model_manager import model_manager_creator 
 import numpy as np
 import sys, getopt
+import pandas as pd
 
 
 
 def run(input_file, output_file, model_name):
     mc = model_manager_creator.create_from_file('./models/enzyme_model')
-    y_pred = mc.predict_on_file('./uniprot-reviewed_yes.tab')
+    y_pred, entry_name = mc.predict_on_file('./uniprot-reviewed_yes.tab')
     data_manager = mc.get_data_manager()
     bool_labels = []
     
@@ -18,17 +19,15 @@ def run(input_file, output_file, model_name):
         bool_labels.append(y_pred[i] > 0.5)
     
     labels = data_manager.one_hot_to_labels(bool_labels)
-    labels = labels[0]
-    f = open("result.txt", "w")
-    index = 0
-    for i in labels:
-        if len(i) > 0:
-            out = str(','.join(i)) + '\n'
-        else:
-            out = "None\n"
-        f.writelines(out)
-        index += 1
-    f.close()
+    task_num = data_manager.get_task_num()
+    entry_name = entry_name.to_frame() 
+    entry_name.reset_index(inplace=True, drop=True)
+    dfs = [entry_name]
+    for i in range(task_num):
+        dfs.append(pd.DataFrame(np.array(labels[i]), columns=['task%d' % i]))
+    df = pd.concat(dfs, axis=1)
+    df.to_csv('result2.csv', sep='\t', index=False)
+    
 
 def command_line_parser(argv):
     help_str = 'enzyme_classifier.py -i <input_file> -o <output_file> -m <model_name>'
@@ -40,6 +39,7 @@ def command_line_parser(argv):
     except getopt.GetoptError:
         print(help_str) 
         sys.exit(2)
+
     for opt, arg in opts:
         if opt == '-h':
             print(help_str)
@@ -59,7 +59,8 @@ def main(argv):
     input_file = ''
     output_file = ''
     model_name = ''
-    input_file, output_file, model_name = command_line_parser(argv)
+    #input_file, output_file, model_name = command_line_parser(argv)
+    run(input_file, output_file, model_name)
 
 if __name__ == "__main__":
    main(sys.argv[1:])

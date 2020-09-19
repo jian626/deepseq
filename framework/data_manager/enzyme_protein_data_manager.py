@@ -23,6 +23,7 @@ class enzyme_protein_data_manager:
         
         df['Lables'] = 1 
         df.loc[pd.isna(df['EC number']), 'Lables'] = 0 
+        df.reset_index(inplace=True, drop=True)
         print('enzyme cnt:',df[df.Lables>0].shape[0])
         print('non-enzyme cnt:', df[df.Lables==0].shape[0])
 
@@ -92,11 +93,15 @@ class enzyme_protein_data_manager:
         ret = []
         y = y[0]
         for e in y:
+            temp = 'unexpected'
             for i, c in enumerate(e):
-                temp = ['N', 'N']
                 if c:
-                    temp[i] = 'Y'
-                ret.append(temp)
+                    if i == 0:
+                        temp = 'N'
+                    else:
+                        temp = 'Y'
+                    break
+            ret.append(temp)
         ret = [ret]
         return ret
 
@@ -115,7 +120,7 @@ class enzyme_protein_data_manager:
         df['Sequence'].apply(check_len)
         feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
         x = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
-        return sequence.pad_sequences(x, maxlen=max_len, padding='post')
+        return sequence.pad_sequences(x, maxlen=max_len, padding='post'), df['Entry name']
 
     def load_x_from_file(self, file_name):
         df = pd.read_csv(file_name, sep='\t')

@@ -197,6 +197,10 @@ class enzyme_data_manager:
             for index, element in enumerate(label): 
                 if element:
                     temp.append(map_table[index])
+            if temp:
+                temp = ';'.join(temp)
+            else:
+                temp = 'uncertain'
             res.append(temp)
         return res
 
@@ -237,8 +241,8 @@ class enzyme_data_manager:
         df['Sequence'].apply(check_len)
         feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
         x = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
-        return sequence.pad_sequences(x, maxlen=max_len, padding='post')
+        return sequence.pad_sequences(x, maxlen=max_len, padding='post'), df['Entry name']
 
     def load_x_from_file(self, file_name):
         df = pd.read_csv(file_name, sep='\t')
-        return self.get_x(df), df['Entry name']
+        return self.get_x(df) 
