@@ -1,0 +1,28 @@
+name: jian_deepseq
+channels:
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1
+  - _tflow_select=2.1.0
+  - keras=2.3.1
+  - keras-applications=1.0.8
+  - keras-base=2.3.1
+  - keras-preprocessing=1.1.0
+  - numpy=1.18.5
+  - numpy-base=1.18.5
+  - pandas=1.0.5
+  - pip=20.1.1
+  - python=3.6.10
+  - python-dateutil=2.8.1
+  - scipy=1.5.0
+  - tensorboard=2.2.1
+  - tensorboard-plugin-wit=1.6.0
+  - tensorflow=2.0.0
+  - tensorflow-base=2.0.0
+  - tensorflow-estimator=2.0.0
+  - tensorflow-gpu=2.0.0
+  - yaml=0.2.5
+  - pip:
+    - scikit-learn==0.23.2
+    - sklearn==0.0
+
