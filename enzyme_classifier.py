@@ -24,7 +24,10 @@ def run(input_file, output_file, model_name):
     entry_name.reset_index(inplace=True, drop=True)
     dfs = [entry_name]
     for i in range(task_num):
-        dfs.append(pd.DataFrame(np.array(labels[i]), columns=['task%d' % i]))
+        name = 'task %d' % i
+        temp_df = pd.DataFrame(np.array(labels[i]), columns=[name])
+        temp_df = temp_df[name].transform(lambda x:';'.join(x))
+        dfs.append(temp_df)
     df = pd.concat(dfs, axis=1)
     df.to_csv('result2.csv', sep='\t', index=False)
     

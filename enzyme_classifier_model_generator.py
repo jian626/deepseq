@@ -27,7 +27,7 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     data_config['fraction'] = 1 
     data_config['ngram'] = 2
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 1 
+    data_config['task_num'] = 4 
     data_config['label_key'] = 'EC number'
     data_config['class_example_threshhold'] = 10 
     
@@ -36,8 +36,8 @@ def run(input_data_config={}, input_model_config={}, input_estmator_config={}):
     model_config['hidden_width'] = 256 
     model_config['dense_net'] = False 
     model_config['cov_kernel_size'] = 3 
-    model_config['layer_len'] = 1
-    model_config['cov_len'] = 1
+    model_config['layer_len'] = 1 
+    model_config['cov_len'] = 1 
     model_config['filter_delta'] = 16
     model_config['pool_size'] = 2 
     model_config['pooling_strides'] = 1 

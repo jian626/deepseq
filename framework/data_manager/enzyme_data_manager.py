@@ -197,10 +197,6 @@ class enzyme_data_manager:
             for index, element in enumerate(label): 
                 if element:
                     temp.append(map_table[index])
-            if temp:
-                temp = ';'.join(temp)
-            else:
-                temp = 'uncertain'
             res.append(temp)
         return res
 
