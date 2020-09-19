@@ -56,6 +56,8 @@ class enzyme_data_manager:
 
 
     def _apply_threshold(self, df):
+        '''This function is used to eliminate classes with examples less than threshold
+        '''
         class_example_threshhold = self.config['class_example_threshhold']
         size = df.shape[0]
         ec_level = self.config['ec_level']
@@ -71,7 +73,9 @@ class enzyme_data_manager:
         return df
 
 
-    def get_data(self, sep=','):
+    def get_data(self, sep='\t'):
+        '''This function is used to get training data, validation data from a csv file
+        '''
         df = pd.read_csv(self.config['file_path'],sep=sep)
         utili.print_debug_info(df, info=True)
         df = df.dropna()
@@ -201,6 +205,8 @@ class enzyme_data_manager:
         return res
 
     def one_hot_to_labels(self, y):
+        '''this function is used to transfer one-hot-encoding to label values
+        '''
         task_num = self.get_task_num()
         number_to_field = self.config['number_to_field']
         ret = []
@@ -222,6 +228,8 @@ class enzyme_data_manager:
         return self.config
 
     def get_class_statistic(self, c):
+        '''This function is used to get class statistics
+        '''
         class_maps = self.config['class_maps']
         for k in class_maps:
             if c in class_maps[k]:
@@ -229,6 +237,8 @@ class enzyme_data_manager:
                 return cnt, k+1
                  
     def get_x(self, df):
+        '''This function is used to get data used for prediction from a pandas frame
+        '''
         max_len = self.config['max_len']
         def check_len(seq):
             if len(seq) > max_len:
@@ -240,5 +250,7 @@ class enzyme_data_manager:
         return sequence.pad_sequences(x, maxlen=max_len, padding='post'), df['Entry name']
 
     def load_x_from_file(self, file_name):
+        '''This function is used to get data used for prediction from a file
+        '''
         df = pd.read_csv(file_name, sep='\t')
         return self.get_x(df) 
