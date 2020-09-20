@@ -16,8 +16,8 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     data_config['max_len'] = 1000
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
-    data_config['ngram'] = 1 
-    data_config['train_percent'] = 0.7
+    data_config['ngram'] = 3 
+    data_config['train_percent'] = 0.2
     data_config['task_num'] = 1 #currently only 1 is supported for enzyme protein classifier generator
     
     model_config = {}
@@ -25,7 +25,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['hidden_width'] = 256 
     model_config['dense_net'] = False 
     model_config['cov_kernel_size'] = 3 
-    model_config['layer_len'] = 1
+    model_config['layer_len'] = 1 
     model_config['cov_len'] = 1
     model_config['filter_delta'] = 16
     model_config['pool_size'] = 2 
@@ -33,7 +33,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['save_model_name'] = 'my_e_p_model'
     model_config['save_path'] = './models/'
     model_config['last_activation'] = 'softmax'
-    model_config['loss_function'] = 'binary_crossentropy'
+    model_config['loss_function'] = 'categorical_crossentropy'
     model_config['early_stopping'] = False
     model_config['optimizer'] = 'Adam'
 
@@ -41,7 +41,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
     estimator_manager_config['patience'] = 20
-    estimator_manager_config['epochs'] = 2 
+    estimator_manager_config['epochs'] = 20 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 

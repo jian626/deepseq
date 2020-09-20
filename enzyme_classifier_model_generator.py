@@ -21,7 +21,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     data_config['ec_level'] = 4 
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
-    data_config['ngram'] = 2
+    data_config['ngram'] = 3 
     data_config['train_percent'] = 0.7
     data_config['task_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
     data_config['label_key'] = 'EC number'

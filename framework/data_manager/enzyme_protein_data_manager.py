@@ -36,8 +36,10 @@ class enzyme_protein_data_manager:
         
         max_len = self.config['max_len']
         print('max_len:', max_len)
-        df['Encode'] = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, BioDefine.aaList, max_len))
-        
+        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
+        self.config['max_features'] = len(feature_list) + 1
+        df['Encode'] = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+
         training_set = df.iloc[:int(using_set_num * self.config['train_percent'])]
         print('training set enzyme cnt:',training_set[training_set.Lables>0].shape[0])
         print('training non-enzyme cnt:', training_set[training_set.Lables==0].shape[0])
@@ -45,8 +47,6 @@ class enzyme_protein_data_manager:
         print("training len:", training_set.shape[0])
         print("test len:", test_set.shape[0])
 
-        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
-        self.config['max_features'] = len(feature_list) + 1
         
         x_train = training_set['Encode']
         x_train = sequence.pad_sequences(x_train, maxlen=max_len)

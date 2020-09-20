@@ -100,12 +100,14 @@ class model_common_manager:
                 for j in range(cov_len):
                     lastLayer = Conv1D(48+delta * j, kernelSize, padding='same', activation='relu')(lastLayer)
                     if j % 2 == 0:
+                        lastLayer = Dropout(0.2)(lastLayer)
                         lastLayer = MaxPooling1D(pool_size=pool_size, strides=pooling_strides, padding='same')(lastLayer)
             lastLayer = Flatten()(lastLayer)
         return lastLayer
     
     def _create_end(self, input_layer, lastLayer):
         last_activation = utili.get_table_value(self.config,'last_activation', 'sigmoid')
+        print('last_activation:', last_activation)
         output = []
         task_loss_num = 1
         train_target = None 
