@@ -34,7 +34,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['cov_kernel_size'] = 3 
     model_config['layer_len'] = 1 
     model_config['cov_len'] = 1 
-    model_config['filter_delta'] = 16
+    model_config['filter_delta'] = 1
     model_config['pool_size'] = 2 
     model_config['pooling_strides'] = 1 #when it is dense net, only strides 1 is currently supported
     model_config['save_model_name'] = 'enzyme_model'
@@ -49,7 +49,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
     estimator_manager_config['patience'] = 20
-    estimator_manager_config['epochs'] = 2 
+    estimator_manager_config['epochs'] = 150 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 
