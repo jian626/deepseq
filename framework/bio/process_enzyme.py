@@ -1,55 +1,77 @@
 from tensorflow.keras.preprocessing import sequence
 import numpy as np
 
-def get_ec_list(ec):
-    if ec:
-        return ec.split(';')
+def get_label_list(value):
+    if value:
+        return value.split(';')
     else:
         return None 
 
-def get_ec_level_list(ec, level):
+def get_label_list_according_to_level(data, level):
+    '''Get levels  which has the input level from a string
+    '''
     ret = [] 
-    ec_list = get_ec_list(ec)
+    ec_list = get_label_list(data)
     for e in ec_list:
         if has_level(level, e): 
             ret.append(e)
     return ret
 
-def get_ec_to_level(ec, level):
-    l = ec.split('.')
+def get_label_at_least_level(label, level, dummy=None):
+    l = label.split('.')
     if len(l) < level:
-        l += ['-'] * (level - len(l))
+        l +=[dummy] * (level - len(l))
     return '.'.join(l)
+    
+
+def _get_label_to_level(label, level, dummy=None):
+    '''get EC numbers to the input level. when there is not enough, '-' is used. 
+    '''
+    l = label.split('.')
+    res = []
+    for index, e in enumerate(l):
+        try:
+            if index < level:
+                e = str(int(e))
+                res.append(e)
+            else:
+                break
+        except:
+            break
+        
+    if len(res) < level:
+        if dummy:
+            res += [dummy] * (level - len(res))
+        else:
+            res = [] 
+
+    return '.'.join(res)
 
 
-def get_ec(ec, level, class_maps):
+def get_label_to_level(label, level, dummy=None, class_maps=None):
+    '''get label according to level, when there is no that level, unknow is used. and collect class information
+    '''
     ret = None
-    if type(ec) == list:
+    if type(label) == list:
         ret = []
-        for e in ec:
-            res = get_ec(e, level, class_maps)
+        for e in label:
+            res = get_label_to_level(e, level, dummy, class_maps)
             ret.append(res)
         ret = list(set(ret))
     else:
         ret = '' 
-        if ec:
-            l = ec.split('.')
-            ret = str(int(l[0]))
-            for i in range(1, level+1):
-                try:
-                    ret = ret + '.' + str(int(l[i]))
-                except:
-                    ret = ret + '.unknown'
-            if ret in class_maps[level]:
-                class_maps[level][ret] += 1
-            else:
-                class_maps[level][ret] = 1
-                
+        if label:
+            ret = _get_label_to_level(label, level, dummy)
+            if class_maps:
+                if ret in class_maps[level-1]:
+                    class_maps[level-1][ret] += 1
+                else:
+                    class_maps[level-1][ret] = 1
     return ret
 
-def not_multilabel_enzyme(ec):
-    if ec:
-        l = ec.split(';')
+def test_str_not_multilabel_labels(values):
+    if values:
+        l = values.split(';')
         if len(l)>1:
             return False 
     return True
@@ -60,8 +82,8 @@ def create_map(m):
         ret[k] = v
     return ret
 
-def has_level(level, ec):
-    l = ec.split('.')
+def has_level(level, label):
+    l = label.split('.')
     if len(l) < level:
         return False 
     try:
@@ -71,51 +93,8 @@ def has_level(level, ec):
         return False
     return True
 
-def get_level_labels(df, level, class_maps):
-    df["level%d" % level] = df['EC number'].apply(lambda x:get_ec(x, level, class_maps))
-    return df
-
-def map_ec_to_value(ec, map_table):
-    ret = None
-    if type(ec) == list:
-        ret = []
-        for e in ec:
-            ret.append(map_table[e])
-    else:
-        ret = map_table[ec]
-    return ret
-
-def create_label_from_field(df, class_maps, field_name, label_name, i):
-    values = list(class_maps[i].keys())
-    field_map_to_number = create_map(values)
-    df[label_name] = df[field_name].apply(lambda x:map_ec_to_value(x, field_map_to_number))
-    return df,len(field_map_to_number), field_map_to_number
-
-def create_input_embedding(max_len, max_features, embedding_dims):
-    inputLayer = Input(shape=(max_len,))
-    return inputLayer, Embedding(max_features,
-                        embedding_dims,
-                        input_length=max_len)(inputLayer)
-
-def map_number_to_label(ec_set, num_classes):
-    ret = None
-    ret = np.zeros((len(ec_set), num_classes)) 
-    for index, ec in enumerate(ec_set):
-        for e in ec:
-            ret[index][e] = 1
-    return ret
-
-def get_data_and_label(data_set, config):
-    x = data_set['Encode']
-    x = sequence.pad_sequences(x, maxlen=config['max_len'], padding='post')
-    y = []
-    for i in range(config['ec_level']):
-        temp = map_number_to_label(data_set['task%d' % i], config['max_category'][i])
-        y.append(temp)
-    return x, y
-
-def get_part_level(ec, level):
-    l = ec.split('.')
+def get_part_level(label, level):
+    l = label.split('.')
     if level <= len(l):
         r = '.'.join(l[:level])
         if not 'unknown' in r:
@@ -125,12 +104,12 @@ def get_conflict(long_level, short_level, compare_level):
     test_map_l = [] 
     test_map_s = [] 
     for e in long_level:
-        part_level = get_part_level(e, compare_level)
+        part_level = _get_label_to_level(e, compare_level)
         if part_level:
             test_map_l.append(part_level) 
 
     for e in short_level:
-        part_level = get_part_level(e, compare_level)
+        part_level = _get_label_to_level(e, compare_level)
         if part_level:
             test_map_s.append(part_level) 
     return set(test_map_l).difference(set(test_map_s))
@@ -138,7 +117,7 @@ def get_conflict(long_level, short_level, compare_level):
 if __name__ == '__main__':
     long_level = ['1.2.2.unknown', '2.2.3.4', '2.2.3.1']
     short_level = ['1.2.2', '2.2.3', ]
-    s = is_conflict(long_level, short_level, 3)
+    s = get_conflict(long_level, short_level, 3)
     print(s)
     print(bool(s))
             

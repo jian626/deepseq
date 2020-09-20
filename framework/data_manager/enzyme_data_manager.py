@@ -31,28 +31,31 @@ class enzyme_data_manager:
             self.config['number_to_field'] = {
                 }
 
-    def ___apply_threshold(self, df, level, threshold):
-        temp = {}
-        def count_class_example(ec_list):
-            for ec in ec_list: 
-                ec = process_enzyme.get_ec_to_level(ec, level)
-                if ec in temp:
-                    temp[ec] += 1
+    def count_class_example(self, df, map_table, level):
+        def apply_fun(label_list):
+            for label in label_list: 
+                label = process_enzyme.get_label_to_level(label, level, '-')
+                if label in map_table:
+                    map_table[label] += 1
                 else:
-                    temp[ec] = 1
+                    map_table[label] = 1
+
+        df[self.label_key].apply(lambda e:apply_fun(e))
+
+    def ___apply_threshold(self, df, level, threshold):
+        map_table = {}
             
-        
-        def delete_class(ec_list, threshold):
+        def delete_class_accord_threshold(label_list, threshold, map_tabel):
             res = []
-            for ec in ec_list:
-                ec = process_enzyme.get_ec_to_level(ec, level)
-                if temp[ec] >  threshold:
-                    res.append(ec)
+            for label in label_list:
+                temp = process_enzyme.get_label_to_level(label, level, '-')
+                if map_table[temp] >  threshold:
+                    res.append(label)
             return res
 
-        df[self.label_key].apply(lambda e:count_class_example(e))  
+        self.count_class_example(df, map_table, level)
 
-        return df[self.label_key].apply(lambda e:delete_class(e, threshold))
+        return df[self.label_key].apply(lambda e:delete_class_accord_threshold(e, threshold, map_table))
 
 
     def _apply_threshold(self, df):
@@ -63,7 +66,7 @@ class enzyme_data_manager:
         ec_level = self.config['ec_level']
         while True:
             for i in range(ec_level-1, -1, -1):
-                df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
+                df[self.label_key] = self.___apply_threshold(df, i+1, class_example_threshhold)
             df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
             if size == df.shape[0]: 
@@ -72,6 +75,52 @@ class enzyme_data_manager:
                 size = df.shape[0]
         return df
 
+    def map_true_value_to_number(true_values, map_table):
+        ret = None
+        if type(true_values) == list:
+            ret = []
+            for t in true_values:
+                ret.append(map_table[t])
+        else:
+            ret = map_table[true_values]
+        return ret
+
+    def create_number_to_catogry_mapping(m):
+        ret = {}
+        for v, k in enumerate(m):
+            ret[k] = v
+        return ret
+
+
+    def create_label_from_field(df, class_maps, field_name, label_name, index): 
+        values = list(class_maps[index].keys())
+        field_map_to_number = enzyme_data_manager.create_number_to_catogry_mapping(values)
+        df[label_name] = df[field_name].apply(lambda x:enzyme_data_manager.map_true_value_to_number(x, field_map_to_number))
+        return df,len(field_map_to_number), field_map_to_number
+
+    def get_level_labels(self, df, level, class_maps):
+        df["level%d" % level] = df[self.label_key].apply(lambda x:process_enzyme.get_label_to_level(x, level, 'unknown', class_maps))
+        return df
+
+    def map_label_set_to_one_hot(self, label_set, num_classes):
+        ret = None
+        ret = np.zeros((len(label_set), num_classes)) 
+        for index, ec in enumerate(label_set):
+            for e in ec:
+                ret[index][e] = 1
+        return ret
+
+    def get_x_from_df(self, df):
+        x = df['Encode']
+        x = sequence.pad_sequences(x, maxlen=self.config['max_len'], padding='post')
+        return x
+
+    def get_y_from_df(self, df): 
+        y = []
+        for i in range(self.config['task_num']):
+            temp = self.map_label_set_to_one_hot(df['task%d' % i], self.config['max_category'][i])
+            y.append(temp)
+        return y
 
     def get_data(self, sep='\t'):
         '''This function is used to get training data, validation data from a csv file
@@ -82,16 +131,16 @@ class enzyme_data_manager:
         
         df[self.label_key] = df[self.label_key].astype(str)
         utili.print_debug_info(df, 'after drop na', print_head = True)
-        ec_level = self.config['ec_level']
+        level = self.config['ec_level']
         
         if self.config['drop_multilabel']:
-            df = df[df[self.label_key].apply(lambda x:process_enzyme.not_multilabel_enzyme(x))]
+            df = df[df[self.label_key].apply(lambda x:process_enzyme.test_str_not_multilabel_labels(x))]
 
         if not self.config['apply_dummy_label']:
-            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_level_list(x, ec_level))
+            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_label_list_according_to_level(x, level))
             df = df[df[self.label_key].apply(lambda x:len(x)>0)]
         else:
-            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_ec_list(x))
+            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_label_list(x))
             
         df['EC count'] = df[self.label_key].apply(lambda x:len(x))
 
@@ -103,13 +152,13 @@ class enzyme_data_manager:
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
-        for i in range(ec_level):
-            df = process_enzyme.get_level_labels(df, i, self.config['class_maps'])
+        for i in range(level):
+            df = self.get_level_labels(df, i+1, self.config['class_maps'])
             utili.print_debug_info(df, 'after select to level %d' % i, print_head = True)
         
         self.config['max_category'] = []
-        for i in range(ec_level):
-            df, temp_max_category, temp_field_map_to_number = process_enzyme.create_label_from_field(df, self.config['class_maps'],'level%d' % i, 'task%d' % i, i)
+        for i in range(level):
+            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'task%d' % i, i)
             self.config['max_category'].append(temp_max_category)
             self.config['field_map_to_number'][i] = temp_field_map_to_number
             utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
@@ -117,7 +166,7 @@ class enzyme_data_manager:
         
         if self.config['print_statistics']:
             print('following statistics information is based on data to use.')
-            for index in range(ec_level):
+            for index in range(level):
                 sorted_k = {k: v for k, v in sorted(self.config['class_maps'][index].items(), key=lambda item: item[1])}
                 cnt = 0
                 map_cnt = {}
@@ -157,8 +206,10 @@ class enzyme_data_manager:
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
         
-        x_train, y_train = process_enzyme.get_data_and_label(training_set, self.config)
-        x_test, y_test = process_enzyme.get_data_and_label(test_set, self.config)
+        x_train = self.get_x_from_df(training_set)
+        y_train = self.get_y_from_df(training_set)
+        x_test = self.get_x_from_df(test_set)
+        y_test = self.get_y_from_df(test_set)
 
         task_num = self.get_task_num() 
         if task_num == 1:

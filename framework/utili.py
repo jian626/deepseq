@@ -128,6 +128,12 @@ def get_table_value(table, key, default=None):
         ret = default
     return ret
 
+def create_number_to_catogry_mapping(m):
+    ret = {}
+    for v, k in enumerate(m):
+        ret[k] = v
+    return ret
+
 if __name__ == '__main__':
     pass
 		
