@@ -136,7 +136,7 @@ class model_common_manager:
         task_num = self.data_manager.get_task_num()
         if (task_num == 1) and self.config['early_stopping']:
             patience = self.config['patience']
-            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=40, verbose=1)
+            early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=patience, verbose=1)
             callbacks.append(early_stopping_callback)
         self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
 

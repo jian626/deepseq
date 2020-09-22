@@ -1,4 +1,4 @@
-name: jian_deepseq
+name: deepseq
 channels:
   - defaults
 dependencies:

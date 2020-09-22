@@ -25,7 +25,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['hidden_width'] = 256 
     model_config['dense_net'] = False 
     model_config['cov_kernel_size'] = 3 
-    model_config['layer_len'] = 1 
+    model_config['layer_len'] = 5 
     model_config['cov_len'] = 1
     model_config['filter_delta'] = 16
     model_config['pool_size'] = 2 
@@ -34,14 +34,14 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['save_path'] = './models/'
     model_config['last_activation'] = 'softmax'
     model_config['loss_function'] = 'categorical_crossentropy'
-    model_config['early_stopping'] = False
+    model_config['early_stopping'] = True 
+    model_config['patience'] = 50
     model_config['optimizer'] = 'Adam'
 
     estimator_manager_config = {}
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
-    estimator_manager_config['patience'] = 20
-    estimator_manager_config['epochs'] = 20 
+    estimator_manager_config['epochs'] = 200 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 

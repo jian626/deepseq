@@ -49,7 +49,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
     estimator_manager_config['patience'] = 20
-    estimator_manager_config['epochs'] = 150 
+    estimator_manager_config['epochs'] = 200 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 
