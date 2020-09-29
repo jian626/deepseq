@@ -2,8 +2,10 @@
 from sklearn.metrics import classification_report
 from framework import utili
 from framework.bio import process_enzyme
+from framework.estimator import estimator_creator
 
 class estimator:
+    name = 'enzyme_protein_estimator'
     def __init__(self, data_manager):
         self.data_manager = data_manager
 
@@ -30,4 +32,9 @@ class estimator:
     
     
     
+
+def create(data_manager):
+    return estimator(data_manager)
+
+estimator_creator.instance.register(estimator.name, create)
     

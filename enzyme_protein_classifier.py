@@ -1,10 +1,11 @@
+from framework import init 
 from framework.model_manager import model_manager_creator 
 import numpy as np
 import sys, getopt
 import pandas as pd
 
 def run(input_file, output_file, model_name):
-    mc = model_manager_creator.create_from_file(model_name)
+    mc = model_manager_creator.instance.create_from_file(model_name)
     y_pred, entry_name = mc.predict_on_file(input_file)
     data_manager = mc.get_data_manager()
     bool_labels = []

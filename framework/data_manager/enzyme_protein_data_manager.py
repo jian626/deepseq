@@ -5,6 +5,8 @@ from framework.bio import BioDefine
 import tensorflow as tf
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.utils import to_categorical
+from framework.data_manager import data_manager_creator
+
 class enzyme_protein_data_manager:
     name = 'enzyme_protein_data_manager'
     def __init__(self, config):
@@ -125,3 +127,8 @@ class enzyme_protein_data_manager:
     def load_x_from_file(self, file_name):
         df = pd.read_csv(file_name, sep='\t')
         return self.get_x(df)
+
+def create(config):
+    return enzyme_protein_data_manager(config)
+
+data_manager_creator.instance.register(enzyme_protein_data_manager.name, create)

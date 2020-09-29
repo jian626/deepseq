@@ -1,9 +1,9 @@
-from framework.data_manager import enzyme_data_manager
-from framework.data_manager import enzyme_protein_data_manager
+from framework import register
 
-def create(config):
-    if 'enzyme_data_manager' == config['name']:
-        return enzyme_data_manager.enzyme_data_manager(config)
-    elif 'enzyme_protein_data_manager' == config['name']:
-        return enzyme_protein_data_manager.enzyme_protein_data_manager(config)
-        
+class creator(register.base):
+    def create(self, config):
+        name = config['name']
+        fn = self.get_entry(name)
+        return fn(config)
+
+instance = creator()

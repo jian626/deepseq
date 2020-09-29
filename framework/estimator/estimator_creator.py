@@ -1,10 +1,8 @@
-from framework.estimator import enzyme_protein_estimator
-from framework.estimator import enzyme_estimator
+from framework import register
+class creator(register.base):
+    def create(self, name, data_manager):
+        fn = self.get_entry(name)
+        return fn(data_manager)
 
 
-def create(name, data_manager):
-    if name == 'enzyme_estimator':
-        return enzyme_estimator.estimator(data_manager)
-    elif name == 'enzyme_protein_estimator':
-        return enzyme_protein_estimator.estimator(data_manager)
-    raise Exception('unsupported extimator name:%s' % name)
+instance = creator()

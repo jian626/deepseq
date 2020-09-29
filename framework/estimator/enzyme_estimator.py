@@ -1,8 +1,10 @@
 from sklearn.metrics import classification_report
 from framework import utili
 from framework.bio import process_enzyme
+from framework.estimator import estimator_creator
 
 class estimator:
+    name = 'enzyme_estimator'
     def __init__(self, data_manager):
         self.data_manager = data_manager
 
@@ -68,5 +70,10 @@ class estimator:
             print('comflict between level %d and level %d is %d, %f%% of %d.' % (i+1, i+2, res[i], float(res[i]) * 100.0 /float(length), length))
     
     
+def create(data_manager):
+    return estimator(data_manager)
+
+estimator_creator.instance.register(estimator.name, create)
+
     
     

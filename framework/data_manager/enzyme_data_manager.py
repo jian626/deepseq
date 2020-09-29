@@ -4,6 +4,7 @@ from framework import utili
 from framework.bio import process_enzyme
 from framework.bio import BioDefine
 from tensorflow.keras.preprocessing import sequence
+from framework.data_manager import data_manager_creator
 
 class enzyme_data_manager:
     name = 'enzyme_data_manager'
@@ -305,3 +306,8 @@ class enzyme_data_manager:
         '''
         df = pd.read_csv(file_name, sep='\t')
         return self.get_x(df) 
+
+def create(config):
+   return enzyme_data_manager(config) 
+
+data_manager_creator.instance.register(enzyme_data_manager.name, create) 

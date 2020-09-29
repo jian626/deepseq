@@ -1,10 +1,10 @@
 from datetime import datetime
+from framework import init 
 from framework import utili
 from framework.estimator_manager import estimator_manager_creator 
 from framework.model_manager import model_manager_creator
 from framework.estimator import estimator_creator 
 from framework.data_manager import data_manager_creator 
-
 
 def run(input_data_config={}, input_model_config={}, input_estimator_manager_config={}):
     transfor_learning= False
@@ -16,14 +16,13 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     data_config['max_len'] = 1000
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
-    data_config['ngram'] = 3 
+    data_config['ngram'] = 1 
     data_config['train_percent'] = 0.2
     data_config['task_num'] = 1 #currently only 1 is supported for enzyme protein classifier generator
     
     model_config = {}
     model_config['embedding_dims'] = 16 
     model_config['hidden_width'] = 256 
-    model_config['dense_net'] = False 
     model_config['cov_kernel_size'] = 3 
     model_config['layer_len'] = 5 
     model_config['cov_len'] = 1
@@ -37,11 +36,12 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['early_stopping'] = True 
     model_config['patience'] = 50
     model_config['optimizer'] = 'Adam'
+    model_config['name'] = 'basic_cnn_manager'
 
     estimator_manager_config = {}
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
-    estimator_manager_config['epochs'] = 200 
+    estimator_manager_config['epochs'] = 20 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 
@@ -58,14 +58,14 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     for k in input_estimator_manager_config:
         estimator_manager_config[k] = input_estimator_manager_config[k]
 
-    dm = data_manager_creator.create(data_config)
+    dm = data_manager_creator.instance.create(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
-    mc = model_manager_creator.create(dm, model_config)
+    mc = model_manager_creator.instance.create(dm, model_config)
     mc.create_model()
-    ee = estimator_creator.create('enzyme_protein_estimator',dm)
+    ee = estimator_creator.instance.create('enzyme_protein_estimator',dm)
     estimator_list = []
     estimator_list.append(ee)
-    me = estimator_manager_creator.create(estimator_manager_config, dm, mc, estimator_list)
+    me = estimator_manager_creator.instance.create(estimator_manager_config, dm, mc, estimator_list)
     me.evaluate()
 
 if __name__ == '__main__':

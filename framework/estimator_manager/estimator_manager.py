@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from framework import utili
 from datetime import datetime
+from framework.estimator_manager import estimator_manager_creator
     
 class common_estimator_manager:
     name = 'common_estimator_manager'
@@ -57,3 +58,8 @@ class common_estimator_manager:
         for estimator in self.estimators:
             estimator.estimate(y_pred, y_test, len(x_test), self.config['print_report'])
         return 
+
+def create(config, data_manager, model_manager, estimator_list):
+    return common_estimator_manager(config, data_manager, model_manager, estimator_list)
+
+estimator_manager_creator.instance.register(common_estimator_manager.name, create)
