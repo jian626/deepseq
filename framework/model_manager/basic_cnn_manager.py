@@ -33,12 +33,12 @@ class basic_cnn_manager(model_manager.model_common_manager):
 
     def _create_main_path(self, lastLayer):
         pooling_strides = self.config['pooling_strides']
-        kernelSize = self.config['cov_kernel_size']
+        kernelSize = self.config['conv_kernel_width']
         pool_size = self.config['pool_size']
         layer_len = self.config['layer_len']
         cov_len = self.config['cov_len']
         
-        kernelSize = self.config['cov_kernel_size']
+        kernelSize = self.config['conv_kernel_width']
         delta = self.config['filter_delta']
         pool_interval = utili.get_table_value(self.config, 'pool_inverval', 2)
         drop_out_rate = utili.get_table_value(self.config, 'drop_out_rate', 0.2)

@@ -33,7 +33,29 @@ class dense_net_manager(model_manager.model_common_manager):
                             input_length=max_len)(inputLayer)
 
     def _create_main_path(self, lastLayer):
-        lastLayer = dense_net.DenseNet121(12, 3, 1, 2, 1, 1, 3, 1, 48, 2, 1, False)(lastLayer)
+        dense_type = utili.get_table_value(self.config, 'dense_type', 'd121')
+        dense_k = utili.get_table_value(self.config, 'dense_k', 12)
+        conv_kernel_width = utili.get_table_value(self.config, 'conv_kernel_width', 3)
+        bottleneck_size = utili.get_table_value(self.config, 'bottleneck_size', 1)
+        transition_pool_size = utili.get_table_value(self.config, 'transition_pool_size', 2)
+        transition_pool_stride = utili.get_table_value(self.config, 'transition_pool_stride', 1)
+        theta = utili.get_table_value(self.config, 'theta', 1)
+        initial_conv_width = utili.get_table_value(self.config, 'initial_conv_width', 3)
+        initial_stride = utili.get_table_value(self.config, 'initial_stride', 1)
+        initial_filters = utili.get_table_value(self.config, 'initial_filters', 48)
+        initial_pool_width = utili.get_table_value(self.config, 'initial_pool_width', 2)
+        initial_pool_stride = utili.get_table_value(self.config, 'initial_pool_stride', 1)
+        use_global_pooling = utili.get_table_value(self.config, 'use_global_pooling', False)
+        #it can be d121,d169,d201 or d264 
+        if dense_type == 'd121':
+            lastLayer = dense_net.DenseNet121(dense_k, conv_kernel_width, bottleneck_size, transition_pool_size, transition_pool_stride, theta, initial_conv_width, initial_stride, initial_filters, initial_pool_width, initial_pool_stride, use_global_pooling)(lastLayer)
+        elif dense_type == 'd169': 
+            lastLayer = dense_net.DenseNet169(dense_k, conv_kernel_width, bottleneck_size, transition_pool_size, transition_pool_stride, theta, initial_conv_width, initial_stride, initial_filters, initial_pool_width, initial_pool_stride, use_global_pooling)(lastLayer)
+        elif dense_type == 'd201': 
+            lastLayer = dense_net.DenseNet201(dense_k, conv_kernel_width, bottleneck_size, transition_pool_size, transition_pool_stride, theta, initial_conv_width, initial_stride, initial_filters, initial_pool_width, initial_pool_stride, use_global_pooling)(lastLayer)
+        elif dense_type == 'd264': 
+            lastLayer = dense_net.DenseNet264(dense_k, conv_kernel_width, bottleneck_size, transition_pool_size, transition_pool_stride, theta, initial_conv_width, initial_stride, initial_filters, initial_pool_width, initial_pool_stride, use_global_pooling)(lastLayer)
+
         lastLayer = Flatten()(lastLayer)
         return lastLayer
     

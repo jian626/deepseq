@@ -1,6 +1,6 @@
 import tensorflow as tf
 import os.path
-import copy
+from datetime import datetime
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Embedding, Flatten, BatchNormalization, AveragePooling1D
 from tensorflow.keras.layers import Conv1D, GlobalMaxPooling1D, MaxPooling1D, Input
@@ -46,7 +46,16 @@ class model_common_manager:
         self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
 
     def predict(self, x_):
-        return self.model.predict(x_)
+        begin = datetime.now()
+        current_time = begin.strftime("%H:%M:%S")
+        print("***prediction begin time***:", current_time)
+
+        res = self.model.predict(x_)
+
+        current_time = end.strftime("%H:%M:%S")
+        print("***end time***:", current_time)
+        print("total prediction time cost:", end - begin)
+        return res
 
     def get_summary(self):
         return self.get_model().summary()

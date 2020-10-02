@@ -23,7 +23,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config = {}
     model_config['embedding_dims'] = 16 
     model_config['hidden_width'] = 256 
-    model_config['cov_kernel_size'] = 3 
+    model_config['conv_kernel_width'] = 3 
     model_config['layer_len'] = 5 
     model_config['cov_len'] = 1
     model_config['filter_delta'] = 16
@@ -37,12 +37,26 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['patience'] = 50
     model_config['optimizer'] = 'Adam'
     model_config['name'] = 'basic_cnn_manager'
+    #model_config['name'] = 'dense_net_manager'
+    model_config['dense_type'] = 'd121' #it can be d121,d169,d201 or d264 
+    model_config['dense_k'] = 12
+    model_config['conv_kernel_width'] = 3
+    model_config['bottleneck_size'] = 1
+    model_config['transition_pool_size'] = 2
+    model_config['transition_pool_stride'] = 2 
+    model_config['theta'] = 1
+    model_config['initial_conv_width'] = 3
+    model_config['initial_stride'] = 1
+    model_config['initial_filters'] = 12 
+    model_config['initial_pool_width'] = 2
+    model_config['initial_pool_stride'] = 2 
+    model_config['use_global_pooling'] = False
 
     estimator_manager_config = {}
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
     estimator_manager_config['epochs'] = 20 
-    estimator_manager_config['batch_size'] = 400
+    estimator_manager_config['batch_size'] = 20 
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 
     estimator_manager_config['round_size'] = 1 

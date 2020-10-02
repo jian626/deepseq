@@ -13,6 +13,10 @@ class common_estimator_manager:
         self.estimators = estimators
 
     def evaluate(self):
+        begin = datetime.now()
+        current_time = begin.strftime("%H:%M:%S")
+        print("*** estimation begin time***:", current_time)
+
         epochs = self.config['epochs']
         batch_round = utili.get_table_value(self.config, 'batch_round')
 
@@ -36,6 +40,12 @@ class common_estimator_manager:
                 self._evaluate(x_train, y_train, x_test, y_test, round_size, i)
         else:
             self._evaluate(x_train, y_train, x_test, y_test, epochs)
+
+        end = datetime.now()
+        current_time = end.strftime("%H:%M:%S")
+        print("***end time***:", current_time)
+        print("total estimation time cost:", end - begin)
+        print("========================done==========================")
 
     def _evaluate(self, x_train, y_train, x_test, y_test, epochs, cur_round = None):
 
