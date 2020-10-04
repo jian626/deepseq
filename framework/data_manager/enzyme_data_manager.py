@@ -130,8 +130,8 @@ class enzyme_data_manager:
         utili.print_debug_info(df, info=True)
         df = df.dropna()
         
-        df[self.label_key] = df[self.label_key].astype(str)
-        utili.print_debug_info(df, 'after drop na', print_head = True)
+        #df[self.label_key] = df[self.label_key].astype(str)
+        #utili.print_debug_info(df, 'after drop na', print_head = True)
         level = self.config['ec_level']
         
         if self.config['drop_multilabel']:

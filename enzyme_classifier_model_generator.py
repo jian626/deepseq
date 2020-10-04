@@ -16,7 +16,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     data_config = {}
     data_config['name'] = 'enzyme_data_manager'
     data_config['file_path'] = 'uniprot-reviewed_yes.tab'
-    data_config['drop_multilabel'] = True 
+    data_config['drop_multilabel'] = False 
     data_config['apply_dummy_label'] = False 
     data_config['max_len'] = 1000
     data_config['ec_level'] = 4 
@@ -26,7 +26,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     data_config['train_percent'] = 0.7
     data_config['task_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
     data_config['label_key'] = 'EC number'
-    data_config['class_example_threshhold'] = 10 
+    data_config['class_example_threshhold'] = 0 
     
     model_config = {}
     model_config['embedding_dims'] = 16 
@@ -44,6 +44,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['early_stopping'] = False
     model_config['last_activation'] = 'sigmoid'
     model_config['name'] = 'basic_cnn_manager'
+
     '''
     model_config['name'] = 'dense_net_manager'
     model_config['dense_type'] = 'd121' #it can be d121,d169,d201 or d264 
@@ -66,7 +67,7 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     estimator_manager_config['print_summary'] = True
     estimator_manager_config['early_stopping'] = True
     estimator_manager_config['patience'] = 20
-    estimator_manager_config['epochs'] = 10 
+    estimator_manager_config['epochs'] = 40 
     estimator_manager_config['batch_size'] = 400
     estimator_manager_config['print_report'] = True
     estimator_manager_config['batch_round'] = False 
