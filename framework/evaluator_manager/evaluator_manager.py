@@ -2,15 +2,15 @@ import numpy as np
 import pandas as pd
 from framework import utili
 from datetime import datetime
-from framework.estimator_manager import estimator_manager_creator
+from framework.evaluator_manager import evaluator_manager_creator
     
-class common_estimator_manager:
-    name = 'common_estimator_manager'
-    def __init__(self, config, data_manager, model_manager, estimators):
+class common_evaluator_manager:
+    name = 'common_evaluator_manager'
+    def __init__(self, config, data_manager, model_manager, evaluators):
         self.config = config
         self.data_manager = data_manager 
         self.model_manager = model_manager 
-        self.estimators = estimators
+        self.evaluators = evaluators
 
     def evaluate(self):
         begin = datetime.now()
@@ -65,11 +65,11 @@ class common_estimator_manager:
             
         y_pred = self.model_manager.predict(x_test)
 
-        for estimator in self.estimators:
-            estimator.estimate(y_pred, y_test, len(x_test), self.config['print_report'])
+        for evaluator in self.evaluators:
+            evaluator.evaluate(y_pred, y_test, len(x_test), self.config['print_report'])
         return 
 
-def create(config, data_manager, model_manager, estimator_list):
-    return common_estimator_manager(config, data_manager, model_manager, estimator_list)
+def create(config, data_manager, model_manager, evaluator_list):
+    return common_evaluator_manager(config, data_manager, model_manager, evaluator_list)
 
-estimator_manager_creator.instance.register(common_estimator_manager.name, create)
+evaluator_manager_creator.instance.register(common_evaluator_manager.name, create)

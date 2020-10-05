@@ -1,12 +1,12 @@
 from datetime import datetime
 from framework import init 
 from framework import utili
-from framework.estimator_manager import estimator_manager_creator 
+from framework.evaluator_manager import evaluator_manager_creator 
 from framework.model_manager import model_manager_creator
-from framework.estimator import estimator_creator 
+from framework.evaluator import evaluator_creator 
 from framework.data_manager import data_manager_creator 
 
-def run(input_data_config={}, input_model_config={}, input_estimator_manager_config={}):
+def run(input_data_config={}, input_model_config={}, input_evaluator_manager_config={}):
     transfor_learning= False
     utili.set_debug_flag(False)
     framdata_config = {}
@@ -53,16 +53,16 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     model_config['initial_pool_stride'] = 2 
     model_config['use_global_pooling'] = False
 
-    estimator_manager_config = {}
-    estimator_manager_config['print_summary'] = True
-    estimator_manager_config['early_stopping'] = True
-    estimator_manager_config['epochs'] = 1000 
-    estimator_manager_config['batch_size'] = 20 
-    estimator_manager_config['print_report'] = True
-    estimator_manager_config['batch_round'] = False 
-    estimator_manager_config['round_size'] = 1 
-    estimator_manager_config['name'] = 'common_estimator_manager'
-    estimator_manager_config['train_model'] = True
+    evaluator_manager_config = {}
+    evaluator_manager_config['print_summary'] = True
+    evaluator_manager_config['early_stopping'] = True
+    evaluator_manager_config['epochs'] = 1000 
+    evaluator_manager_config['batch_size'] = 20 
+    evaluator_manager_config['print_report'] = True
+    evaluator_manager_config['batch_round'] = False 
+    evaluator_manager_config['round_size'] = 1 
+    evaluator_manager_config['name'] = 'common_evaluator_manager'
+    evaluator_manager_config['train_model'] = True
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]
@@ -70,17 +70,17 @@ def run(input_data_config={}, input_model_config={}, input_estimator_manager_con
     for k in input_model_config:
         model_config[k] = input_model_config[k]
 
-    for k in input_estimator_manager_config:
-        estimator_manager_config[k] = input_estimator_manager_config[k]
+    for k in input_evaluator_manager_config:
+        evaluator_manager_config[k] = input_evaluator_manager_config[k]
 
     dm = data_manager_creator.instance.create(data_config)
     x_train, y_train, x_test, y_test = dm.get_data(sep='\t')
     mc = model_manager_creator.instance.create(dm, model_config)
     mc.create_model()
-    ee = estimator_creator.instance.create('enzyme_protein_estimator',dm)
-    estimator_list = []
-    estimator_list.append(ee)
-    me = estimator_manager_creator.instance.create(estimator_manager_config, dm, mc, estimator_list)
+    ee = evaluator_creator.instance.create('enzyme_protein_evaluator',dm)
+    evaluator_list = []
+    evaluator_list.append(ee)
+    me = evaluator_manager_creator.instance.create(evaluator_manager_config, dm, mc, evaluator_list)
     me.evaluate()
 
 if __name__ == '__main__':
