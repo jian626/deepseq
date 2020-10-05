@@ -18,7 +18,7 @@ class model_common_manager:
             save_path = config['save_path']
             dirname = os.path.dirname(save_path)
             if not os.path.exists(dirname):
-                raise Exception('the path %s does not exist.' % dirname)
+                os.makedirs(dirname)
 
         self.config = config
         self.config['name'] = self.name

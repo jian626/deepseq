@@ -1,2 +1,2 @@
-from framework.estimator import enzyme_protein_estimator
-from framework.estimator import enzyme_estimator
+from framework.evaluator import enzyme_protein_evaluator
+from framework.evaluator import enzyme_evaluator

@@ -17,7 +17,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
     data_config['ngram'] = 1 
-    data_config['train_percent'] = 0.2
+    data_config['train_percent'] = 0.5
     data_config['task_num'] = 1 #currently only 1 is supported for enzyme protein classifier generator
     
     model_config = {}
@@ -56,7 +56,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     evaluator_manager_config = {}
     evaluator_manager_config['print_summary'] = True
     evaluator_manager_config['early_stopping'] = True
-    evaluator_manager_config['epochs'] = 1000 
+    evaluator_manager_config['epochs'] = 30 
     evaluator_manager_config['batch_size'] = 20 
     evaluator_manager_config['print_report'] = True
     evaluator_manager_config['batch_round'] = False 

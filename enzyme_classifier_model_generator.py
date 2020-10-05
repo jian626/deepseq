@@ -33,7 +33,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     model_config['hidden_width'] = 256 
     model_config['conv_kernel_width'] = 3 
     model_config['layer_len'] = 1 
-    model_config['cov_len'] = 1 
+    model_config['conv_len'] = 1 
     model_config['filter_delta'] = 1
     model_config['pool_size'] = 2 
     model_config['pooling_strides'] = 1 #when it is dense net, only strides 1 is currently supported
