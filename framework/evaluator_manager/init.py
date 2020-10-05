@@ -1,1 +1,1 @@
-from framework.estimator_manager import estimator_manager 
+from framework.evaluator_manager import evaluator_manager 
