@@ -33,19 +33,19 @@ class basic_cnn_manager(model_manager.model_common_manager):
 
     def _create_main_path(self, lastLayer):
         pooling_strides = self.config['pooling_strides']
-        kernelSize = self.config['conv_kernel_width']
         pool_size = self.config['pool_size']
         layer_len = self.config['layer_len']
-        cov_len = self.config['cov_len']
+        conv_len = self.config['conv_len']
+        conv_strides = utili.get_table_value(self.config, 'conv_strides', 1)
         
-        kernelSize = self.config['conv_kernel_width']
+        conv_kernel_width = self.config['conv_kernel_width']
         delta = self.config['filter_delta']
         pool_interval = utili.get_table_value(self.config, 'pool_inverval', 2)
         drop_out_rate = utili.get_table_value(self.config, 'drop_out_rate', 0.2)
         start_width = utili.get_table_value(self.config, 'start_width', 48)
         for i in range(layer_len): 
-            for j in range(cov_len):
-                lastLayer = Conv1D(start_width +delta * j, kernelSize, padding='same', activation='relu')(lastLayer)
+            for j in range(conv_len):
+                lastLayer = Conv1D(start_width +delta * j, conv_kernel_width, strides=conv_strides,padding='same', activation='relu')(lastLayer)
                 if j % pool_interval == 0:
                     lastLayer = Dropout(drop_out_rate)(lastLayer)
                     lastLayer = MaxPooling1D(pool_size=pool_size, strides=pooling_strides, padding='same')(lastLayer)
