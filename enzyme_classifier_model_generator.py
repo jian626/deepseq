@@ -22,9 +22,11 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     data_config['ec_level'] = 4 
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
-    data_config['ngram'] = 3 
+    data_config['ngram'] = 1 
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
+    data_config['task_num'] = 1 #currently only 1 or 4 is supported for enzyme classifier generator
+    data_config['level_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
+    data_config['target_level'] = 4#for single task only
     data_config['label_key'] = 'EC number'
     data_config['class_example_threshhold'] = 0 
     
@@ -32,11 +34,11 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     model_config['embedding_dims'] = 16 
     model_config['hidden_width'] = 256 
     model_config['conv_kernel_width'] = 3 
-    model_config['layer_len'] = 1 
+    model_config['layer_len'] = 5 
     model_config['conv_len'] = 1 
     model_config['filter_delta'] = 1
     model_config['pool_size'] = 2 
-    model_config['pooling_strides'] = 1 #when it is dense net, only strides 1 is currently supported
+    model_config['pooling_strides'] = 1
     model_config['save_model_name'] = 'enzyme_model'
     model_config['save_path'] = './models/'
     model_config['optimizer'] = 'Adam' 
@@ -67,8 +69,8 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     evaluator_manager_config['print_summary'] = True
     evaluator_manager_config['early_stopping'] = True
     evaluator_manager_config['patience'] = 20
-    evaluator_manager_config['epochs'] = 40 
-    evaluator_manager_config['batch_size'] = 400
+    evaluator_manager_config['epochs'] = 30 
+    evaluator_manager_config['batch_size'] = 20 
     evaluator_manager_config['print_report'] = True
     evaluator_manager_config['batch_round'] = False 
     evaluator_manager_config['round_size'] = 1 

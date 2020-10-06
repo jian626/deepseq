@@ -64,9 +64,9 @@ class enzyme_data_manager:
         '''
         class_example_threshhold = self.config['class_example_threshhold']
         size = df.shape[0]
-        ec_level = self.config['ec_level']
+        level_num = self.config['level_num']
         while True:
-            for i in range(ec_level-1, -1, -1):
+            for i in range(level_num-1, -1, -1):
                 df[self.label_key] = self.___apply_threshold(df, i+1, class_example_threshhold)
             df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
@@ -118,8 +118,8 @@ class enzyme_data_manager:
 
     def get_y_from_df(self, df): 
         y = []
-        for i in range(self.config['task_num']):
-            temp = self.map_label_set_to_one_hot(df['task%d' % i], self.config['max_category'][i])
+        for i in range(self.config['level_num']):
+            temp = self.map_label_set_to_one_hot(df['level%d' % i], self.config['max_category'][i])
             y.append(temp)
         return y
 
@@ -132,7 +132,7 @@ class enzyme_data_manager:
         
         df[self.label_key] = df[self.label_key].astype(str)
         utili.print_debug_info(df, 'after drop na', print_head = True)
-        level = self.config['ec_level']
+        level = self.config['level_num']
         
         if self.config['drop_multilabel']:
             df = df[df[self.label_key].apply(lambda x:process_enzyme.test_str_not_multilabel_labels(x))]
@@ -159,7 +159,7 @@ class enzyme_data_manager:
         
         self.config['max_category'] = []
         for i in range(level):
-            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'task%d' % i, i)
+            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'level%d' % i, i)
             self.config['max_category'].append(temp_max_category)
             self.config['field_map_to_number'][i] = temp_field_map_to_number
             utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
@@ -213,9 +213,10 @@ class enzyme_data_manager:
         y_test = self.get_y_from_df(test_set)
 
         task_num = self.get_task_num() 
+        target_level = self.config['target_level']
         if task_num == 1:
-            y_train = [y_train[ec_level - 1]]
-            y_test = [y_test[ec_level - 1]]
+            y_train = [y_train[target_level - 1]]
+            y_test = [y_test[target_level - 1]]
 
         self.x_train = x_train
         self.y_train = y_train
@@ -236,7 +237,7 @@ class enzyme_data_manager:
     def get_max_category(self):
         ret = self.config['max_category']
         if self.get_task_num() == 1:
-            ret = [self.config['max_category'][self.config['ec_level']-1]]
+            ret = [self.config['max_category'][self.config['target_level']-1]]
         return ret
 
     def get_max_feature(self):
@@ -269,8 +270,8 @@ class enzyme_data_manager:
                 labels = self._one_hot_to_labels(y[i], i, number_to_field[i])
                 ret.append(labels)
         else:
-            ec_level = self.config['ec_level']
-            i = ec_level - 1
+            level_num = self.config['level_num']
+            i = level_num - 1
             if not i in number_to_field:
                 number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
             ret.append(self._one_hot_to_labels(y[0], i, number_to_field[i]))
