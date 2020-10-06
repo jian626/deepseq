@@ -24,7 +24,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     data_config['fraction'] = 1 
     data_config['ngram'] = 1 
     data_config['train_percent'] = 0.7
-    data_config['task_num'] = 1 #currently only 1 or 4 is supported for enzyme classifier generator
+    data_config['task_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
     data_config['level_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
     data_config['target_level'] = 4#for single task only
     data_config['label_key'] = 'EC number'
@@ -69,7 +69,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     evaluator_manager_config['print_summary'] = True
     evaluator_manager_config['early_stopping'] = True
     evaluator_manager_config['patience'] = 20
-    evaluator_manager_config['epochs'] = 30 
+    evaluator_manager_config['epochs'] = 1 
     evaluator_manager_config['batch_size'] = 20 
     evaluator_manager_config['print_report'] = True
     evaluator_manager_config['batch_round'] = False 
