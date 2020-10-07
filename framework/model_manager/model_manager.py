@@ -52,6 +52,7 @@ class model_common_manager:
 
         res = self.model.predict(x_)
 
+        end = datetime.now()
         current_time = end.strftime("%H:%M:%S")
         print("***end time***:", current_time)
         print("total prediction time cost:", end - begin)

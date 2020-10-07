@@ -1,5 +1,6 @@
 import enzyme_classifier
 import enzyme_protein_classifier
+from datetime import datetime
 import pandas as pd
 import sys, getopt
 import os
@@ -58,4 +59,13 @@ def main(argv):
     run(input_file, output_file, is_enzyme_model, enzyme_model)
 
 if __name__ == "__main__":
+   begin = datetime.now()
+   current_time = begin.strftime("%H:%M:%S")
+   print("***prediction begin time***:", current_time)
+    
    main(sys.argv)
+
+   end = datetime.now()
+   current_time = end.strftime("%H:%M:%S")
+   print("***end time***:", current_time)
+   print("total prediction time cost:", end - begin)
