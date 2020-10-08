@@ -12,7 +12,7 @@
     using command:
     python enzyme_protein_classifier_model_generator.py data_file_name
     if the data_file_name is not specified, default file name 'uniprot-reviewed_yes.tab' is used
-    the output can be configurable, the default output path and name are 'models/' 'E_P_model' 
+    the output can be configurable, the default output path and name are 'models/' and 'E_P_model' 
 	
 	enzyme_classifier_model_generator.py is used to generate model for enzyme commision number prediction. 
 	This process will generate two files in a user specified folder.
@@ -21,7 +21,7 @@
     using command:
     python enzyme_classifier_model_generator.py data_file_name
     if the data_file_name is not specified, default file name 'uniprot-reviewed_yes.tab' is used
-    the output can be configurable, the default output path and name are 'models/' 'E_C_model' 
+    the output can be configurable, the default output path and name are 'models/' and 'E_C_model' 
 
     *Note: 
     *       the configure of E_P model is in enzyme_protein_classifier_model_generator.py.
