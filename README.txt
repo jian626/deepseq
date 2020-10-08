@@ -8,11 +8,24 @@
 	*		the file used to feed the model for prediction should contain 'Sequence' field
 
 3. model generate
-	enzyme_protein_classifier_model_generator.py is used to generate model for distinguish enzyme and non-enzyme. 
-	This process will generate two files in a user specified folder.
+	enzyme_protein_classifier_model_generator.py is used to generate E_P model for distinguish enzyme and non-enzyme
+    using command:
+    python enzyme_protein_classifier_model_generator.py data_file_name
+    if the data_file_name is not specified, default file name 'uniprot-reviewed_yes.tab' is used
+    the output can be configurable, the default output path and name are 'models/' 'E_P_model' 
 	
 	enzyme_classifier_model_generator.py is used to generate model for enzyme commision number prediction. 
 	This process will generate two files in a user specified folder.
+
+	enzyme_protein_classifier_model_generator.py is used to generate E_C model for enzyme classification 
+    using command:
+    python enzyme_classifier_model_generator.py data_file_name
+    if the data_file_name is not specified, default file name 'uniprot-reviewed_yes.tab' is used
+    the output can be configurable, the default output path and name are 'models/' 'E_C_model' 
+
+    *Note: 
+    *       the configure of E_P model is in enzyme_protein_classifier_model_generator.py.
+    *       the configure of E_C model is in enzyme_classifier_model_generator.py.
 
 4. use model for prediction
 	enzyme_protein_classifier.py use the model generated in step 3 to predict protein sequences contained in a CSV whether they are enzyme or non-enzyme.
