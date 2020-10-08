@@ -62,7 +62,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     evaluator_manager_config['batch_round'] = False 
     evaluator_manager_config['round_size'] = 1 
     evaluator_manager_config['name'] = 'common_evaluator_manager'
-    evaluator_manager_config['train_model'] = True
+    evaluator_manager_config['train_model'] = True 
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]

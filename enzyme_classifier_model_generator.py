@@ -27,7 +27,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     data_config['level_num'] = 4 #currently only 1 or 4 is supported for enzyme classifier generator
     data_config['target_level'] = 4#for single task only
     data_config['label_key'] = 'EC number'
-    data_config['class_example_threshhold'] = 10 
+    data_config['class_example_threshhold'] = 0 
     
     model_config = {}
     model_config['embedding_dims'] = 16 
@@ -73,7 +73,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     evaluator_manager_config['print_report'] = True
     evaluator_manager_config['batch_round'] = False 
     evaluator_manager_config['round_size'] = 1 
-    evaluator_manager_config['train_model'] = True
+    evaluator_manager_config['train_model'] = True 
     evaluator_manager_config['name'] = 'common_evaluator_manager'
 
     for k in input_data_config:
