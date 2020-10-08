@@ -12,7 +12,7 @@ def run(input_data_config={}, input_model_config={}, input_evaluator_manager_con
     framdata_config = {}
     data_config = {}
     data_config['name'] = 'enzyme_protein_data_manager'
-    data_config['file_path'] = 'uniprot-reviewed_yes.tab'
+    data_config['file_path'] = 'uniprot-reviewed_yes.tab'#
     data_config['max_len'] = 1000
     data_config['print_statistics'] = True
     data_config['fraction'] = 1 
