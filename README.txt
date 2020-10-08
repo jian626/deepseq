@@ -40,4 +40,4 @@
 	*		when specifying them to .py described in this step, only "enzyme_model" should be specified.
 	*
 	
-5. The 1d dense-net implementation is migrated from https://github.com/ankitvgupta/densenet_1d by Ankit Gupta 
+5. The 1d dense-net implementation is transplanted from https://github.com/ankitvgupta/densenet_1d written by Ankit Gupta 
