@@ -27,6 +27,7 @@
     *       the configure of E_P model is in enzyme_protein_classifier_model_generator.py.
     *       the configure of E_C model is in enzyme_classifier_model_generator.py.
 
+
 4. use model for prediction
 	enzyme_protein_classifier.py use the model generated in step 3 to predict protein sequences contained in a CSV whether they are enzyme or non-enzyme.
 	the file used for prediction should contain two fields, namely 'Sequence' and 'Entry name'. The CSV should use '\t' as seperator.
@@ -39,3 +40,4 @@
 	*		when specifying them to .py described in this step, only "enzyme_model" should be specified.
 	*
 	
+5. The 1d dense-net implementation is migrated from https://github.com/ankitvgupta/densenet_1d by Ankit Gupta 
