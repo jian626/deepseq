@@ -76,12 +76,6 @@ def test_str_not_multilabel_labels(values):
             return False 
     return True
 
-def create_map(m):
-    ret = {}
-    for v, k in enumerate(m):
-        ret[k] = v
-    return ret
-
 def has_level(level, label):
     l = label.split('.')
     if len(l) < level:

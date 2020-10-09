@@ -1,6 +1,6 @@
 from sklearn.metrics import classification_report
 from framework import utili
-from framework.bio import process_enzyme
+from framework.strategy import hierarchical_learning
 from framework.evaluator import evaluator_creator
 
 class evaluator:
@@ -15,7 +15,7 @@ class evaluator:
         temp_msg = ''
         if task_num > 1:
             for i in range(task_num-1): 
-                temp_conflict = process_enzyme.get_conflict(pred_labels[i+1][index], pred_labels[i][index], i+1)
+                temp_conflict = hierarchical_learning.get_conflict(pred_labels[i+1][index], pred_labels[i][index], i+1)
                 if temp_conflict:
                     temp_list = list(temp_conflict) 
                     conflict.append((i+1, i+2, temp_list))
@@ -64,7 +64,7 @@ class evaluator:
 
         for i in range(length):
             for j in range(task_num-1):
-                if process_enzyme.get_conflict(pred_labels[j+1][i], pred_labels[j][i], j+1):
+                if hierarchical_learning.get_conflict(pred_labels[j+1][i], pred_labels[j][i], j+1):
                     res[j] += 1
         for i in range(task_num-1):
             print('comflict between level %d and level %d is %d, %f%% of %d.' % (i+1, i+2, res[i], float(res[i]) * 100.0 /float(length), length))

@@ -1,7 +1,5 @@
-
 from sklearn.metrics import classification_report
 from framework import utili
-from framework.bio import process_enzyme
 from framework.evaluator import evaluator_creator
 
 class evaluator:

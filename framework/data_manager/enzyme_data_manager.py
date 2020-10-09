@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from framework import utili
-from framework.bio import process_enzyme
+from framework.strategy import hierarchical_learning
 from framework.bio import BioDefine
 from tensorflow.keras.preprocessing import sequence
 from framework.data_manager import data_manager_creator
@@ -35,7 +35,7 @@ class enzyme_data_manager:
     def count_class_example(self, df, map_table, level):
         def apply_fun(label_list):
             for label in label_list: 
-                label = process_enzyme.get_label_to_level(label, level, '-')
+                label = hierarchical_learning.get_label_to_level(label, level, '-')
                 if label in map_table:
                     map_table[label] += 1
                 else:
@@ -49,7 +49,7 @@ class enzyme_data_manager:
         def delete_class_accord_threshold(label_list, threshold, map_tabel):
             res = []
             for label in label_list:
-                temp = process_enzyme.get_label_to_level(label, level, '-')
+                temp = hierarchical_learning.get_label_to_level(label, level, '-')
                 if map_table[temp] >  threshold:
                     res.append(label)
             return res
@@ -100,7 +100,7 @@ class enzyme_data_manager:
         return df,len(field_map_to_number), field_map_to_number
 
     def get_level_labels(self, df, level, class_maps):
-        df["level%d" % level] = df[self.label_key].apply(lambda x:process_enzyme.get_label_to_level(x, level, 'unknown', class_maps))
+        df["level%d" % level] = df[self.label_key].apply(lambda x:hierarchical_learning.get_label_to_level(x, level, 'unknown', class_maps))
         return df
 
     def map_label_set_to_one_hot(self, label_set, num_classes):
@@ -135,13 +135,13 @@ class enzyme_data_manager:
         level = self.config['level_num']
         
         if self.config['drop_multilabel']:
-            df = df[df[self.label_key].apply(lambda x:process_enzyme.test_str_not_multilabel_labels(x))]
+            df = df[df[self.label_key].apply(lambda x:hierarchical_learning.test_str_not_multilabel_labels(x))]
 
         if not self.config['apply_dummy_label']:
-            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_label_list_according_to_level(x, level))
+            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list_according_to_level(x, level))
             df = df[df[self.label_key].apply(lambda x:len(x)>0)]
         else:
-            df[self.label_key]= df[self.label_key].apply(lambda x:process_enzyme.get_label_list(x))
+            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list(x))
             
         df['EC count'] = df[self.label_key].apply(lambda x:len(x))
 
