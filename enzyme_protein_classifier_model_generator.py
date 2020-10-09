@@ -61,6 +61,11 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     model_config['optimizer'] = 'Adam'
     #Main part manager name, support basic_cnn_manager, dense_net_manager
     model_config['name'] = 'basic_cnn_manager'
+    #early_stopping, only for single task currently
+    model_config['early_stopping'] = True
+    #after how many epoch the learning will stop if there is no improvement. effective only early_stopping takes effect 
+    model_config['patience'] = 40
+
     #following commented out configuration is for  dense_net 
     '''
     model_config['name'] = 'dense_net_manager'
@@ -82,10 +87,8 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config = {}
     #summary result switch
     evaluator_manager_config['print_summary'] = True
-    #early_stopping, only for single task currently
-    evaluator_manager_config['early_stopping'] = True
     #epochs
-    evaluator_manager_config['epochs'] = 30
+    evaluator_manager_config['epochs'] = 30 
     #batch size
     evaluator_manager_config['batch_size'] = 200
     #print report swith

@@ -75,6 +75,10 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     model_config['last_activation'] = 'sigmoid'
     #model manager name, currently support: basic_cnn_manager, dense_net_manager
     model_config['name'] = 'basic_cnn_manager'
+    #early_stopping, only for single task currently
+    model_config['early_stopping'] = True
+    #after how many epoch the learning will stop if there is no improvement. effective only early_stopping takes effect 
+    model_config['patience'] = 40
 
     #the following configuration commented out is for dense_net_manager
     '''
@@ -98,10 +102,6 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config = {}
     #print summary switch 
     evaluator_manager_config['print_summary'] = True
-    #early stopping switch  only support single task currently
-    evaluator_manager_config['early_stopping'] = True
-    #early_stopping patience
-    evaluator_manager_config['patience'] = 20
     #epochs
     evaluator_manager_config['epochs'] = 30 
     #batch_size
