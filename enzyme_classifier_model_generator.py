@@ -21,9 +21,9 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
         file_path = 'uniprot-reviewed_yes.tab'
     #where the training data is 
     data_config['file_path'] = file_path
-    #drop multi-label?
-    data_config['drop_multilabel'] = False 
-    #dummy label switch
+    #drop examples multi-labels more than the value. if 0, nothing will be dropped
+    data_config['drop_multilabel'] = 0 
+    #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
     data_config['apply_dummy_label'] = False 
     #max length of sequence
     data_config['max_len'] = 1000

@@ -123,6 +123,7 @@ class enzyme_data_manager:
             y.append(temp)
         return y
 
+
     def get_data(self, sep='\t'):
         '''This function is used to get training data, validation data from a csv file
         '''
@@ -134,8 +135,8 @@ class enzyme_data_manager:
         utili.print_debug_info(df, 'after drop na', print_head = True)
         level = self.config['level_num']
         
-        if self.config['drop_multilabel']:
-            df = df[df[self.label_key].apply(lambda x:hierarchical_learning.test_str_not_multilabel_labels(x))]
+        if self.config['drop_multilabel'] > 0:
+            df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
 
         if not self.config['apply_dummy_label']:
             df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list_according_to_level(x, level))

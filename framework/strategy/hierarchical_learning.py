@@ -69,10 +69,11 @@ def get_label_to_level(label, level, dummy=None, class_maps=None):
                     class_maps[level-1][ret] = 1
     return ret
 
-def test_str_not_multilabel_labels(values):
+
+def multilabel_labels_not_greater(values, threshold):
     if values:
         l = values.split(';')
-        if len(l)>1:
+        if len(l)>threshold:
             return False 
     return True
 
