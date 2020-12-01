@@ -62,6 +62,7 @@ class basic_cnn_manager(model_manager.model_common_manager):
         test_target = None 
         for i in range(self.data_manager.get_task_num()):
             task_lastLayer = Dense(self.config['hidden_width'], activation='relu')(lastLayer)
+            task_lastLayer = Dense(self.config['hidden_width'], activation='relu')(lastLayer)
             task_lastLayer = Dense(self.data_manager.get_max_category()[i], activation=last_activation, name="task_%d_1" % i)(task_lastLayer)
             output.append(task_lastLayer)
         model = Model(inputs=input_layer, outputs=output)

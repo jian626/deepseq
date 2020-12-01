@@ -44,7 +44,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #label filed name in the file
     data_config['label_key'] = 'EC number'
     #if the examples of a class are below this value, that examples of the class will be removed
-    data_config['class_example_threshhold'] = 0 
+    data_config['class_example_threshhold'] = 1 
     
     model_config = {}
     #embedding dimension
@@ -58,7 +58,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #convolutional layer length per CNN
     model_config['conv_len'] = 1 
     #the increae value of width of convolutional layer per CNN
-    model_config['filter_delta'] = 1
+    model_config['filter_delta'] = 24 
     #the pool size
     model_config['pool_size'] = 16 
     #the pool strides
@@ -113,7 +113,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #batch run:this function is in experiment
     evaluator_manager_config['round_size'] = 1 
     #training model switch. when debug data, set to false, training will not be excuted
-    evaluator_manager_config['train_model'] = True 
+    evaluator_manager_config['train_model'] = False 
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
 

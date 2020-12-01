@@ -182,13 +182,14 @@ class enzyme_data_manager:
                 for i in range(10):
                     if i in map_cnt:
                         less_than_10 += map_cnt[i]
-                print('level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
+                        print('level %d: %d class only have %d examples' % (index+1, map_cnt[i], i))
+                print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
         
         
         df = df.sample(frac=self.config['fraction'])
         utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
         self.config['using_set_num'] = df.shape[0]
-        df = df.reindex(np.random.permutation(df.index))
+        #df = df.reindex(np.random.permutation(df.index))
         
         self.config['max_len'] = 0
         def set_max_len(x):
