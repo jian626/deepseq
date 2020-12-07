@@ -206,6 +206,7 @@ class enzyme_data_manager:
         print('train_percent:%f' % self.config['train_percent'])
 
         target_level = self.config['target_level']
+        print('target_level:', target_level)
 
         training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
         index_name = 'level%d' % (target_level - 1)
