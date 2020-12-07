@@ -204,8 +204,37 @@ class enzyme_data_manager:
         
         
         print('train_percent:%f' % self.config['train_percent'])
-        training_set = df.iloc[:int(self.config['using_set_num'] * self.config['train_percent'])]
+
+        target_level = self.config['target_level']
+
+        training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
+        index_name = 'level%d' % (target_level - 1)
+        counting_map = {}
+        rows_index = []
+        for i in range(df.shape[0]):
+            row = df.iloc[i]
+            label_values = row[index_name]
+            should_add = False
+            for label in label_values:
+                if not label in counting_map:
+                    counting_map[label] = 1
+                    should_add = True
+            if should_add:
+                rows_index.append(i)
+            if len(counting_map) >= self.config['max_category'][self.config['target_level']-1]:
+                print('counting_map:',len(counting_map))
+                break
+
+        test_set_temp = df.iloc[rows_index]
+        df = df.drop[rows_index]
+        training_amount = training_amount - test_set_temp.shape.shape[0]
+
+        df = df.reindex(np.random.permutation(df.index))
+        
+
+        training_set = df.iloc[:training_amount]
         test_set = df.iloc[training_set.shape[0]:]
+        test_set = pandas.concat([test_set_temp, test_set])
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
         
@@ -215,7 +244,6 @@ class enzyme_data_manager:
         y_test = self.get_y_from_df(test_set)
 
         task_num = self.get_task_num() 
-        target_level = self.config['target_level']
         if task_num == 1:
             y_train = [y_train[target_level - 1]]
             y_test = [y_test[target_level - 1]]
