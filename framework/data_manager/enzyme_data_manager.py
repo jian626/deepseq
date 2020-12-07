@@ -227,7 +227,7 @@ class enzyme_data_manager:
 
         test_set_temp = df.iloc[rows_index]
         df = df.drop(df.index[rows_index])
-        training_amount = training_amount - test_set_temp.shape.shape[0]
+        training_amount = training_amount - test_set_temp.shape[0]
 
         df = df.reindex(np.random.permutation(df.index))
         
