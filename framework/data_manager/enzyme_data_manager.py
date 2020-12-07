@@ -234,7 +234,7 @@ class enzyme_data_manager:
 
         training_set = df.iloc[:training_amount]
         test_set = df.iloc[training_set.shape[0]:]
-        test_set = pandas.concat([test_set_temp, test_set])
+        test_set = pd.concat([test_set_temp, test_set])
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
         
