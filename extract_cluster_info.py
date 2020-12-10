@@ -23,7 +23,6 @@ def get_cluster_info(cluster_info_file, origin_file, dest_file):
         for i in range(len(records)):
             row = records.iloc[i] 
             try:
-                print(row['Entry'])
                 temp_list.append(entry_cluster_mapping[row['Entry']])
             except:
                 temp_list.append('unknown')
