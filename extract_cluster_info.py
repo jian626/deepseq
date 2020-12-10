@@ -13,7 +13,7 @@ def get_cluster_info(cluster_info_file, origin_file, dest_file):
             name = row['Cluster name']
             members = row['Cluster members'].split(';')
             for member in members: 
-                entry_cluster_mapping[member] = name
+                entry_cluster_mapping[member.strip()] = name.strip()
 
     df_data = pd.read_csv(origin_file, chunksize=300, sep='\t')
     
@@ -23,6 +23,7 @@ def get_cluster_info(cluster_info_file, origin_file, dest_file):
         for i in range(len(records)):
             row = records.iloc[i] 
             try:
+                print(row['Entry'])
                 temp_list.append(entry_cluster_mapping[row['Entry']])
             except:
                 temp_list.append('unknown')
