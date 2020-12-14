@@ -5,6 +5,7 @@ from framework.strategy import hierarchical_learning
 from framework.bio import BioDefine
 from tensorflow.keras.preprocessing import sequence
 from framework.data_manager import data_manager_creator
+from framework.tools import data_spliter
 
 class enzyme_data_manager:
     name = 'enzyme_data_manager'
@@ -91,7 +92,6 @@ class enzyme_data_manager:
         for v, k in enumerate(m):
             ret[k] = v
         return ret
-
 
     def create_label_from_field(df, class_maps, field_name, label_name, index): 
         values = list(class_maps[index].keys())
@@ -196,11 +196,6 @@ class enzyme_data_manager:
             if self.config['max_len'] <len(x):
                 self.config['max_len'] = len(x)
             
-        df['Sequence'].apply(lambda x:set_max_len(x))
-        print('max_len:', self.config['max_len'])
-        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
-        self.config['max_features'] = len(feature_list) + 1
-        df['Encode'] = df['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
         
         
         print('train_percent:%f' % self.config['train_percent'])
@@ -210,6 +205,25 @@ class enzyme_data_manager:
 
         training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
         index_name = 'level%d' % (target_level - 1)
+        training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
+
+        if 'save_data' in self.config:
+            save_data = self.config['save_data']
+            training_set.to_csv(save_data[0], index=False, sep='\t')
+            test_set.to_csv(save_data[1], index=False, sep='\t')
+
+        if 'reuse_data' in self.config:
+            
+            
+        df['Sequence'].apply(lambda x:set_max_len(x))
+        print('max_len:', self.config['max_len'])
+
+        feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
+        self.config['max_features'] = len(feature_list) + 1
+        training_set['Encode'] = training_set['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+        test_set['Encode'] = test_set['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+
+        '''
         counting_map = {}
         rows_index = []
         for i in range(df.shape[0]):
@@ -236,6 +250,7 @@ class enzyme_data_manager:
         training_set = df.iloc[:training_amount]
         test_set = df.iloc[training_set.shape[0]:]
         test_set = pd.concat([test_set_temp, test_set])
+        '''
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
         
