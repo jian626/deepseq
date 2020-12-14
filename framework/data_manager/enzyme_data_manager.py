@@ -217,6 +217,10 @@ class enzyme_data_manager:
             reuse_data = self.config['reuse_data']
             training_set = pd.read_csv(reuse_data[0], sep='\t')
             test_set = pd.read_csv(reuse_data[1], sep='\t')
+            print('-------------------training_set-----------------------------------')
+            print(training_set)
+            print('-------------------test_set---------------------------------------')
+            print(test_set)
             self.config = utili.load_obj(reuse_data[2])
             self.config['reuse_data'] = reuse_data
             
