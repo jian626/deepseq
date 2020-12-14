@@ -217,12 +217,20 @@ class enzyme_data_manager:
             reuse_data = self.config['reuse_data']
             training_set = pd.read_csv(reuse_data[0], sep='\t')
             test_set = pd.read_csv(reuse_data[1], sep='\t')
-            print('-------------------training_set-----------------------------------')
-            print(training_set)
-            print('-------------------test_set---------------------------------------')
-            print(test_set)
+
             self.config = utili.load_obj(reuse_data[2])
             self.config['reuse_data'] = reuse_data
+
+            def convert_str_to_list(s):
+                s = s[1:-2].split(',')
+                ret = []
+                for e in s:
+                    ret.append(int(e))
+                return s
+
+            for i in range(level):
+                training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
+                test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
             
             
         df['Sequence'].apply(lambda x:set_max_len(x))
