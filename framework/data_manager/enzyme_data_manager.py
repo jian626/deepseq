@@ -231,7 +231,7 @@ class enzyme_data_manager:
                         print('s:', s)
                         print('e:', e)
                         raise error
-                return s
+                return ret 
 
             for i in range(level):
                 training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
