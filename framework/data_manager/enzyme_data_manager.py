@@ -225,7 +225,7 @@ class enzyme_data_manager:
                 s = s[1:-2].split(',')
                 ret = []
                 for e in s:
-                    ret.append(int(e))
+                    ret.append(int(e.strip()))
                 return s
 
             for i in range(level):
