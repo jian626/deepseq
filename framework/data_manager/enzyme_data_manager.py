@@ -225,7 +225,12 @@ class enzyme_data_manager:
                 s = s[1:-2].split(',')
                 ret = []
                 for e in s:
-                    ret.append(int(e.strip()))
+                    try:
+                        ret.append(int(e.strip()))
+                    except Exception as error:
+                        print('s:', s)
+                        print('e:', e)
+                        raise error
                 return s
 
             for i in range(level):
