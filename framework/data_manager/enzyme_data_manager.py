@@ -222,7 +222,7 @@ class enzyme_data_manager:
             self.config['reuse_data'] = reuse_data
 
             def convert_str_to_list(s):
-                s = s[1:-2].split(',')
+                s = s[1:-1].split(',')
                 ret = []
                 for e in s:
                     try:
