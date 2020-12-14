@@ -45,11 +45,13 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     data_config['label_key'] = 'EC number'
     #if the examples of a class are below this value, that examples of the class will be removed
     data_config['class_example_threshhold'] = 1 
-    #save data, if it is set, the data will be saved to files 
-    data_config['save_data'] = ['train.tab', 'test.tab', 'data_config.pl'] 
+    #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
+    #object of python, and it will be saved with ending of .pkl
+    data_config['save_data'] = ['train.tab', 'test.tab', 'data_config'] 
 
     #reuse:to reused data in files as training and testing
-    data_config['reuse_data'] = ['train.tab', 'test.tab']
+    #the last name is the config file name without .pkl
+    data_config['reuse_data'] = ['train.tab', 'test.tab', 'data_config']
     
     model_config = {}
     #embedding dimension

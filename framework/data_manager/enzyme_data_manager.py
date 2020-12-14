@@ -211,8 +211,14 @@ class enzyme_data_manager:
             save_data = self.config['save_data']
             training_set.to_csv(save_data[0], index=False, sep='\t')
             test_set.to_csv(save_data[1], index=False, sep='\t')
+            utili.save_obj(self.config, save_data[2])
 
         if 'reuse_data' in self.config:
+            reuse_data = self.config['reuse_data']
+            training_set = pd.read_csv(reuse_data[0], sep='\t')
+            test_set = pd.read_csv(reuse_data[1], sep='\t')
+            self.config = utili.load_obj(reuse_data[2])
+            self.config['reuse_data'] = reuse_data
             
             
         df['Sequence'].apply(lambda x:set_max_len(x))
