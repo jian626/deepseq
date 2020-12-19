@@ -10,6 +10,8 @@ class SequenceGenerator(Sequence):
     def __getitem__(self, index):
         print('----------------------__getitem__-----------')
         x, y = self.data_manager.get_training_data()
+        print('x:', x)
+        print('y:', y)
         pos = self.pos
         self.pos += 1
         rx, ry = x[pos: pos + self.batch_size], y[pos: pos + self.batch_size]
