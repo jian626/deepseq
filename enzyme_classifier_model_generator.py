@@ -36,7 +36,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #traning percentage, validation percentage will be 1- training percentage
     data_config['train_percent'] = 0.7
     #how many tasks will be 
-    data_config['task_num'] = 4 
+    data_config['task_num'] = 1 
     #how many hieracical levels are there.
     data_config['level_num'] = 4 
     #when single task is setting, which level is the target level
