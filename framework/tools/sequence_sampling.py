@@ -12,7 +12,7 @@ class SequenceGenerator(Sequence):
         x, y = self.data_manager.get_training_data()
         pos = self.pos
         self.pos += 1
-        return x[pos: pos + batch_size], y[pos: pos + batch_size]
+        return x[pos: pos + self.batch_size], y[pos: pos + self.batch_size]
 
     def __len__(self):
         print('-----------------------__len__-------------:', self.len)
