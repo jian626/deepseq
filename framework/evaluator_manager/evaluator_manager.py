@@ -60,8 +60,8 @@ class common_evaluator_manager:
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        self.model_manager.fit_generator(self.sg)
-        #self.model_manager.fit(x_train, y_train, epochs, batch_size)
+        #self.model_manager.fit_generator(self.sg)
+        self.model_manager.fit(x_train, y_train, epochs, batch_size)
 
         suffix = ''
         if not cur_round is None:
