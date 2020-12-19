@@ -14,7 +14,7 @@ class SequenceGenerator(Sequence):
         print('y:', y)
         pos = self.pos
         self.pos += 1
-        rx, ry = x[index: index + self.batch_size - 1], y[pos: index + self.batch_size - 1]
+        rx, ry = x[index:index + self.batch_size - 1], y[index: index + self.batch_size - 1]
         print('len y:', len(y))
         print('len rx:', len(rx))
         print('len ry:', len(ry))
