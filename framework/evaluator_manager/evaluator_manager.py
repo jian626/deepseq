@@ -3,6 +3,7 @@ import pandas as pd
 from framework import utili
 from datetime import datetime
 from framework.evaluator_manager import evaluator_manager_creator
+from framework.tools.sequence_sampling import SequenceGenerator
     
 class common_evaluator_manager:
     name = 'common_evaluator_manager'
@@ -11,6 +12,7 @@ class common_evaluator_manager:
         self.data_manager = data_manager 
         self.model_manager = model_manager 
         self.evaluators = evaluators
+        self.sg = None 
 
     def evaluate(self):
         begin = datetime.now()
@@ -51,11 +53,15 @@ class common_evaluator_manager:
 
         task_num = self.data_manager.get_task_num()
         batch_size = self.config['batch_size']
+
+        if not self.sg:
+            self.sg = SequenceGenerator(self.data_manager, batch_size)
             
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        self.model_manager.fit(x_train, y_train, epochs, batch_size)
+        self.model_manager.fit(self.sg)
+        #self.model_manager.fit(x_train, y_train, epochs, batch_size)
 
         suffix = ''
         if not cur_round is None:
