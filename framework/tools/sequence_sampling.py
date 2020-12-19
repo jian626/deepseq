@@ -10,7 +10,7 @@ class SequenceGenerator(Sequence):
     def __getitem__(self, index):
         print('----------------------__getitem__-----------:', index)
         x, y = self.data_manager.get_training_data()
-        num_task = self.data_manager.get_task_num()
+        task_num = self.data_manager.get_task_num()
         pos = self.pos
         self.pos += 1
         rx = x[index: index + self.batch_size] 
