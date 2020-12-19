@@ -19,7 +19,4 @@ class SequenceGenerator(Sequence):
         return self.len
 
     def on_epoch_end(self):
-        print('---------------------on_epoch_end------------'
-        
-
-
+        print('---------------------on_epoch_end------------')
