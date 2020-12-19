@@ -51,6 +51,7 @@ class common_evaluator_manager:
 
     def _evaluate(self, x_train, y_train, x_test, y_test, epochs, cur_round = None):
 
+        print('len(y_train)', len(y_train))
         task_num = self.data_manager.get_task_num()
         batch_size = self.config['batch_size']
 
