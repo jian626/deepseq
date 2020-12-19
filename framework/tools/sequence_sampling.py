@@ -13,6 +13,7 @@ class SequenceGenerator(Sequence):
         pos = self.pos
         self.pos += 1
         rx, ry = x[pos: pos + self.batch_size], y[pos: pos + self.batch_size]
+        print('len y:', len(y)
         print('len rx:', len(rx))
         print('len ry:', len(ry))
         return rx, ry
