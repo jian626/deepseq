@@ -18,6 +18,10 @@ class SequenceGenerator(Sequence):
         print('len y:', len(y))
         print('len rx:', len(rx))
         print('len ry:', len(ry))
+        print('rx:')
+        print(rx)
+        print('ry:')
+        print(ry)
         return rx, ry
 
     def __len__(self):
