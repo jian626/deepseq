@@ -8,13 +8,13 @@ class SequenceGenerator(Sequence):
         self.len = int(x.shape[0] / batch_size)
 
     def __getitem__(self, index):
-        print('----------------------__getitem__-----------')
+        print('----------------------__getitem__-----------:', index)
         x, y = self.data_manager.get_training_data()
         print('x:', x)
         print('y:', y)
         pos = self.pos
         self.pos += 1
-        rx, ry = x[pos: pos + self.batch_size], y[pos: pos + self.batch_size]
+        rx, ry = x[index: index + self.batch_size - 1], y[pos: index + self.batch_size - 1]
         print('len y:', len(y))
         print('len rx:', len(rx))
         print('len ry:', len(ry))
