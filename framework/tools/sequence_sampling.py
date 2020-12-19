@@ -20,7 +20,6 @@ class SequenceGenerator(Sequence):
 
     def on_epoch_end(self):
         print('---------------------on_epoch_end------------'
-        return
         
 
 
