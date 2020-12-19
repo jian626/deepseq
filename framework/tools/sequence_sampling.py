@@ -15,7 +15,7 @@ class SequenceGenerator(Sequence):
         rx = x[index: index + self.batch_size] 
         ry = []
         for i in range(4):
-            ry.append(y[index][index:index+self.batch_size])
+            ry.append(y[i][index:index+self.batch_size])
         return rx, ry
 
     def __len__(self):
