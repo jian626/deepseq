@@ -1,5 +1,5 @@
 from tensorflow.keras.utils import Sequence
-import nump as np
+import numpy as np
 class SequenceGenerator(Sequence):
     def __init__(self, data_manager, batch_size):
         self.data_manager = data_manager
