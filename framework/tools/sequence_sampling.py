@@ -10,11 +10,12 @@ class SequenceGenerator(Sequence):
     def __getitem__(self, index):
         print('----------------------__getitem__-----------:', index)
         x, y = self.data_manager.get_training_data()
+        num_task = self.data_manager.get_task_num()
         pos = self.pos
         self.pos += 1
         rx = x[index: index + self.batch_size] 
         ry = []
-        for i in range(4):
+        for i in range(task_num):
             ry.append(y[i][index:index+self.batch_size])
         return rx, ry
 
