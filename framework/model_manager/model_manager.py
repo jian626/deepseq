@@ -45,8 +45,8 @@ class model_common_manager:
             callbacks.append(early_stopping_callback)
         self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
 
-    def fit_generator(self, generator):
-        self.get_model().fit_generator(generator)
+    def fit_generator(self, generator, epochs):
+        self.get_model().fit_generator(generator, epochs=epochs)
 
     def predict(self, x_):
         begin = datetime.now()
