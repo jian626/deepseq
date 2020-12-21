@@ -127,92 +127,8 @@ class enzyme_data_manager:
     def get_data(self, sep='\t'):
         '''This function is used to get training data, validation data from a csv file
         '''
-        df = pd.read_csv(self.config['file_path'],sep=sep)
-        utili.print_debug_info(df, info=True)
-        df = df.dropna()
-        
-        df[self.label_key] = df[self.label_key].astype(str)
-        utili.print_debug_info(df, 'after drop na', print_head = True)
-        level = self.config['level_num']
-        
-        if self.config['drop_multilabel'] > 0:
-            df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
-
-        if not self.config['apply_dummy_label']:
-            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list_according_to_level(x, level))
-            df = df[df[self.label_key].apply(lambda x:len(x)>0)]
-        else:
-            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list(x))
-            
-        df['EC count'] = df[self.label_key].apply(lambda x:len(x))
-
-        if self.config['max_len'] > 0:
-            df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
-            utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
-
-        df = self._apply_threshold(df)
-
-        utili.print_debug_info(df, 'after apply threshold', print_head = True)
-        
-        for i in range(level):
-            df = self.get_level_labels(df, i+1, self.config['class_maps'])
-            utili.print_debug_info(df, 'after select to level %d' % i, print_head = True)
-        
-        self.config['max_category'] = []
-        for i in range(level):
-            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'level%d' % i, i)
-            self.config['max_category'].append(temp_max_category)
-            self.config['field_map_to_number'][i] = temp_field_map_to_number
-            utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
-        print('max_category:', self.config['max_category'])
-        
-        if self.config['print_statistics']:
-            print('following statistics information is based on data to use.')
-            for index in range(level):
-                sorted_k = {k: v for k, v in sorted(self.config['class_maps'][index].items(), key=lambda item: item[1])}
-                cnt = 0
-                map_cnt = {}
-                for k in sorted_k: 
-                    if not sorted_k[k] in map_cnt:
-                        map_cnt[sorted_k[k]] = 1
-                    else:
-                        map_cnt[sorted_k[k]] += 1
-        
-                less_than_10 = 0
-                for i in range(10):
-                    if i in map_cnt:
-                        less_than_10 += map_cnt[i]
-                        print('level %d: %d class only have %d examples' % (index+1, map_cnt[i], i))
-                print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
-        
-        
-        df = df.sample(frac=self.config['fraction'])
-        utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
-        self.config['using_set_num'] = df.shape[0]
-        #df = df.reindex(np.random.permutation(df.index))
-        
-        self.config['max_len'] = 0
-        def set_max_len(x):
-            if self.config['max_len'] <len(x):
-                self.config['max_len'] = len(x)
-            
-        
-        
-        print('train_percent:%f' % self.config['train_percent'])
-
-        target_level = self.config['target_level']
-        print('target_level:', target_level)
-
-        training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
-        index_name = 'level%d' % (target_level - 1)
-        training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
-
-        if 'save_data' in self.config:
-            save_data = self.config['save_data']
-            training_set.to_csv(save_data[0], index=False, sep='\t')
-            test_set.to_csv(save_data[1], index=False, sep='\t')
-            utili.save_obj(self.config, save_data[2])
-
+        training_set = None
+        test_set = None
         if 'reuse_data' in self.config:
             reuse_data = self.config['reuse_data']
             training_set = pd.read_csv(reuse_data[0], sep='\t')
@@ -241,6 +157,93 @@ class enzyme_data_manager:
             for i in range(level):
                 training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
                 test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
+        else:
+            df = pd.read_csv(self.config['file_path'],sep=sep)
+            utili.print_debug_info(df, info=True)
+            df = df.dropna()
+            
+            df[self.label_key] = df[self.label_key].astype(str)
+            utili.print_debug_info(df, 'after drop na', print_head = True)
+            level = self.config['level_num']
+            
+            if self.config['drop_multilabel'] > 0:
+                df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
+
+            if not self.config['apply_dummy_label']:
+                df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list_according_to_level(x, level))
+                df = df[df[self.label_key].apply(lambda x:len(x)>0)]
+            else:
+                df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list(x))
+                
+            df['EC count'] = df[self.label_key].apply(lambda x:len(x))
+
+            if self.config['max_len'] > 0:
+                df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
+                utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
+
+            df = self._apply_threshold(df)
+
+            utili.print_debug_info(df, 'after apply threshold', print_head = True)
+            
+            for i in range(level):
+                df = self.get_level_labels(df, i+1, self.config['class_maps'])
+                utili.print_debug_info(df, 'after select to level %d' % i, print_head = True)
+            
+            self.config['max_category'] = []
+            for i in range(level):
+                df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'level%d' % i, i)
+                self.config['max_category'].append(temp_max_category)
+                self.config['field_map_to_number'][i] = temp_field_map_to_number
+                utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
+            print('max_category:', self.config['max_category'])
+            
+            if self.config['print_statistics']:
+                print('following statistics information is based on data to use.')
+                for index in range(level):
+                    sorted_k = {k: v for k, v in sorted(self.config['class_maps'][index].items(), key=lambda item: item[1])}
+                    cnt = 0
+                    map_cnt = {}
+                    for k in sorted_k: 
+                        if not sorted_k[k] in map_cnt:
+                            map_cnt[sorted_k[k]] = 1
+                        else:
+                            map_cnt[sorted_k[k]] += 1
+            
+                    less_than_10 = 0
+                    for i in range(10):
+                        if i in map_cnt:
+                            less_than_10 += map_cnt[i]
+                            print('level %d: %d class only have %d examples' % (index+1, map_cnt[i], i))
+                    print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
+            
+            
+            df = df.sample(frac=self.config['fraction'])
+            utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
+            self.config['using_set_num'] = df.shape[0]
+            #df = df.reindex(np.random.permutation(df.index))
+            
+            self.config['max_len'] = 0
+            def set_max_len(x):
+                if self.config['max_len'] <len(x):
+                    self.config['max_len'] = len(x)
+                
+            
+            
+            print('train_percent:%f' % self.config['train_percent'])
+
+            target_level = self.config['target_level']
+            print('target_level:', target_level)
+
+            training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
+            index_name = 'level%d' % (target_level - 1)
+            training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
+
+            if 'save_data' in self.config:
+                save_data = self.config['save_data']
+                training_set.to_csv(save_data[0], index=False, sep='\t')
+                test_set.to_csv(save_data[1], index=False, sep='\t')
+                utili.save_obj(self.config, save_data[2])
+
             
             
         df['Sequence'].apply(lambda x:set_max_len(x))
