@@ -155,7 +155,7 @@ class enzyme_data_manager:
         print(training_set)
         return training_set, test_set
 
-    def normal_process(self):
+    def normal_process(self, sep):
         df = pd.read_csv(self.config['file_path'],sep=sep)
         utili.print_debug_info(df, info=True)
         df = df.dropna()
@@ -257,7 +257,7 @@ class enzyme_data_manager:
             training_set, test_set = self.reuse_data_process()
         else:
             print('none reuse_data')
-            training_set, test_set = self.normal_process()
+            training_set, test_set = self.normal_process(sep)
 
 
         feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
