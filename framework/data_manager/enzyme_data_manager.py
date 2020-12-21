@@ -150,6 +150,9 @@ class enzyme_data_manager:
         for i in range(level):
             training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
             test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
+        print('self.config:', self.config)
+        print('training_set:')
+        print(training_set)
         return training_set, test_set
 
     def normal_process(self):
