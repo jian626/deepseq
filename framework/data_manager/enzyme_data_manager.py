@@ -149,6 +149,8 @@ class enzyme_data_manager:
                     raise error
             return ret 
 
+        level = self.config['level_num']
+
         for i in range(level):
             training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
             test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
