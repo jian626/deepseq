@@ -222,6 +222,9 @@ class enzyme_data_manager:
             self.config['class_maps'] = config['class_maps']
             self.config['field_map_to_number'] = config['field_map_to_number']
             self.config['number_to_field'] = config['number_to_field']
+            self.config['max_category'] = config['max_category']
+            self.config['using_set_num'] = config['using_set_num']
+            self.config['max_len'] = config['max_len']
 
             def convert_str_to_list(s):
                 s = s[1:-1].split(',')

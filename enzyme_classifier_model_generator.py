@@ -51,7 +51,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
-    #data_config['reuse_data'] = ['train1.tab', 'test1.tab', 'data_config']
+    data_config['reuse_data'] = ['train1.tab', 'test1.tab', 'data_config']
     
     model_config = {}
     #embedding dimension
