@@ -156,6 +156,7 @@ class enzyme_data_manager:
         return training_set, test_set
 
     def normal_process(self, sep):
+        print('normal_process')
         df = pd.read_csv(self.config['file_path'],sep=sep)
         utili.print_debug_info(df, info=True)
         df = df.dropna()
@@ -240,6 +241,7 @@ class enzyme_data_manager:
         print('max_len:', self.config['max_len'])
 
         if 'save_data' in self.config:
+            print('save_data...')
             save_data = self.config['save_data']
             training_set.to_csv(save_data[0], index=False, sep='\t')
             test_set.to_csv(save_data[1], index=False, sep='\t')
