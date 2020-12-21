@@ -237,6 +237,9 @@ class enzyme_data_manager:
         index_name = 'level%d' % (target_level - 1)
         training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
 
+        df['Sequence'].apply(lambda x:set_max_len(x))
+        print('max_len:', self.config['max_len'])
+
         if 'save_data' in self.config:
             save_data = self.config['save_data']
             training_set.to_csv(save_data[0], index=False, sep='\t')
@@ -255,8 +258,6 @@ class enzyme_data_manager:
         else:
             training_set, test_set = self.normal_process()
 
-        df['Sequence'].apply(lambda x:set_max_len(x))
-        print('max_len:', self.config['max_len'])
 
         feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
         self.config['max_features'] = len(feature_list) + 1
