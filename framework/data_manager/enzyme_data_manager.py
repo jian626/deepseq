@@ -218,8 +218,10 @@ class enzyme_data_manager:
             training_set = pd.read_csv(reuse_data[0], sep='\t')
             test_set = pd.read_csv(reuse_data[1], sep='\t')
 
-            self.config = utili.load_obj(reuse_data[2])
-            self.config['reuse_data'] = reuse_data
+            config = utili.load_obj(reuse_data[2])
+            self.config['class_maps'] = config['class_maps']
+            self.config['field_map_to_number'] = config['field_map_to_number']
+            self.config['number_to_field'] = config['number_to_field']
 
             def convert_str_to_list(s):
                 s = s[1:-1].split(',')
