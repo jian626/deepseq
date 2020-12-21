@@ -136,17 +136,13 @@ class enzyme_data_manager:
         self.config['max_category'] = config['max_category']
         self.config['using_set_num'] = config['using_set_num']
         self.config['max_len'] = config['max_len']
+        self.config['level_num'] = config['level_num']
 
         def convert_str_to_list(s):
             s = s[1:-1].split(',')
             ret = []
             for e in s:
-                try:
-                    ret.append(int(e.strip()))
-                except Exception as error:
-                    print('s:', s)
-                    print('e:', e)
-                    raise error
+                ret.append(int(e.strip()))
             return ret 
 
         level = self.config['level_num']
