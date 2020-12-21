@@ -5,6 +5,7 @@ class SequenceGenerator(Sequence):
         self.data_manager = data_manager
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
+        print(x)
         self.len = int(np.floor(len(x) / self.batch_size))
 
     def __getitem__(self, index):

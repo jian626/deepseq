@@ -47,11 +47,11 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     data_config['class_example_threshhold'] = 1 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
-    data_config['save_data'] = ['train.tab', 'test.tab', 'data_config'] 
+    #data_config['save_data'] = ['train.tab', 'test.tab', 'data_config'] 
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
-    #data_config['reuse_data'] = ['train.tab', 'test.tab', 'data_config']
+    data_config['reuse_data'] = ['train.tab', 'test.tab', 'data_config']
     
     model_config = {}
     #embedding dimension
@@ -120,7 +120,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #batch run:this function is in experiment
     evaluator_manager_config['round_size'] = 1 
     #training model switch. when debug data, set to false, training will not be excuted
-    evaluator_manager_config['train_model'] = False 
+    evaluator_manager_config['train_model'] = True 
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
 
