@@ -254,8 +254,10 @@ class enzyme_data_manager:
         test_set = None
 
         if 'reuse_data' in self.config:
+            print('reuse_data')
             training_set, test_set = self.reuse_data_process()
         else:
+            print('none reuse_data')
             training_set, test_set = self.normal_process()
 
 
