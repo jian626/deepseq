@@ -275,7 +275,7 @@ class enzyme_data_manager:
 
         task_num = self.get_task_num() 
         if task_num == 1:
-            target_level = self.config['target_level']
+        target_level = self.config['target_level']
             y_train = [y_train[target_level - 1]]
             y_test = [y_test[target_level - 1]]
 
