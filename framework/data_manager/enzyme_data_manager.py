@@ -124,7 +124,7 @@ class enzyme_data_manager:
         return y
 
 
-    def reuse_data_process():
+    def reuse_data_process(self):
         reuse_data = self.config['reuse_data']
         training_set = pd.read_csv(reuse_data[0], sep='\t')
         test_set = pd.read_csv(reuse_data[1], sep='\t')
