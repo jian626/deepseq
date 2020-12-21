@@ -120,7 +120,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #batch run:this function is in experiment
     evaluator_manager_config['round_size'] = 1 
     #training model switch. when debug data, set to false, training will not be excuted
-    evaluator_manager_config['train_model'] = True 
+    evaluator_manager_config['train_model'] = False 
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
 
