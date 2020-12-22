@@ -4,10 +4,11 @@ class SequenceGenerator(Sequence):
     def __init__(self, data_manager, batch_size):
         self.data_manager = data_manager
         self.batch_size = batch_size
-        training_set, _ = self.data_manager.get_training_and_test_set()
-        print('Cluster name')
+        x, y = self.data_manager.get_training_data()
         self.len = int(np.floor(len(x) / self.batch_size))
         self.cluster_info = []
+        training_set, _ = self.data_manager.get_training_and_test_set()
+        print('Cluster name')
         for i in range(training_set.shape[0]):
            print(training_set.iloc[i]['Cluster name'])
        
