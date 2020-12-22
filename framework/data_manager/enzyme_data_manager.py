@@ -32,6 +32,8 @@ class enzyme_data_manager:
         if not 'number_to_field' in self.config:
             self.config['number_to_field'] = {
                 }
+        self.training_set = None
+        self.test_set = None
 
     def count_class_example(self, df, map_table, level):
         def apply_fun(label_list):
@@ -266,6 +268,9 @@ class enzyme_data_manager:
 
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
+
+        self.training_set = training_set
+        self.test_set = test_set
         
         x_train = self.get_x_from_df(training_set)
         y_train = self.get_y_from_df(training_set)
@@ -284,6 +289,10 @@ class enzyme_data_manager:
         self.y_test = y_test
 
         return x_train, y_train, x_test, y_test
+
+    def get_training_and_test_set(self):
+        return self.training_set, self.test_set
+
 
     def get_training_data(self):
         return self.x_train, self.y_train
