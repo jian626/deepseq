@@ -112,7 +112,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #epochs
     evaluator_manager_config['epochs'] = 30 
     #batch_size
-    evaluator_manager_config['batch_size'] = 200 
+    evaluator_manager_config['batch_size'] = 100 
     #print report switch
     evaluator_manager_config['print_report'] = True
     #batch run:this function is in experiment
