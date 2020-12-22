@@ -29,7 +29,7 @@ class SequenceGenerator(Sequence):
         needed = min(self.batch_size, sample_len)
         if len(cluster_keys) >= needed:
             for i in range(needed):
-                key = cluster_keys[(i+(index * batch_size))% len(cluster_keys)]
+                key = cluster_keys[(i+(index * self.batch_size))% len(cluster_keys)]
                 members = self.cluster_info[key]
                 result.append(members.pop()) 
                 sample_len -= 1
