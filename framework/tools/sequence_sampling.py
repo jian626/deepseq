@@ -22,7 +22,7 @@ class SequenceGenerator(Sequence):
     def __getitem__(self, index):
         x, y = self.data_manager.get_training_data()
         task_num = self.data_manager.get_task_num()
-        cluster_keys = self.cluster_info.keys()
+        cluster_keys = list(self.cluster_info.keys())
         result = []
         sample_len = self.sample_len
 
