@@ -124,7 +124,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
-    evaluator_manager_config['batch_generator'] = 'cluster'
+    #evaluator_manager_config['batch_generator'] = 'cluster'
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]
