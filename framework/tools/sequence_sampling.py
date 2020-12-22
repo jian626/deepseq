@@ -1,24 +1,31 @@
 from tensorflow.keras.utils import Sequence
 import numpy as np
 import random
+import copy
 class SequenceGenerator(Sequence):
     def __init__(self, data_manager, batch_size):
         self.data_manager = data_manager
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
-        self.sample_len = len(x)
+        self.sample_len_store = len(x)
         print('sample_len:', self.sample_len)
         self.batch_num = int(np.floor(len(x) / self.batch_size))
-        self.cluster_info = {} 
+        self.cluster_info_store = {} 
         training_set, _ = self.data_manager.get_training_and_test_set()
         print('Cluster name')
         for i in range(training_set.shape[0]):
             cluster_name = training_set.iloc[i]['Cluster name']
             cluster_members = None
-            if not cluster_name in self.cluster_info:
+            if not cluster_name in self.cluster_info_store:
                 self.cluster_info[cluster_name] = []
-            cluster_members = self.cluster_info[cluster_name]
+            cluster_members = self.cluster_info_store[cluster_name]
             cluster_members.append(i)
+
+        self.reset()
+
+    def reset(self):
+        self.sample_len = self.sample_len_store
+        self.cluster_info = copy.deepcopy(self.cluster_info_store)
 
     def __getitem__(self, index):
         x, y = self.data_manager.get_training_data()
@@ -66,4 +73,4 @@ class SequenceGenerator(Sequence):
         return self.batch_num
 
     def on_epoch_end(self):
-        pass
+        self.reset()
