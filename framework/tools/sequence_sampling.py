@@ -25,8 +25,10 @@ class SequenceGenerator(Sequence):
         cluster_keys = list(self.cluster_info.keys())
         result = []
         sample_len = self.sample_len
-
         needed = min(self.batch_size, sample_len)
+
+        print(sample_len, needed, index)
+
         if len(cluster_keys) >= needed:
             for i in range(needed):
                 key = cluster_keys[(i+(index * self.batch_size))% len(cluster_keys)]

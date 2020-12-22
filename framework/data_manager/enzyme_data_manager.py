@@ -301,7 +301,6 @@ class enzyme_data_manager:
         return self.x_test, self.y_test
 
     def get_task_num(self):
-        print('task num:----------------------------', self.config['task_num'])
         return self.config['task_num']
 
     def get_max_category(self):
