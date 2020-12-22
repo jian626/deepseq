@@ -48,7 +48,9 @@ class SequenceGenerator(Sequence):
                         break
 
         self.sample_len = sample_len
-        return x[result], y[result]
+        rx = x.iloc[result]
+        ry = y.iloc[result]
+        return rx, ry
 
 
 
