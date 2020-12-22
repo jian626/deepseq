@@ -36,7 +36,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #traning percentage, validation percentage will be 1- training percentage
     data_config['train_percent'] = 0.7
     #how many tasks will be 
-    data_config['task_num'] = 1 
+    data_config['task_num'] = 4 
     #how many hieracical levels are there.
     data_config['level_num'] = 4 
     #when single task is setting, which level is the target level
@@ -123,6 +123,8 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config['train_model'] = True 
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
+    #customized batch
+    evaluator_manager_config['batch_generator'] = 'cluster'
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]

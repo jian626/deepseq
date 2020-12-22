@@ -55,14 +55,18 @@ class common_evaluator_manager:
         task_num = self.data_manager.get_task_num()
         batch_size = self.config['batch_size']
 
-        if not self.sg:
-            self.sg = SequenceGenerator(self.data_manager, batch_size)
             
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        #self.model_manager.fit_generator(self.sg, epochs = epochs)
-        self.model_manager.fit(x_train, y_train, epochs, batch_size)
+        if 'batch_generator' in self.config:
+            print('batch_generator:', self.config['batch_generator'])
+            if not self.sg:
+                self.sg = SequenceGenerator(self.data_manager, batch_size)
+            self.model_manager.fit_generator(self.sg, epochs = epochs)
+        else:
+            print('batch_generator:', 'default')
+            self.model_manager.fit(x_train, y_train, epochs, batch_size)
 
         suffix = ''
         if not cur_round is None:
