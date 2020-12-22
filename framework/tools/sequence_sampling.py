@@ -49,34 +49,15 @@ class SequenceGenerator(Sequence):
 
         self.sample_len = sample_len
         training_set, _ = self.data_manager.get_training_and_test_set()
-        result_set = training_set.iloc[result]
-        rx = self.data_manager.get_x_from_df(result_set)
-        ry = self.data_manager.get_y_from_df(result_set)
-
-        return rx, ry
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        rx = x[index * self.batch_size : (index + 1) * self.batch_size] 
+        rx = x[result] 
         ry = []
+
         for i in range(task_num):
-            ry.append(y[i][index * self.batch_size : (index+1) * self.batch_size])
+            ry.append(y[i][result])
+
         return rx, ry
+
+
 
     def __len__(self):
         return self.batch_num
