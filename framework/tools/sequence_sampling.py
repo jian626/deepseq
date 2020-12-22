@@ -6,6 +6,7 @@ class SequenceGenerator(Sequence):
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
 
+        print('Cluster info:')
         print(x['Cluster name'])
         self.len = int(np.floor(len(x) / self.batch_size))
 
