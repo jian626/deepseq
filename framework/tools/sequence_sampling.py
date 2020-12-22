@@ -48,7 +48,8 @@ class SequenceGenerator(Sequence):
                         break
 
         self.sample_len = sample_len
-        result_set = self.training_set.iloc[result]
+        training_set, _ = self.data_manager.get_training_and_test_set()
+        result_set = training_set.iloc[result]
         rx = self.data_manager.get_x_from_df(result_set)
         ry = self.data_manager.get_y_from_df(result_set)
 
