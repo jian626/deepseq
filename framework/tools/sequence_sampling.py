@@ -37,7 +37,7 @@ class SequenceGenerator(Sequence):
                     del self.cluster_info[key]
         else:
             while needed>len(result):
-                cluster_info = self.cluster_info.keys()
+                cluster_keys = self.cluster_info.keys()
                 for k in cluster_keys:
                     members = self.cluster_info[k]
                     result.append(members.pop())
