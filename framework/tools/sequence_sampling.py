@@ -14,7 +14,7 @@ class SequenceGenerator(Sequence):
         for i in range(training_set.shape[0]):
             cluster_name = training_set.iloc[i]['Cluster name']
             cluster_members = None
-            if not cn in self.cluster_info:
+            if not cluster_name in self.cluster_info:
                 self.cluster_info[cluster_name] = []
             cluster_members = self.cluster_info[cluster_name]
             cluster_members.append(i)
