@@ -3,7 +3,7 @@ import numpy as np
 import random
 import copy
 class SequenceGenerator(Sequence):
-    def __init__(self, data_manager, batch_size):
+    def __init__(self, data_manager, batch_size, debug_file = 'debug.tab'):
         self.data_manager = data_manager
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
@@ -13,6 +13,7 @@ class SequenceGenerator(Sequence):
         print('sample_len:', self.sample_len)
         self.batch_num = int(np.floor(len(x) / self.batch_size))
         self.cluster_info_store = {} 
+        self.debug_file = debug_file
         training_set, _ = self.data_manager.get_training_and_test_set()
         print('Cluster name')
         for i in range(training_set.shape[0]):
@@ -23,7 +24,6 @@ class SequenceGenerator(Sequence):
             cluster_members = self.cluster_info_store[cluster_name]
             cluster_members.append(i)
         self.cluster_keys = None 
-
         self.reset()
 
     def reset(self):
@@ -87,6 +87,9 @@ class SequenceGenerator(Sequence):
             ry.append(y[i][result])
 
         print('get item end:', index)
+        if self.debug_file:
+            debug_df = training_set.iloc[result][['Entry', 'Entry name', 'EC number', 'Cluster name']]
+            debug_df.to_csv(self.debug_file, sep='\t', index=False, mode='a')
         return rx, ry
 
     def __len__(self):
@@ -94,3 +97,4 @@ class SequenceGenerator(Sequence):
 
     def on_epoch_end(self):
         self.reset()
+        self.debug_file = None
