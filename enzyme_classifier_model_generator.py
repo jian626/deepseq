@@ -125,6 +125,8 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
     evaluator_manager_config['batch_generator'] = 'cluster'
+    #custom batch generator debug file
+    evaluator_manager_config['debug_file'] = 'debug_file.tab'
 
     for k in input_data_config:
         data_config[k] = input_data_config[k]

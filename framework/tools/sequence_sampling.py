@@ -3,7 +3,7 @@ import numpy as np
 import random
 import copy
 class SequenceGenerator(Sequence):
-    def __init__(self, data_manager, batch_size, debug_file = 'debug.tab'):
+    def __init__(self, data_manager, batch_size, debug_file = None):
         self.data_manager = data_manager
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
