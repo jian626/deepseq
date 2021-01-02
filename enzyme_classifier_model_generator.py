@@ -47,11 +47,12 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     data_config['class_example_threshhold'] = 1 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
-    #data_config['save_data'] = ['train.tab', 'test.tab', 'data_config'] 
+    #data_config['save_data'] = ['train50.tab', 'test50.tab', 'data_config50'] 
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
-    data_config['reuse_data'] = ['train.tab', 'test.tab', 'data_config']
+    #data_config['reuse_data'] = ['train.tab', 'test.tab', 'data_config']
+    data_config['reuse_data'] = ['train50.tab', 'test50.tab', 'data_config50'] 
     
     model_config = {}
     #embedding dimension
@@ -61,15 +62,15 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #convolutional layer width
     model_config['conv_kernel_width'] = 3 
     #CNN layer length
-    model_config['layer_len'] = 1 
+    model_config['layer_len'] = 5 
     #convolutional layer length per CNN
     model_config['conv_len'] = 1 
     #the increae value of width of convolutional layer per CNN
     model_config['filter_delta'] = 24 
     #the pool size
-    model_config['pool_size'] = 16 
+    model_config['pool_size'] = 2 
     #the pool strides
-    model_config['pooling_strides'] = 16 
+    model_config['pooling_strides'] = 2 
     #the model saving name without suffix 
     model_config['save_model_name'] = 'E_C_model'
     #model saving path
@@ -124,7 +125,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
-    evaluator_manager_config['batch_generator'] = 'cluster'
+    #evaluator_manager_config['batch_generator'] = 'cluster'
     #custom batch generator debug file
     evaluator_manager_config['debug_file'] = 'debug_file.tab'
 
