@@ -13,6 +13,7 @@ class enzyme_data_manager:
         self.config = config
         self.config['name'] = 'enzyme_data_manager'
         self.label_key = config['label_key']
+        self.id_name = config['id_name']
         if not 'class_maps' in self.config:
             self.config['class_maps'] = { 
                     0:{},
@@ -126,38 +127,46 @@ class enzyme_data_manager:
         return y
 
 
-    def reuse_data_process(self):
+    def reuse_data_process(self, sep='\t'):
         reuse_data = self.config['reuse_data']
-        training_set = pd.read_csv(reuse_data[0], sep='\t')
-        test_set = pd.read_csv(reuse_data[1], sep='\t')
+        training_set = pd.DataFrame()
+        test_set = pd.DataFrame()
 
-        config = utili.load_obj(reuse_data[2])
-        self.config['class_maps'] = config['class_maps']
-        self.config['field_map_to_number'] = config['field_map_to_number']
-        self.config['number_to_field'] = config['number_to_field']
-        self.config['max_category'] = config['max_category']
-        self.config['using_set_num'] = config['using_set_num']
-        self.config['max_len'] = config['max_len']
-        self.config['level_num'] = config['level_num']
+        for train in reuse_data['train']:
+            training_set = training_set.append(pd.read_csv(train, sep=sep))
 
-        def convert_str_to_list(s):
-            s = s[1:-1].split(',')
-            ret = []
-            for e in s:
-                ret.append(int(e.strip()))
-            return ret 
+        for test in reuse_data['test']:
+            test_set = test_set.append(pd.read_csv(test, sep=sep))
 
-        level = self.config['level_num']
+        if 'meta' in reuse_data:
+            config = utili.load_obj(reuse_data['meta'])
+            self.config['class_maps'] = config['class_maps']
+            self.config['field_map_to_number'] = config['field_map_to_number']
+            self.config['number_to_field'] = config['number_to_field']
+            self.config['max_category'] = config['max_category']
+            self.config['using_set_num'] = config['using_set_num']
+            self.config['max_len'] = config['max_len']
+            self.config['level_num'] = config['level_num']
 
-        for i in range(level):
-            training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
-            test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
+            def convert_str_to_list(s):
+                s = s[1:-1].split(',')
+                ret = []
+                for e in s:
+                    ret.append(int(e.strip()))
+                return ret 
+
+            level = self.config['level_num']
+
+            for i in range(level):
+                training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
+                test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
+        else:
+            df = pd.read_csv(self.config['file_path'],sep=sep)
+            training_set, test_set = self.process_df(df, training_set, test_set)
+            
         return training_set, test_set
 
-    def normal_process(self, sep):
-        print('normal_process')
-        df = pd.read_csv(self.config['file_path'],sep=sep)
-        utili.print_debug_info(df, info=True)
+    def process_df(self, df, origin_training_set, origin_test_set):
         df = df.dropna()
         
         df[self.label_key] = df[self.label_key].astype(str)
@@ -232,20 +241,34 @@ class enzyme_data_manager:
         target_level = self.config['target_level']
         print('target_level:', target_level)
 
-        training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
-        index_name = 'level%d' % (target_level - 1)
-        training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
-
         df['Sequence'].apply(lambda x:set_max_len(x))
         print('max_len:', self.config['max_len'])
+
+        if origin_training_set is None or origin_test_set is None:
+            print('*************normal split processs*****************')
+            training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
+            index_name = 'level%d' % (target_level - 1)
+            training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
+        else:
+            print('*****************begin to merge data***************')
+            training_set = df.merge(origin_training_set[self.id_name], how='left', on=self.id_name)
+            test_set = df.merge(origin_test_set[self.id_name], how='left', on=self.id_name)
+
 
         if 'save_data' in self.config:
             print('save_data...')
             save_data = self.config['save_data']
-            training_set.to_csv(save_data[0], index=False, sep='\t')
-            test_set.to_csv(save_data[1], index=False, sep='\t')
-            utili.save_obj(self.config, save_data[2])
+            training_set.to_csv(save_data['train'], index=False, sep='\t')
+            test_set.to_csv(save_data['test'], index=False, sep='\t')
+            if 'meta' in save_data: 
+                utili.save_obj(self.config, save_data['meta'])
         return training_set, test_set
+
+    def normal_process(self, sep):
+        print('normal_process')
+        df = pd.read_csv(self.config['file_path'],sep=sep)
+        utili.print_debug_info(df, info=True)
+        return self.process_df(df)
 
     def get_data(self, sep='\t'):
         '''This function is used to get training data, validation data from a csv file
@@ -255,10 +278,10 @@ class enzyme_data_manager:
 
         if 'reuse_data' in self.config:
             print('reuse_data')
-            training_set, test_set = self.reuse_data_process()
+            training_set, test_set = self.reuse_data_process(sep=sep)
         else:
             print('none reuse_data')
-            training_set, test_set = self.normal_process(sep)
+            training_set, test_set = self.normal_process(sep=sep)
 
 
         feature_list = utili.GetNGrams(BioDefine.aaList, self.config['ngram'])
