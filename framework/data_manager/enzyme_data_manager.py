@@ -138,6 +138,11 @@ class enzyme_data_manager:
         for test in reuse_data['test']:
             test_set = test_set.append(pd.read_csv(test, sep=sep))
 
+        print('***********training set********************')
+        print(training_set.head(10))
+        print('***********test set********************')
+        print(test_set.head(10))
+
         if 'meta' in reuse_data:
             config = utili.load_obj(reuse_data['meta'])
             self.config['class_maps'] = config['class_maps']
@@ -163,6 +168,10 @@ class enzyme_data_manager:
         else:
             df = pd.read_csv(self.config['file_path'],sep=sep)
             training_set, test_set = self.process_df(df, training_set, test_set)
+        print('***********<<<<<training set********************')
+        print(training_set.head(10))
+        print('***********<<<<test set********************')
+        print(test_set.head(10))
             
         return training_set, test_set
 
@@ -251,8 +260,24 @@ class enzyme_data_manager:
             training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
         else:
             print('*****************begin to merge data***************')
-            training_set = df.merge(origin_training_set[self.id_name], how='left', on=self.id_name)
-            test_set = df.merge(origin_test_set[self.id_name], how='left', on=self.id_name)
+            print('**********origin_training_set************')
+            print(origin_training_set.head(10))
+            print('**********origin_test_set************')
+            print(origin_test_set.head(10))
+            training_set = df.merge(origin_training_set[self.id_name], how='inner', on=self.id_name)
+            test_set = df.merge(origin_test_set[self.id_name], how='inner', on=self.id_name)
+            print('**************df*********************')
+            print(df.head(10))
+            print('**********training_set************')
+            print(training_set.head(10))
+            print('**********test_set************')
+            print(test_set.head(10))
+            print('shapes..................')
+            print(df.shape)
+            print(origin_training_set.shape)
+            print(origin_test_set.shape)
+            print(training_set.shape)
+            print(test_set.shape)
 
 
         if 'save_data' in self.config:

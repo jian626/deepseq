@@ -49,13 +49,14 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     data_config['class_example_threshhold'] = 1 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
-    data_config['save_data'] = {'train':'train50_.tab', 'test':'test50_.tab', 'meta':'data_config50_'}
+    #data_config['save_data'] = {'train':'train50_.tab', 'test':'test50_.tab', 'meta':'data_config50_'}
     #data_config['save_data'] = {'train':'train50.tab', 'test':'test50.tab'} 
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
-    data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
+    #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
+    data_config['reuse_data'] = {'test':['test_uniprot-reviewed_yes_cluster_by_species.tab'], 'train':['train_uniprot-reviewed_yes_cluster_by_species.tab']}
     #data_config['reuse_data'] = ['train50.tab', 'test50.tab', 'data_config50'] 
     
     model_config = {}
