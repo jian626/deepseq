@@ -3,7 +3,7 @@ import numpy as np
 import random
 import copy
 class SequenceGenerator(Sequence):
-    def __init__(self, data_manager, batch_size, debug_file = None):
+    def __init__(self, data_manager, batch_size, ever_random=True, debug_file = None):
         self.data_manager = data_manager
         self.batch_size = batch_size
         x, y = self.data_manager.get_training_data()
@@ -24,7 +24,26 @@ class SequenceGenerator(Sequence):
             cluster_members = self.cluster_info_store[cluster_name]
             cluster_members.append(i)
         self.cluster_keys = None 
-        self.reset()
+        self.reset(True)
+
+    def get_reset_samples(self):
+        train_examples = []
+        cluster_info = copy.deepcopy(self.cluster_info_store)
+        keys = list(self.cluster_info_store.keys())
+        random.shuffle(keys)
+        for k in range(len(keys)):
+            random.shuffle(cluster_info[k])
+        index = 0
+        while keys:
+            i = index % len(keys)
+            k = keys[i]
+            info = cluster_info[k]
+            train_examples.append(info.pop())
+            if len(info) == 0:
+                del keys[i]
+                del cluster_info[k] 
+            index +=1
+        return train_examples
 
     def reset(self):
         self.sample_len = self.sample_len_store
