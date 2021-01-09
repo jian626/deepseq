@@ -23,15 +23,16 @@ class SequenceGenerator(Sequence):
                 self.cluster_info_store[cluster_name] = []
             cluster_members = self.cluster_info_store[cluster_name]
             cluster_members.append(i)
+        self.ever_random = ever_random
         self.cluster_keys = None 
-        self.reset(True)
+        self.train_examples = self.get_reset_samples() 
 
     def get_reset_samples(self):
         train_examples = []
         cluster_info = copy.deepcopy(self.cluster_info_store)
         keys = list(self.cluster_info_store.keys())
         random.shuffle(keys)
-        for k in range(len(keys)):
+        for k in keys:
             random.shuffle(cluster_info[k])
         index = 0
         while keys:
@@ -45,75 +46,26 @@ class SequenceGenerator(Sequence):
             index +=1
         return train_examples
 
-    def reset(self):
-        self.sample_len = self.sample_len_store
-        self.cluster_info = copy.deepcopy(self.cluster_info_store)
-        for k in self.cluster_info:
-            random.shuffle(self.cluster_info[k])
-        self.cluster_keys = list(self.cluster_info.keys())
-        random.shuffle(self.cluster_keys)
-        self.cluster_keys = np.array(self.cluster_keys)
-
     def __getitem__(self, index):
-        x, y = self.data_manager.get_training_data()
-        result = []
-        sample_len = self.sample_len
-        needed = min(self.batch_size, sample_len)
-
-        print('get item begin:', sample_len, index, needed, len(self.cluster_keys), len(self.cluster_info))
-
-        need_to_del_keys_index  = []
-
-        if len(self.cluster_keys) >= needed:
-            for i in range(needed):
-                relative_index = (i+(index * self.batch_size))% len(self.cluster_keys)
-                key = self.cluster_keys[relative_index]
-                try:
-                    members = self.cluster_info[key]
-                except:
-                    print('---------bad key:', key)
-                    print(len(self.cluster_keys), len(self.cluster_info), i, len(need_to_del_keys_index))
-                    raise
-                result.append(members.pop()) 
-                sample_len -= 1
-                if len(members) == 0:
-                    need_to_del_keys_index.append(relative_index)
-                    del self.cluster_info[key]
-        else:
-            while needed>len(result):
-                cluster_keys = list(self.cluster_info.keys())
-                random.shuffle(cluster_keys)
-                for k in cluster_keys:
-                    members = self.cluster_info[k]
-                    result.append(members.pop())
-                    if not members:
-                        del self.cluster_info[k]
-                    sample_len -= 1
-                    if needed <= len(result):
-                        break
-        if need_to_del_keys_index:
-            print('need to del')
-            self.cluster_keys = np.delete(self.cluster_keys, need_to_del_keys_index)
-
-        self.sample_len = sample_len
+        begin = index * self.batch_size
+        end = begin + self.batch_size
+        result = self.train_examples[begin:end]
         training_set, _ = self.data_manager.get_training_and_test_set()
-        rx = x[result] 
-        ry = []
-
-        task_num = self.data_manager.get_task_num()
-
-        for i in range(task_num):
-            ry.append(y[i][result])
-
-        print('get item end:', index)
         if self.debug_file:
             debug_df = training_set.iloc[result][['Entry', 'Entry name', 'EC number', 'Cluster name']]
             debug_df.to_csv(self.debug_file, sep='\t', index=False, mode='a')
+        x, y = self.data_manager.get_training_data()
+        rx = x[result]
+        ry = []
+        task_num = self.data_manager.get_task_num()
+        for i in range(task_num):
+            ry.append(y[i][result])
         return rx, ry
 
     def __len__(self):
         return self.batch_num
 
     def on_epoch_end(self):
-        self.reset()
+        if self.ever_random:
+            self.train_examples = self.get_reset_samples()
         self.debug_file = None

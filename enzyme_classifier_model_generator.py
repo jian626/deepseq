@@ -130,7 +130,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #evaluator manager name: current support common_evaluator_manager
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
-    #evaluator_manager_config['batch_generator'] = 'cluster'
+    evaluator_manager_config['batch_generator'] = 'cluster'
     #custom batch generator debug file
     evaluator_manager_config['debug_file'] = 'debug_file.tab'
 
