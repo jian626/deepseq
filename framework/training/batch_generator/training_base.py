@@ -2,6 +2,7 @@ from tensorflow.keras.utils import Sequence
 import numpy as np
 import random
 import copy
+from framework.utili import get_table_value
 class training_base(Sequence):
     def reset_samples(self):
         pass
@@ -45,10 +46,10 @@ class training_base(Sequence):
 
 class cluster_training_base(training_base):
     def __init__(self, data_manager, batch_size, config):
-        cluster_col_name = config['cluster_col_name']
-        ever_random = config['ever_random']
-        debug_file = config['debug_file']
-        log_colums = config['log_colums']
+        cluster_col_name = get_table_value(config,'cluster_col_name', 'Cluster name')
+        ever_random = get_table_value(config, 'ever_random', False)
+        debug_file = get_table_value(config, 'debug_file')
+        log_colums = get_table_value(config, 'log_colums')
 
         self.data_manager = data_manager
         self.batch_size = batch_size
