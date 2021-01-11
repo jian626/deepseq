@@ -4,7 +4,7 @@ from framework import utili
 from datetime import datetime
 from framework.evaluator_manager import evaluator_manager_creator
 #from framework.training.batch_generator.cluster_random_sampling import SequenceGenerator
-from framework.training.batch_generator.cluster_random_sampling import homogenous_cluster_training as SequenceGenerator
+from framework.training.batch_generator.cluster_homogenous_training import homogenous_cluster_training as SequenceGenerator
     
 class common_evaluator_manager:
     name = 'common_evaluator_manager'
