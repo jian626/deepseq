@@ -1,4 +1,4 @@
-from framework.training.batch_generator.training_base import Sequence
+from framework.training.batch_generator.training_base import cluster_training_base
 import numpy as np
 import random
 import copy
