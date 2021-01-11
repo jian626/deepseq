@@ -51,6 +51,7 @@ class cluster_training_base(training_base):
         debug_file = get_table_value(config, 'debug_file')
         log_colums = get_table_value(config, 'log_colums')
 
+        self.ever_random = ever_random
         self.data_manager = data_manager
         self.batch_size = batch_size
         self.log_colums = log_colums 
