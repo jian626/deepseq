@@ -7,10 +7,10 @@ class training_base(Sequence):
     def reset_samples(self):
         pass
 
-    def get_train_examples():
+    def get_train_examples(self):
         pass
 
-    def get_log_columns_names():
+    def get_log_columns_names(self):
         pass
 
     def need_reset(self):
@@ -75,7 +75,7 @@ class cluster_training_base(training_base):
         self.cluster_keys = None 
         self.reset_samples()
 
-    def get_log_columns_names():
+    def get_log_columns_names(self):
         return self.log_colums
 
     def need_reset(self):
@@ -84,7 +84,7 @@ class cluster_training_base(training_base):
     def get_debug_file_name(self):
         return self.debug_file
 
-    def get_train_examples():
+    def get_train_examples(self):
         return self.train_examples
 
     def __len__(self):
