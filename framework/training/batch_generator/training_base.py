@@ -44,7 +44,7 @@ class training_base(Sequence):
         self.debug_file = None
 
 class cluster_training_base(training_base):
-    def __init__(self, data_manager, batch_size, config)
+    def __init__(self, data_manager, batch_size, config):
         cluster_col_name = config['cluster_col_name']
         ever_random = config['ever_random']
         debug_file = config['debug_file']
