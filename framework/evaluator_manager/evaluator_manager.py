@@ -63,7 +63,7 @@ class common_evaluator_manager:
         if 'batch_generator' in self.config:
             print('batch_generator:', self.config['batch_generator'])
             if not self.sg:
-                self.sg = SequenceGenerator(self.data_manager, self.config['batch_generator']['config'])
+                self.sg = SequenceGenerator(self.data_manager, batch_size, self.config['batch_generator']['config'])
             self.model_manager.fit_generator(self.sg, epochs = epochs)
         else:
             print('batch_generator:', 'default')
