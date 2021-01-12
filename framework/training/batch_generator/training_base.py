@@ -45,11 +45,12 @@ class training_base(Sequence):
         self.debug_file = None
 
 class cluster_training_base(training_base):
-    def __init__(self, data_manager, batch_size, config):
+    def __init__(self, config, data_manager):
         cluster_col_name = get_table_value(config,'cluster_col_name', 'Cluster name')
         ever_random = get_table_value(config, 'ever_random', False)
         debug_file = get_table_value(config, 'debug_file')
         log_colums = get_table_value(config, 'log_colums')
+        batch_size = get_table_value(config, 'batch_size')
 
         self.ever_random = ever_random
         self.data_manager = data_manager

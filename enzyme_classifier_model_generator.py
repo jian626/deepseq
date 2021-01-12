@@ -137,7 +137,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
             'cluster_col_name':'Cluster name',
             'ever_random': False 
             }
-    evaluator_manager_config['batch_generator'] = {'name':'inhomogeneous_cluster', 'config':batch_generator_config}
+    evaluator_manager_config['batch_generator'] = batch_generator_config 
     #custom batch generator debug file
     evaluator_manager_config['debug_file'] = 'debug_file.tab'
 

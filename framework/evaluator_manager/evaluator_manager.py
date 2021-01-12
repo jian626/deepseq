@@ -3,9 +3,10 @@ import pandas as pd
 from framework import utili
 from datetime import datetime
 from framework.evaluator_manager import evaluator_manager_creator
+from framework.training.batch_generator.batch_generator_creator import creator as batch_generator_creator 
 #from framework.training.batch_generator.cluster_random_sampling import SequenceGenerator
 #from framework.training.batch_generator.inhomogenous_cluster_training import inhomogenous_cluster_training as SequenceGenerator
-from framework.training.batch_generator.homogenous_cluster_training import homogenous_cluster_training as SequenceGenerator
+#from framework.training.batch_generator.homogenous_cluster_training import homogenous_cluster_training as SequenceGenerator
     
 class common_evaluator_manager:
     name = 'common_evaluator_manager'
@@ -63,8 +64,11 @@ class common_evaluator_manager:
 
         if 'batch_generator' in self.config:
             print('batch_generator:', self.config['batch_generator'])
+            batch_generator_config = self.config['batch_generator'] 
             if not self.sg:
-                self.sg = SequenceGenerator(self.data_manager, batch_size, self.config['batch_generator']['config'])
+                batch_generator_config['batch_size'] = batch_size
+                bgc = batch_generator_creator()
+                self.sg = bgc.create(batch_generator_config, self.data_manager)
             self.model_manager.fit_generator(self.sg, epochs = epochs)
         else:
             print('batch_generator:', 'default')
