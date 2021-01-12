@@ -4,6 +4,7 @@ import random
 import copy
 class homogenous_cluster_training(cluster_training_base):
     def reset_samples(self):
+        train_examples = []
         for _, v in self.cluster_info_store.items():
             train_examples += v
 
