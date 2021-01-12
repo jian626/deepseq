@@ -131,7 +131,7 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
     batch_generator_config = {
-            'name': 'inhomogenous_cluster_training',
+            'name': 'homogenous_cluster_training',
             'debug_file':'debug_cluster.log',
             'log_colums':['Entry', 'Entry name', 'EC number', 'Cluster name'],
             'cluster_col_name':'Cluster name',
