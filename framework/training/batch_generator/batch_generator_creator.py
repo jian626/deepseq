@@ -1,5 +1,4 @@
 from framework import register
-from framework.
 
 class creator(register.base):
     def create(self, config, data_manager):
