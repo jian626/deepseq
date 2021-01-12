@@ -8,5 +8,6 @@ class homogenous_cluster_training(cluster_training_base):
         keys = list(self.cluster_info_store.keys())
         random.shuffle(keys)
         for k in keys:
+            random.shuffle(self.cluster_info_store[k])
             train_examples += self.cluster_info_store[k]
         self.train_examples = train_examples
