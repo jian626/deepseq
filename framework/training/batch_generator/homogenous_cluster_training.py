@@ -1,5 +1,5 @@
 from framework.training.batch_generator.training_base import cluster_training_base
-from framework.training.batch_generator.batch_generator_creator import creator
+from framework.training.batch_generator import batch_generator_creator as creator
 import numpy as np
 import random
 import copy
