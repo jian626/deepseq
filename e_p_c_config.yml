@@ -1,0 +1,89 @@
+data_config:
+    name: 'enzyme_protein_data_manager'
+    file_path: 'uniprot-reviewed_yes.tab'
+    #max length of sequence, the sequence beyond that will be eliminated
+    max_len: 1000
+    #print statistics switch
+    print_statistics: True
+    #the used proportion of data 
+    fraction: 1
+    #ngram
+    ngram: 1 
+    #training percentage
+    train_percent: 0.7
+    #currently only 1 is supported for enzyme protein classifier generator
+    task_num: 1 
+
+basic_cnn_manager: &basic_cnn_manager
+
+    #embedding dimension 
+    embedding_dims: 16
+    #the last hidden layer width 
+    hidden_width: 256
+    #convolutional layer kernel width
+    conv_kernel_width: 3
+    #convolutional layer strides 
+    conv_strides: 1
+    #how many CNN layers 
+    layer_len: 1
+    #how many convolutional layers per CNN layer 
+    conv_len: 1
+    #the increase value of each convolutional layer relative to previous convolutional layer
+    filter_delta: 16
+    #pooling size
+    pool_size: 16
+    #pooling strides 
+    pooling_strides: 16
+    #the generated model name without 
+    save_model_name: 'E_P_model'
+    #where the model will be generated
+    save_path: './models/'
+    #last activation
+    last_activation: 'softmax'
+    #losst function
+    loss_function: 'categorical_crossentropy'
+    #optimizer name
+    optimizer: 'Adam'
+    #Main part manager name, support basic_cnn_manager, dense_net_manager
+    name: 'basic_cnn_manager'
+    #early_stopping, only for single task currently
+    early_stopping: True
+    #after how many epoch the learning will stop if there is no improvement. effective only early_stopping takes effect 
+    patience: 40
+    
+    #following commented out configuration is for  dense_net 
+dense_net_manager:
+    name: 'dense_net_manager'
+    dense_type: 'd121' #if dense_net_manager is used, it can be d121,d169,d201 or d264 
+    dense_k: 12 #dense_net configurations
+    conv_kernel_width: 3
+    bottleneck_size: 1
+    transition_pool_size: 2
+    transition_pool_stride: 2 
+    theta: 1
+    initial_conv_width: 3
+    initial_stride: 1
+    initial_filters: 12 
+    initial_pool_width: 2
+    initial_pool_stride: 2 
+    use_global_pooling: False
+
+model_config: *basic_cnn_manager
+
+evaluator_manager_config:
+    #summary result switch
+    print_summary: True
+    #epochs
+    epochs: 30 
+    #batch size
+    batch_size: 200
+    #print report swith
+    print_report: True
+    #this function is in experiment 
+    batch_round: False
+    #this function is in experiment 
+    round_size: 1
+    #evaluator manager name: currently only common_evaluator_manager
+    name: 'common_evaluator_manager'
+    #need to train model or just print some information 
+    train_model: True
