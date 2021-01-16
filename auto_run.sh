@@ -10,7 +10,7 @@ do
 		arrIN=(${tmp//./ })
 		tmp=${arrIN[0]}
 		tmp="${tmp}_${count}_.log"
-		`python enzyme_classifier_model_generator.py $name | tee $tmp`
+		python enzyme_classifier_model_generator.py $name | tee $tmp
 	done
 	count=$(( count + 1 ))
 done
