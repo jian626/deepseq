@@ -175,7 +175,7 @@ class enzyme_data_manager:
             
         return training_set, test_set
 
-    def process_df(self, df, origin_training_set, origin_test_set):
+    def process_df(self, df, origin_training_set=None, origin_test_set=None):
         df = df.dropna()
         
         df[self.label_key] = df[self.label_key].astype(str)

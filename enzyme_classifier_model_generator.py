@@ -51,13 +51,14 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     #object of python, and it will be saved with ending of .pkl
     #data_config['save_data'] = {'train':'train50_.tab', 'test':'test50_.tab', 'meta':'data_config50_'}
     #data_config['save_data'] = {'train':'train50.tab', 'test':'test50.tab'} 
+    #data_config['save_data'] = {'train':'train_random.tab', 'test':'test_random.tab'} 
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     data_config['reuse_data'] = {'test':['test_uniprot-reviewed_yes_cluster_by_species.tab'], 'train':['train_uniprot-reviewed_yes_cluster_by_species.tab']}
-    #data_config['reuse_data'] = ['train50.tab', 'test50.tab', 'data_config50'] 
+    #data_config['reuse_data'] = {'train':['train_random.tab'], 'test':['test_random.tab']} 
     
     model_config = {}
     #embedding dimension
@@ -131,13 +132,13 @@ def run(file_path=None, input_data_config={}, input_model_config={}, input_evalu
     evaluator_manager_config['name'] = 'common_evaluator_manager'
     #customized batch
     batch_generator_config = {
-            'name': 'homogenous_cluster_training',
+            'name': 'inhomogenous_cluster_training',
             'debug_file':'debug_cluster.log',
             'log_colums':['Entry', 'Entry name', 'EC number', 'Cluster name'],
             'cluster_col_name':'Cluster name',
             'ever_random': False 
             }
-    evaluator_manager_config['batch_generator'] = batch_generator_config 
+    #evaluator_manager_config['batch_generator'] = batch_generator_config 
     #custom batch generator debug file
     evaluator_manager_config['debug_file'] = 'debug_file.tab'
 
