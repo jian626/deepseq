@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) < 1:
         print('please input configure file')
-        return
-    config_path = sys.argv[1]
-    run(config_path)
+    else:
+        config_path = sys.argv[1]
+        run(config_path)
     
