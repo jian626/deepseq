@@ -10,7 +10,7 @@ do
 		arrIN=(${tmp//./ })
 		tmp=${arrIN[0]}
 		tmp="${tmp}_${count}_.log"
-		echo $tmp
+		python $name | tee $tmp
 	done
 	count=$(( count + 1 ))
 done
