@@ -1,5 +1,7 @@
 #!/bin/bash
 number=$1
+dir_name=$2
+shift
 shift
 count=0
 while [ $count -lt $number ]
@@ -10,7 +12,7 @@ do
 		arrIN=(${tmp//./ })
 		tmp=${arrIN[0]}
 		tmp="${tmp}_${count}_.log"
-		python enzyme_classifier_model_generator.py $name | tee $tmp
+		python enzyme_classifier_model_generator.py ${dir_name}${name} | tee $tmp
 	done
 	count=$(( count + 1 ))
 done
