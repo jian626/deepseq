@@ -124,5 +124,3 @@ evaluator_manager_config:
          cluster_col_name: 'Cluster name',
          ever_random: True 
         }
-    #custom batch generator debug file
-    debug_file: 'debug_file.tab'
