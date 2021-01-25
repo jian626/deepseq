@@ -40,7 +40,7 @@ class model_common_manager:
         active_training_config = None
         if 'active_training' in self.config:
             active_training_config = self.config['active_training']
-        history = self.get_model().fit(x_train, y_train, epochs=1,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        history = self.get_model().fit(x_train, y_train, epochs=1,  batch_size=batch_size, validation_split=1/6)
         print(history.history)
 
     def fit(self, x_train, y_train, epochs, batch_size):  
