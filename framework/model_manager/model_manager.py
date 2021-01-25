@@ -36,6 +36,13 @@ class model_common_manager:
         loss_function = self.config['loss_function']
         self.get_model().compile(optimizer=optimizer, loss=[loss_function] * task_num , metrics=['categorical_accuracy'] * task_num)
 
+    def fit_active_training(self, x_train, y_train, epochs, batch_size):
+        active_training_config = None
+        if 'active_training' in self.config:
+            active_training_config = self.config['active_training']
+        history = self.get_model().fit(x_train, y_train, epochs=1,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        print(history.history)
+
     def fit(self, x_train, y_train, epochs, batch_size):  
         callbacks = []
         task_num = self.data_manager.get_task_num()

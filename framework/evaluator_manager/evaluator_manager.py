@@ -62,7 +62,11 @@ class common_evaluator_manager:
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
 
-        if 'batch_generator' in self.config:
+        #if 'active_training' in self.config: 
+        if True: 
+            self.model_manager.fit_active_training(x_train, y_train, epochs, batch_size)
+
+        elif 'batch_generator' in self.config:
             print('batch_generator:', self.config['batch_generator'])
             batch_generator_config = self.config['batch_generator'] 
             if not self.sg:
