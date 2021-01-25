@@ -41,7 +41,7 @@ class model_common_manager:
         if 'active_training' in self.config:
             active_training_config = self.config['active_training']
         self.get_model().fit(x_train, y_train, epochs=1,  batch_size=batch_size, validation_split=1/6)
-        training_loss = self.get_model().test_on_batch(x_train, y_train, return_dict=True)
+        training_loss = self.get_model().test_on_batch(x_train, y_train)
         print(training_loss)
 
     def fit(self, x_train, y_train, epochs, batch_size):  
