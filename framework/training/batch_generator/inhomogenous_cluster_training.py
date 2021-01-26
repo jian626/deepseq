@@ -26,8 +26,8 @@ class inhomogenous_cluster_training(cluster_training_base):
             index +=1
         self.train_examples = train_examples
 
-def create(config, data_manager):
-    return inhomogenous_cluster_training(config, data_manager)
+def create(config, context):
+    return inhomogenous_cluster_training(config, context)
 
 
 creator.instance.register(inhomogenous_cluster_training.name, create)

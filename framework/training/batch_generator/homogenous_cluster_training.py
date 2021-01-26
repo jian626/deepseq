@@ -14,7 +14,7 @@ class homogenous_cluster_training(cluster_training_base):
             train_examples += self.cluster_info_store[k]
         self.train_examples = train_examples
 
-def create(config, data_manager):
-    return homogenous_cluster_training(config, data_manager)
+def create(config, context):
+    return homogenous_cluster_training(config, context)
 
 creator.instance.register(homogenous_cluster_training.name, create)

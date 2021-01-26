@@ -1,10 +1,10 @@
 from framework import register
 
 class creator(register.base):
-    def create(self, config, data_manager):
+    def create(self, config, context):
         name = config['name']
         fn = self.get_entry(name)
-        return fn(config, data_manager)
+        return fn(config, context)
 
 instance = creator()
 
