@@ -91,6 +91,9 @@ class common_evaluator_manager:
             evaluator.evaluate(y_pred, y_test, len(x_test), self.config['print_report'])
         return 
 
+def get_model_manager(self):
+    return self.model_manager
+
 def create(config, data_manager, model_manager, evaluator_list):
     return common_evaluator_manager(config, data_manager, model_manager, evaluator_list)
 
