@@ -1,7 +1,7 @@
 from framework.training.batch_generator.training_base import training_base  
 from framework.training.batch_generator import batch_generator_creator as creator
 from framework.utili import get_table_value
-from framework.algorithm.loss_function import binary_entropy
+from framework.algorithm import loss_function 
 import numpy as np
 import random
 import copy
@@ -47,13 +47,13 @@ class loss_sampling(training_base):
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
         predicted = model.predict(x)[3]
-        cross_np_loss = binary_entropy(y[3], predicted)
+        loss = loss_function.binary_entropy(y[3], predicted)
         indices = None
         hard_first = utili.get_table_value(self.config, 'hard_first', False) 
         if self.config['hard_first']:
-            indices = np.argsort(-cross_np_loss)
+            indices = np.argsort(-loss)
         else:
-            indices = np.argsort(cross_np_loss)
+            indices = np.argsort(loss)
         self.train_examples = indices 
 
     def __len__(self):
