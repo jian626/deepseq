@@ -23,6 +23,8 @@ class loss_sampling(training_base):
         self.batch_size = batch_size
         self.log_colums = log_colums 
         self.reset_samples()
+        x, y = self.data_manager.get_training_data()
+        self.batch_num = int(np.floor(len(x) / self.batch_size))
 
     def get_train_examples(self):
         return self.train_examples
@@ -50,6 +52,9 @@ class loss_sampling(training_base):
         cross_np_loss = self.get_binary_entropy(y[3], predicted)
         indices = np.argsort(-cross_np_loss)
         self.train_examples = indices 
+
+    def __len__(self):
+        return self.batch_num 
 
 def create(config, context):
     return loss_sampling(config, context)
