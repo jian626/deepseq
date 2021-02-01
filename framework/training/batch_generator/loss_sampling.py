@@ -46,7 +46,7 @@ class loss_sampling(training_base):
         mm = self.model_manager
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
-        predicted = model.predict(x, y)[3]
+        predicted = model.predict(x)[3]
         cross_np_loss = get_binary_entropy(y[3], predicted)
         indices = np.argsort(-cross_np_loss)
         self.train_examples = indices 
