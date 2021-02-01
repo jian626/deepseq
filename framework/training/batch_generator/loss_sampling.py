@@ -38,7 +38,7 @@ class loss_sampling(training_base):
         return True 
 
     def get_debug_file_name(self):
-        debug_file = utili.get_table_value(self.config,'debug_file', None)
+        debug_file = get_table_value(self.config,'debug_file', None)
         return debug_file 
 
     def reset_samples(self):
