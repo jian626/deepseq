@@ -22,6 +22,7 @@ class loss_sampling(training_base):
         self.model_manager = model_manager
         self.batch_size = batch_size
         self.log_colums = log_colums 
+        self.reset_samples()
 
     def get_train_examples(self):
         return self.train_examples
@@ -41,6 +42,7 @@ class loss_sampling(training_base):
         return -1 * (np.sum(y * np.log(y_) + (1-y) * np.log(1-y_), axis=1))
 
     def reset_samples(self):
+        print('---------------------------reset_samples--------------------------------')
         mm = self.evaluator_manager.get_model_manager()
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
