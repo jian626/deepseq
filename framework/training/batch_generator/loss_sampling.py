@@ -1,5 +1,6 @@
 from framework.training.batch_generator.training_base import training_base  
 from framework.training.batch_generator import batch_generator_creator as creator
+from framework.utili import get_table_value
 import numpy as np
 import random
 import copy
