@@ -44,10 +44,14 @@ class loss_sampling(training_base):
     def reset_samples(self):
         print('---------------------------reset_samples--------------------------------')
         mm = self.model_manager
+        print('-1')
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
+        print('-2')
         predicted = model.predict(x)[3]
+        print('-3')
         loss = loss_function.binary_entropy(y[3], predicted)
+        print('-4')
         indices = None
         hard_first = get_table_value(self.config, 'hard_first', False) 
         sampling_with_replace = get_table_value(self.config, 'sampling_with_replace', None)
