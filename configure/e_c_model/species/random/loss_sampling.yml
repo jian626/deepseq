@@ -123,6 +123,6 @@ evaluator_manager_config:
          debug_file: 'debug_cluster.log',
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
          cluster_col_name: 'Cluster name',
-         sampling_with_replacement: True,
+         sampling_with_replace: True,
          hard_first: True 
         }
