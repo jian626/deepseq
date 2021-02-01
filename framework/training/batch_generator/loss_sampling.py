@@ -49,7 +49,7 @@ class loss_sampling(training_base):
         predicted = model.predict(x)[3]
         loss = loss_function.binary_entropy(y[3], predicted)
         indices = None
-        hard_first = utili.get_table_value(self.config, 'hard_first', False) 
+        hard_first = get_table_value(self.config, 'hard_first', False) 
         if self.config['hard_first']:
             indices = np.argsort(-loss)
         else:
