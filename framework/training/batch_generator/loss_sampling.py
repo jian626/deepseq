@@ -51,13 +51,18 @@ class loss_sampling(training_base):
         indices = None
         hard_first = get_table_value(self.config, 'hard_first', False) 
         sampling_with_replace = get_table_value(self.config, 'sampling_with_replace', None)
+        print('0')
         if not sampling_with_replace is None:
             n = len(predicted)
             if hard_first:
+                print('1')
                 p = loss /np.sum(loss)
+                print('2')
             else:
                 p = 1 - loss /np.sum(loss)
+            print('3')
             indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replace, p=p)
+            print('4')
         else:
             if hard_first:
                 indices = np.argsort(-loss)
