@@ -124,4 +124,5 @@ evaluator_manager_config:
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
          cluster_col_name: 'Cluster name',
          ever_random: True 
+         #hard_first: False
         }

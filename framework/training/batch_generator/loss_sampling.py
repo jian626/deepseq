@@ -1,6 +1,7 @@
 from framework.training.batch_generator.training_base import training_base  
 from framework.training.batch_generator import batch_generator_creator as creator
 from framework.utili import get_table_value
+from framework.algorithm.loss_function import binary_entropy
 import numpy as np
 import random
 import copy
@@ -9,6 +10,7 @@ class loss_sampling(training_base):
 
     def __init__(self, config, context):
         self.context = context
+        self.config = config
         cluster_col_name = get_table_value(config,'cluster_col_name', 'Cluster name')
         ever_random = get_table_value(config, 'ever_random', False)
         debug_file = get_table_value(config, 'debug_file')
@@ -38,19 +40,19 @@ class loss_sampling(training_base):
     def get_debug_file_name(self):
         return None
 
-    def get_binary_entropy(self, y, y_, epsilon=1e-12):
-        y = np.clip(y, epsilon, 1. - epsilon)
-        y_ = np.clip(y_, epsilon, 1. - epsilon)
-        return -1 * (np.sum(y * np.log(y_) + (1-y) * np.log(1-y_), axis=1))
-
     def reset_samples(self):
         print('---------------------------reset_samples--------------------------------')
         mm = self.model_manager
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
         predicted = model.predict(x)[3]
-        cross_np_loss = self.get_binary_entropy(y[3], predicted)
-        indices = np.argsort(-cross_np_loss)
+        cross_np_loss = binary_entropy(y[3], predicted)
+        indices = None
+        hard_first = utili.get_table_value(self.config, 'hard_first', False) 
+        if self.config['hard_first']:
+            indices = np.argsort(-cross_np_loss)
+        else:
+            indices = np.argsort(cross_np_loss)
         self.train_examples = indices 
 
     def __len__(self):
