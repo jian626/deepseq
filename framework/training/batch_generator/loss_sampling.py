@@ -35,7 +35,6 @@ class loss_sampling(training_base):
     def get_debug_file_name(self):
         return None
 
-
     def get_binary_entropy(y, y_, epsilon=1e-12):
         y = np.clip(y, epsilon, 1. - epsilon)
         y_ = np.clip(y_, epsilon, 1. - epsilon)

@@ -118,7 +118,8 @@ evaluator_manager_config:
     name: 'common_evaluator_manager'
     #customized batch
     batch_generator: 
-        {name: 'loss_sampling',
+        {name: 'homogenous_cluster_training',
+        #{name: 'loss_sampling',
          #debug_file: 'debug_cluster.log',
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
          cluster_col_name: 'Cluster name',
