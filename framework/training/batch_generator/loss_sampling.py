@@ -50,10 +50,20 @@ class loss_sampling(training_base):
         loss = loss_function.binary_entropy(y[3], predicted)
         indices = None
         hard_first = get_table_value(self.config, 'hard_first', False) 
-        if self.config['hard_first']:
-            indices = np.argsort(-loss)
+        sampling_with_replace = get_table_value(self.config, 'sampling_with_replace', None)
+        if not sampling_with_replacement is None:
+            n = len(predicted)
+            if hard_first:
+                p = loss /np.sum(loss)
+            else:
+                p = 1 - loss /np.sum(loss)
+            indices = [x for x in range(n)]
+            indices = np.random.choice(a=indices, size=n, replace=sampling_with_replacement, p=p)
         else:
-            indices = np.argsort(loss)
+            if hard_first:
+                indices = np.argsort(-loss)
+            else:
+                indices = np.argsort(loss)
         self.train_examples = indices 
 
     def __len__(self):
