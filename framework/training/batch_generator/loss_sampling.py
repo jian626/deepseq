@@ -43,7 +43,7 @@ class loss_sampling(training_base):
 
     def reset_samples(self):
         print('---------------------------reset_samples--------------------------------')
-        mm = self.evaluator_manager.get_model_manager()
+        mm = self.model_manager
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
         predicted = model.predict(x, y)[3]
