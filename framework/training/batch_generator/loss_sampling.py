@@ -36,7 +36,7 @@ class loss_sampling(training_base):
     def get_debug_file_name(self):
         return None
 
-    def get_binary_entropy(y, y_, epsilon=1e-12):
+    def get_binary_entropy(self, y, y_, epsilon=1e-12):
         y = np.clip(y, epsilon, 1. - epsilon)
         y_ = np.clip(y_, epsilon, 1. - epsilon)
         return -1 * (np.sum(y * np.log(y_) + (1-y) * np.log(1-y_), axis=1))
@@ -47,7 +47,7 @@ class loss_sampling(training_base):
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
         predicted = model.predict(x)[3]
-        cross_np_loss = get_binary_entropy(y[3], predicted)
+        cross_np_loss = self.get_binary_entropy(y[3], predicted)
         indices = np.argsort(-cross_np_loss)
         self.train_examples = indices 
 
