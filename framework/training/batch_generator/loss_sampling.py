@@ -57,8 +57,7 @@ class loss_sampling(training_base):
                 p = loss /np.sum(loss)
             else:
                 p = 1 - loss /np.sum(loss)
-            indices = [x for x in range(n)]
-            indices = np.random.choice(a=indices, size=n, replace=sampling_with_replacement, p=p)
+            indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replacement, p=p)
         else:
             if hard_first:
                 indices = np.argsort(-loss)
