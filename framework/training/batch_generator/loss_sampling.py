@@ -65,7 +65,8 @@ class loss_sampling(training_base):
             else:
                 p = 1 - loss /np.sum(loss)
             print('3')
-            indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replace, p=p)
+            #indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replace, p=p)
+            indices = random.choices([x for x in range(n)], weights=p, k=n)
             print('4')
         else:
             if hard_first:
