@@ -103,7 +103,7 @@ model_config: *basic_cnn_manager
 evaluator_manager_config:
     print_summary: True
     #epochs
-    epochs: 20 
+    epochs: 15 
     #batch_size
     batch_size: 200 
     #print report switch
