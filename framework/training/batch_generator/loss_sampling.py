@@ -42,32 +42,26 @@ class loss_sampling(training_base):
         return debug_file 
 
     def reset_samples(self):
+        test_file = open('test_log.txt', 'a')
         print('---------------------------reset_samples--------------------------------')
         mm = self.model_manager
-        print('-1')
         x, y = self.data_manager.get_training_data()
         model = mm.get_model()
-        print('-2')
         predicted = model.predict(x)[3]
-        print('-3')
         loss = loss_function.binary_entropy(y[3], predicted)
-        print('-4')
         indices = None
         hard_first = get_table_value(self.config, 'hard_first', False) 
         sampling_with_replace = get_table_value(self.config, 'sampling_with_replace', None)
-        print('0')
         if not sampling_with_replace is None:
             n = len(predicted)
             if hard_first:
-                print('1')
                 p = loss /np.sum(loss)
-                print('2')
             else:
                 p = 1 - loss /np.sum(loss)
-            print('3')
             #indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replace, p=p)
             indices = random.choices([x for x in range(n)], weights=p, k=n)
-            print('4')
+            test_file.writelines(str(indices))
+        test_file.close()
         else:
             if hard_first:
                 indices = np.argsort(-loss)
