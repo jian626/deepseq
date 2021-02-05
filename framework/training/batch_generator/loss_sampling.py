@@ -61,7 +61,7 @@ class loss_sampling(training_base):
             #indices = np.random.choice(a=[x for x in range(n)], size=n, replace=sampling_with_replace, p=p)
             indices = random.choices([x for x in range(n)], weights=p, k=n)
             test_file.writelines(str(indices))
-        test_file.close()
+            test_file.close()
         else:
             if hard_first:
                 indices = np.argsort(-loss)
