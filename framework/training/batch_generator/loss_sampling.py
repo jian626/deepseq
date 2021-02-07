@@ -70,6 +70,7 @@ class loss_sampling(training_base):
         self.train_examples = indices 
 
     def __len__(self):
+        print('__len__:', self.batch_num)
         return self.batch_num 
 
 def create(config, context):
