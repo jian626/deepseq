@@ -82,6 +82,7 @@ class common_evaluator_manager:
         elif 'training_method' in self.config:
             training_method_confg = self.config['training_method']
             training_method_confg['batch_size'] = batch_size
+            context = {}
             context['data_manager'] = self.data_manager
             context['model_manager'] = self.model_manager
             training_method = training_method_generator.instance.create(training_method_confg, context)
