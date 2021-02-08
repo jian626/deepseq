@@ -124,5 +124,12 @@ evaluator_manager_config:
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
          cluster_col_name: 'Cluster name',
          sampling_with_replace: False,
-         hard_first: True 
+         hard_first: True,
+        }
+    training_method:
+        {name: 'training_on_batch',
+         period_of_sort: 200,
+         recomputation_freq_per_epoch: 50,
+         ratio_of_recomputation: 1.0,
+         sel: 100
         }

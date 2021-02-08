@@ -4,6 +4,7 @@ from framework import utili
 from datetime import datetime
 from framework.evaluator_manager import evaluator_manager_creator
 from framework.training.batch_generator import batch_generator_creator 
+from framework.training.method import training_method_generator 
 #from framework.training.batch_generator.cluster_random_sampling import SequenceGenerator
 #from framework.training.batch_generator.inhomogenous_cluster_training import inhomogenous_cluster_training as SequenceGenerator
 #from framework.training.batch_generator.homogenous_cluster_training import homogenous_cluster_training as SequenceGenerator
@@ -78,6 +79,13 @@ class common_evaluator_manager:
                 context['model_manager'] = self.model_manager
                 self.sg = batch_generator_creator.instance.create(batch_generator_config, context)
             self.model_manager.fit_generator(self.sg, epochs = epochs)
+        elif 'train_method' in self.config:
+            train_method_confg = self.config['train_method']
+            train_method_confg['batch_size'] = batch_size
+            context['data_manager'] = self.data_manager
+            context['model_manager'] = self.model_manager
+            training_method = training_method_generator.instance.create(train_method_confg, context)
+            training_method.train()
         else:
             print('batch_generator:', 'default')
             self.model_manager.fit(x_train, y_train, epochs, batch_size)
