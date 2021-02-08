@@ -79,12 +79,12 @@ class common_evaluator_manager:
                 context['model_manager'] = self.model_manager
                 self.sg = batch_generator_creator.instance.create(batch_generator_config, context)
             self.model_manager.fit_generator(self.sg, epochs = epochs)
-        elif 'train_method' in self.config:
-            train_method_confg = self.config['train_method']
-            train_method_confg['batch_size'] = batch_size
+        elif 'training_method' in self.config:
+            training_method_confg = self.config['training_method']
+            training_method_confg['batch_size'] = batch_size
             context['data_manager'] = self.data_manager
             context['model_manager'] = self.model_manager
-            training_method = training_method_generator.instance.create(train_method_confg, context)
+            training_method = training_method_generator.instance.create(training_method_confg, context)
             training_method.train()
         else:
             print('batch_generator:', 'default')
