@@ -6,7 +6,7 @@ class training_on_batch:
         self.config = config
         self.context = context
 
-    def training(self):
+    def train(self):
         print('--------------------------training------------------')
 
 
