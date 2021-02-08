@@ -1,3 +1,5 @@
+from framework.training.method import training_method_creator as creator
+
 class training_on_batch:
     name = 'training_on_batch'
     def __init__(self, config, context):
