@@ -74,6 +74,7 @@ class common_evaluator_manager:
             batch_generator_config = self.config['batch_generator'] 
             if not self.sg:
                 batch_generator_config['batch_size'] = batch_size
+                batch_generator_config['epochs'] = epochs
                 context = {}
                 context['data_manager'] = self.data_manager
                 context['model_manager'] = self.model_manager
@@ -82,6 +83,7 @@ class common_evaluator_manager:
         elif 'training_method' in self.config:
             training_method_config = self.config['training_method']
             training_method_config['batch_size'] = batch_size
+            training_method_config['epochs'] = epochs
             context = {}
             context['data_manager'] = self.data_manager
             context['model_manager'] = self.model_manager
