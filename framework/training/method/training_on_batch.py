@@ -41,6 +41,8 @@ class training_on_batch:
 
         step_index = 0
 
+        print('batch_length:',batch_length)
+        print('epochs:', epochs)
         for epoch_index in range(epochs):
             print('==============epoch:=======================', epoch_index)
             predicted = model.predict(x)[3]
