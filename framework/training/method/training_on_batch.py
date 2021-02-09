@@ -20,7 +20,7 @@ class training_on_batch:
         ratio_of_recomputation = self.config['ratio_of_recomputation']
         sel = self.config['sel']
         data_len = len(x)
-        batch_length = int(np.floor(data_len / self.batch_size))
+        batch_length = int(np.floor(data_len / batch_size))
 
         def calculate_prob(loss):
             data_len = len(loss)
