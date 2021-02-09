@@ -65,17 +65,30 @@ class training_on_batch:
                     reverse_indices = np.argsort(indices)
                     
 
-                res = []
-                for _ in range(batch_size):
-                    r = np.random.random_sample()
-                    index = 0
-                    for v in a: 
-                        if v > r:
-                            break
-                        index += 1
-                    res.append(reverse_indices[index])
-                print('res:', res)
+                def select(batch_size, reverse_indices, a):
+                    res = []
+                    al = len(a)
+                    for _ in range(batch_size):
+                        r = np.random.random_sample()
+
+                        begin = 0
+                        end = al
+                        mid = (begin + end) / 2
+                        while begin < end:
+                            if r < a[mid]:
+                                end = mid
+                            else:
+                                begin = mid + 1
+                            mid = (begin + end) / 2
+
+                        res.append(reverse_indices[mid])
+                    print('res:', res)
+                    return res
+
+                res = select(batch_size, reverse_indices, a)
+
                 y_ = []
+
                 for i in range(4):
                     y_.append(y[i][res])
 
