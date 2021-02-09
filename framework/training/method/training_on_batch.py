@@ -71,8 +71,8 @@ class training_on_batch:
                         if v > r:
                             break
                         index += 1
-                    print('orig index',reverse_indices[index])
                     res.append(reverse_indices[index])
+                print('res:', res)
                 y_ = []
                 for i in range(4):
                     y_.append(y[i][res])
