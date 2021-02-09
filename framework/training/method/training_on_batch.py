@@ -1,6 +1,7 @@
 from framework.training.method import training_method_creator as creator
 from framework.algorithm import loss_function 
 import numpy as np
+import gc
 
 class training_on_batch:
     name = 'training_on_batch'
@@ -83,10 +84,6 @@ class training_on_batch:
                         if mid == al:
                             mid -= 1 #to handle suspecious float point problem
 
-                        print('------')
-                        print('r:', r)
-                        print('av:', a[mid])
-                        print('------')
                         res.append(reverse_indices[mid])
                     return res
 
@@ -100,6 +97,7 @@ class training_on_batch:
                 model.train_on_batch(x[res], y_)
                 step_index += 1
                 
+            gc.collect()
 
 
 
