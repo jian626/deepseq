@@ -83,8 +83,10 @@ class training_on_batch:
                         if mid == al:
                             mid -= 1 #to handle suspecious float point problem
 
+                        print('------')
                         print('r:', r)
                         print('av:', a[mid])
+                        print('------')
                         res.append(reverse_indices[mid])
                     return res
 
