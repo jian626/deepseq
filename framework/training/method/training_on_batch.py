@@ -75,12 +75,16 @@ class training_on_batch:
                         end = al
                         mid = (begin + end) // 2
                         while begin < end:
-                            if r < a[mid]:
+                            if r <= a[mid]:
                                 end = mid
                             else:
                                 begin = mid + 1
                             mid = (begin + end) // 2
+                        if mid == al:
+                            mid -= 1 #to handle suspecious float point problem
 
+                        print('r:', r)
+                        print('av:', a[mid])
                         res.append(reverse_indices[mid])
                     return res
 
