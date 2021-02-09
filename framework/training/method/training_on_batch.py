@@ -9,6 +9,7 @@ class training_on_batch:
         self.context = context
 
     def train(self):
+        print('=======================train===============================')
         model_manager = self.context['model_manager']
         data_manager = self.context['data_manager']
         model = model_manager.get_model()
