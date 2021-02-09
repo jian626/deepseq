@@ -71,7 +71,7 @@ class training_on_batch:
                             break
                         index += 1
                     res.append(reverse_indices[index])
-                model.train_on_batch(x[res], y[3][res])
+                model.train_on_batch(x[res], y[res])
                 step_index += 1
                 
 
