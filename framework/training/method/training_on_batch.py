@@ -73,13 +73,13 @@ class training_on_batch:
 
                         begin = 0
                         end = al
-                        mid = (begin + end) / 2
+                        mid = (begin + end) // 2
                         while begin < end:
                             if r < a[mid]:
                                 end = mid
                             else:
                                 begin = mid + 1
-                            mid = (begin + end) / 2
+                            mid = (begin + end) // 2
 
                         res.append(reverse_indices[mid])
                     print('res:', res)
