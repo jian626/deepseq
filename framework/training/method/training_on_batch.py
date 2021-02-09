@@ -29,7 +29,6 @@ class training_on_batch:
             loss_sorted = loss[indices]
             a = []
             epoch_index
-            predicted = model.predict(x)[3]
             probability = np.array([0] * data_len)
             probability = (1 / np.exp(np.log(loss_sorted) / data_len)) ** [x for x in range(1, data_len + 1)]  
             probability = probability / np.sum(probability)
@@ -43,6 +42,7 @@ class training_on_batch:
 
         for epoch_index in range(epochs):
             print('==============epoch:=======================', epoch_index)
+            predicted = model.predict(x)[3]
             loss = loss_function.binary_entropy(y[3], predicted)
             a, probability, indices, reverse_indices = calculate_prob(loss)
 
