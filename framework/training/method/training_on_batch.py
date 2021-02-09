@@ -82,7 +82,6 @@ class training_on_batch:
                             mid = (begin + end) // 2
 
                         res.append(reverse_indices[mid])
-                    print('res:', res)
                     return res
 
                 res = select(batch_size, reverse_indices, a)
