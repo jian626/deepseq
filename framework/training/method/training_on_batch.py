@@ -97,7 +97,7 @@ class training_on_batch:
                 z = x[res]
                 model.train_on_batch(z, y_)
                 log_file = get_table_value(self.config, 'debug_file', None)
-                log_colums = get_table_value(self.config, 'cluster_col_name', None)
+                log_colums = get_table_value(self.config, 'log_colums', None)
 
                 if log_file:
                     training_set, _ = data_manager.get_training_and_test_set()
