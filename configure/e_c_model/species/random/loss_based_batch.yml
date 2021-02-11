@@ -122,6 +122,6 @@ evaluator_manager_config:
          period_of_sort: 200,
          recomputation_freq_per_epoch: 50,
          ratio_of_recomputation: 1.0,
-         sel: 100
+         sel: 100,
          log_file: 'log_batch.csv'
         }
