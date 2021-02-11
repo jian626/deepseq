@@ -2,7 +2,7 @@ from framework.training.method import training_method_creator as creator
 from framework.algorithm import loss_function 
 import numpy as np
 import gc
-import framework.utili.get_table_value as get_table_value
+from framework.utili import get_table_value
 
 class training_on_batch:
     name = 'training_on_batch'
