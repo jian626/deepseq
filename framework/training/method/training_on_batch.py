@@ -99,7 +99,7 @@ class training_on_batch:
                 log_file = get_table_value(self.config, 'log_file', None)
 
                 if log_file:
-                    training_set, _ = self.data_manager.get_training_and_test_set()
+                    training_set, _ = data_manager.get_training_and_test_set()
                     training_set.to_csv(log_file, mode='a', sep='\t')
 
                 step_index += 1
