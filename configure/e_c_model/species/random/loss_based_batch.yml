@@ -123,6 +123,6 @@ evaluator_manager_config:
          recomputation_freq_per_epoch: 50,
          ratio_of_recomputation: 1.0,
          sel: 100,
-         debug_file: 'log_batch.csv'
+         debug_file: 'log_batch.csv',
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
         }
