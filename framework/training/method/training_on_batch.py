@@ -2,6 +2,7 @@ from framework.training.method import training_method_creator as creator
 from framework.algorithm import loss_function 
 import numpy as np
 import gc
+import utili.get_table_value as get_table_value
 
 class training_on_batch:
     name = 'training_on_batch'
@@ -64,7 +65,6 @@ class training_on_batch:
                     loss[ids] = r_loss
                     indices = np.argsort(loss)
                     reverse_indices = np.argsort(indices)
-                    
 
                 def select(batch_size, reverse_indices, a):
                     res = []
@@ -94,24 +94,15 @@ class training_on_batch:
                 for i in range(4):
                     y_.append(y[i][res])
 
-                model.train_on_batch(x[res], y_)
+                z = x[res]
+                model.train_on_batch(z, y_)
+                log_file = get_table_value(self.config, 'log_file', None)
+
+                if log_file:
+                    z.to_csv(log_file, mode='a', sep='\t')
+
                 step_index += 1
-                
             gc.collect()
-
-
-
-
-
-
-
-
-
-
-                
-
-
-
 
 def create(config, context):
     return training_on_batch(config, context)
