@@ -96,11 +96,12 @@ class training_on_batch:
 
                 z = x[res]
                 model.train_on_batch(z, y_)
-                log_file = get_table_value(self.config, 'log_file', None)
+                log_file = get_table_value(self.config, 'debug_file', None)
+                log_colums = get_table_value(self.config, 'cluster_col_name', None)
 
                 if log_file:
                     training_set, _ = data_manager.get_training_and_test_set()
-                    training_set.to_csv(log_file, mode='a', sep='\t')
+                    training_set.iloc[res][log_colums].to_csv(log_file, mode='a', sep='\t')
 
                 step_index += 1
             gc.collect()
