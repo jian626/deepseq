@@ -2,6 +2,7 @@ from framework.training.method import training_method_creator as creator
 from framework.algorithm import loss_function 
 import numpy as np
 import gc
+import os
 from framework.utili import get_table_value
 
 class training_on_batch:
@@ -9,6 +10,9 @@ class training_on_batch:
     def __init__(self, config, context):
         self.config = config
         self.context = context
+        log_file = get_table_value(self.config, 'debug_file', None)
+        if os.path.exists(log_file)
+              os.remove(log_file)
 
     def train(self):
         print('=======================train===============================')
