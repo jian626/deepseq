@@ -1,5 +1,5 @@
 import numpy as np
-import tensorflow.keras.losses.BinaryCrossentropy as BinaryCrossentropy 
+from tensorflow.keras.losses import BinaryCrossentropy 
 
 
 
