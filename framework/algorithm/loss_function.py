@@ -1,5 +1,6 @@
 import numpy as np
-import tf.keras.losses.BinaryCrossentropy as BinaryCrossentropy 
+import tensorflow.keras.losses.BinaryCrossentropy as BinaryCrossentropy 
+
 
 
 def binary_entropy(y, y_, epsilon=1e-12):
