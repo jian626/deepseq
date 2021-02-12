@@ -11,7 +11,7 @@ class training_on_batch:
         self.config = config
         self.context = context
         log_file = get_table_value(self.config, 'debug_file', None)
-        if log_file and os.path.exists(log_file)
+        if log_file and os.path.exists(log_file):
               os.remove(log_file)
 
     def train(self):
