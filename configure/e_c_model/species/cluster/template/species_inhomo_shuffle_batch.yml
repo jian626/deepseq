@@ -53,8 +53,7 @@ data_config:
     name: enzyme_data_manager
     #file path
     #where the training data is 
-    #file_path: uniprot-reviewed_yes_cluster_by_species.tab 
-    file_path: uniport-reviewed_yes_with_cluster_90.tab
+    file_path: uniprot-reviewed_yes_cluster_by_species.tab 
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
     #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
@@ -84,16 +83,20 @@ data_config:
     class_example_threshhold: 1 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
+    save_data:
+        train: train50_.tab
+        test: test50_.tab
+        meta: data_config50_
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     reuse_data: 
-        train: 
-            - 'train_cluster_90.tab'
-        test:
-            - 'test_cluster_90.tab'
+        test: 
+            - 'test_uniprot-reviewed_yes_cluster_by_species.tab'
+        train:
+            - 'train_uniprot-reviewed_yes_cluster_by_species.tab'
 
 model_config: *basic_cnn_manager
 
