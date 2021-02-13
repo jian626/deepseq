@@ -25,11 +25,12 @@ class training_on_batch:
         period_of_sort = get_table_value(self.config, 'period_of_sort', None)
         recomputation_freq_per_epoch = get_table_value(self.config, 'recomputation_freq_per_epoch', None)
         ratio_of_recomputation = get_table_value(self.config, 'ratio_of_recomputation', 1)
-        sel = get_table_value(self.config, 'sel', 100)
+        sel_begin = get_table_value(self.config, 'sel_begin', 100)
+        sel_end = get_table_value(self.config, 'sel_end', 1)
         data_len = len(x)
         batch_length = int(np.floor(data_len / batch_size))
 
-        def calculate_prob(loss):
+        def calculate_prob(loss, sel):
             data_len = len(loss)
             indices = np.argsort(-loss)
             reverse_indices = np.argsort(indices)
@@ -51,7 +52,8 @@ class training_on_batch:
             print('==============epoch:=======================', epoch_index)
             predicted = model.predict(x)[3]
             loss = loss_function.binary_entropy(y[3], predicted)
-            a, probability, indices, reverse_indices = calculate_prob(loss)
+            sel = sel_begin * (np.exp(np.log(sel_end/sel_begin)/epochs) ** epoch_index)
+            a, probability, indices, reverse_indices = calculate_prob(loss, sel)
 
             for batch_index in range(batch_length): 
                 if not period_of_sort is None:
