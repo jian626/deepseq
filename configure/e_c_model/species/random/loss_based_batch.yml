@@ -119,8 +119,8 @@ evaluator_manager_config:
     #customized batch
     training_method:
         {name: 'training_on_batch',
-         period_of_sort: 200,
-         recomputation_freq_per_epoch: 50,
+        #period_of_sort: 200,
+        #recomputation_freq_per_epoch: 50,
          ratio_of_recomputation: 1.0,
          sel: 100,
          debug_file: 'log_batch.csv',

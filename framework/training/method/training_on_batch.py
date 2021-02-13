@@ -22,10 +22,10 @@ class training_on_batch:
         x, y = data_manager.get_training_data()
         batch_size = self.config['batch_size']
         epochs = self.config['epochs']
-        period_of_sort = self.config['period_of_sort']
-        recomputation_freq_per_epoch = self.config['recomputation_freq_per_epoch']
-        ratio_of_recomputation = self.config['ratio_of_recomputation']
-        sel = self.config['sel']
+        period_of_sort = get_table_value(self.config, 'period_of_sort', None)
+        recomputation_freq_per_epoch = get_table_value(self.config, 'recomputation_freq_per_epoch', None)
+        ratio_of_recomputation = get_table_value(self.config, 'ratio_of_recomputation', 1)
+        sel = get_table_value(self.config, 'sel', 100)
         data_len = len(x)
         batch_length = int(np.floor(data_len / batch_size))
 
@@ -33,10 +33,9 @@ class training_on_batch:
             data_len = len(loss)
             indices = np.argsort(-loss)
             reverse_indices = np.argsort(indices)
-            loss_sorted = loss[indices]
             a = []
             epoch_index
-            probability = (1 / np.exp(np.log(loss_sorted) / data_len)) ** [x for x in range(1, data_len + 1)]  
+            probability =  np.array([(1 / np.exp(np.log(sel) / data_len)) ** x for x in range(1, data_len + 1)])
             probability = probability / np.sum(probability)
             a.append(probability[0])
 
@@ -55,19 +54,21 @@ class training_on_batch:
             a, probability, indices, reverse_indices = calculate_prob(loss)
 
             for batch_index in range(batch_length): 
-                if step_index % period_of_sort == 0:
-                    indices = np.argsort(loss)
-                    reverse_indices = np.argsort(indices)
+                if not period_of_sort is None:
+                    if step_index % period_of_sort == 0:
+                        indices = np.argsort(loss)
+                        reverse_indices = np.argsort(indices)
 
-                if step_index % recomputation_freq_per_epoch == 0: 
-                    ids = indices[:int(data_len * ratio_of_recomputation)]
-                    r_x = x[ids]
-                    r_y = y[3][ids]
-                    r_predicted = predicted[ids]
-                    r_loss = loss_function.binary_entropy(r_y, r_predicted)
-                    loss[ids] = r_loss
-                    indices = np.argsort(loss)
-                    reverse_indices = np.argsort(indices)
+                if not recomputation_freq_per_epoch is None:
+                    if step_index % recomputation_freq_per_epoch == 0: 
+                        ids = indices[:int(data_len * ratio_of_recomputation)]
+                        r_x = x[ids]
+                        r_y = y[3][ids]
+                        r_predicted = predicted[ids]
+                        r_loss = loss_function.binary_entropy(r_y, r_predicted)
+                        loss[ids] = r_loss
+                        indices = np.argsort(loss)
+                        reverse_indices = np.argsort(indices)
 
                 def select(batch_size, reverse_indices, a):
                     res = []
