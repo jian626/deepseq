@@ -36,7 +36,6 @@ class training_on_batch:
             loss_sorted = loss[indices]
             a = []
             epoch_index
-            probability = np.array([0] * data_len)
             probability = (1 / np.exp(np.log(loss_sorted) / data_len)) ** [x for x in range(1, data_len + 1)]  
             probability = probability / np.sum(probability)
             a.append(probability[0])
