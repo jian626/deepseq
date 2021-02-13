@@ -83,9 +83,6 @@ data_config:
     class_example_threshhold: 1 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
-    save_data:
-        train: train90_.tab
-        test: test90_.tab
         #meta: data_config50_
 
     #reuse:to reused data in files as training and testing
@@ -93,10 +90,10 @@ data_config:
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     reuse_data: 
-        test: 
-            - 'test_uniprot-reviewed_yes_cluster_by_species.tab'
-        train:
-            - 'train_uniprot-reviewed_yes_cluster_by_species.tab'
+        train: 
+            - 'train_cluster_90.tab'
+        test:
+            - 'test_cluster_90.tab'
 
 model_config: *basic_cnn_manager
 
