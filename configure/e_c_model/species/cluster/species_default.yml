@@ -84,9 +84,9 @@ data_config:
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
     save_data:
-        train: train50_.tab
-        test: test50_.tab
-        meta: data_config50_
+        train: train90_.tab
+        test: test90_.tab
+        #meta: data_config50_
 
     #reuse:to reused data in files as training and testing
     #the last name is the config file name without .pkl
