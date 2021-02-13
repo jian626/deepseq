@@ -107,7 +107,7 @@ class training_on_batch:
                     training_set.iloc[res][log_colums].to_csv(log_file, mode='a', sep='\t')
 
                 step_index += 1
-            gc.collect()
+            #gc.collect()
 
 def create(config, context):
     return training_on_batch(config, context)
