@@ -12,7 +12,10 @@ do
 		arrIN=(${tmp//./ })
 		tmp=${arrIN[0]}
 		tmp="${tmp}_${count}_.log"
-		python enzyme_classifier_model_generator.py ${dir_name}${name} | tee $tmp
+		if [ ! -d ${dir_name}${name} ]
+		then
+			python enzyme_classifier_model_generator.py ${dir_name}${name} | tee $tmp
+		fi
 	done
 	count=$(( count + 1 ))
 done
