@@ -32,6 +32,7 @@ def get_cluster_info(cluster_info_file, origin_file, dest_file):
 
 
 
+
 if __name__=='__main__':
     get_cluster_info(sys.argv[1],sys.argv[2],sys.argv[3])
 
