@@ -58,6 +58,7 @@ data_config:
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
     #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
+    nan_value: '0.0.0.0'
     apply_dummy_label: false 
     #max length of sequence
     max_len: 1000
