@@ -176,7 +176,7 @@ class enzyme_data_manager:
         return training_set, test_set
 
     def process_df(self, df, origin_training_set=None, origin_test_set=None):
-        nan_value = get_table_value(self.config, 'nan_value', None)
+        nan_value = utili.get_table_value(self.config, 'nan_value', None)
         if nan_value is None:
             df = df.dropna()
         else:
