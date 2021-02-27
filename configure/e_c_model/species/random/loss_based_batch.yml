@@ -53,7 +53,7 @@ data_config:
     name: enzyme_data_manager
     #file path
     #where the training data is 
-    file_path: uniprot-reviewed_yes_cluster_by_species.tab 
+    file_path: uniport-reviewed_yes_with_cluster_90.tab 
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
     #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
@@ -94,9 +94,9 @@ data_config:
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     reuse_data: 
         test: 
-            - 'train50_.tab'
+            - 'test_cluster_90.tab'
         train:
-            - 'test50_.tab'
+            - 'train_cluster_90.tab'
 
 model_config: *basic_cnn_manager
 
