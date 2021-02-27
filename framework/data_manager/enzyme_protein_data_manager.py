@@ -128,6 +128,12 @@ class enzyme_protein_data_manager:
         df = pd.read_csv(file_name, sep='\t')
         return self.get_x(df)
 
+    def get_main_level(self):
+        main_level = utili.get_table_value(self.config, 'main_level', None)
+        if main_level is None:
+            main_level = self.get_task_num() - 1
+        return main_level
+
 def create(config):
     return enzyme_protein_data_manager(config)
 

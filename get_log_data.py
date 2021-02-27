@@ -52,5 +52,8 @@ def get_log_date(dir_name, field_name, level, field_num, sep=',', ext_name='.log
     df.to_csv(field_name.replace(' ', '_') + '.csv', index=False, sep=sep)
 
 if __name__ == '__main__':
-    get_log_date(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5])
+    if len(sys.argv) < 6:
+        print('dir_name, field_name, level, field_num, sep')
+    else:
+        get_log_date(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5])
 

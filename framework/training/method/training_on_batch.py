@@ -18,6 +18,7 @@ class training_on_batch:
         print('=======================train===============================')
         model_manager = self.context['model_manager']
         data_manager = self.context['data_manager']
+        main_level = data_manager.get_main_level()
         model = model_manager.get_model()
         x, y = data_manager.get_training_data()
         batch_size = self.config['batch_size']
@@ -50,8 +51,8 @@ class training_on_batch:
         print('epochs:', epochs)
         for epoch_index in range(epochs):
             print('==============epoch:=======================', epoch_index)
-            predicted = model.predict(x)[3]
-            loss = loss_function.binary_entropy(y[3], predicted)
+            predicted = model.predict(x)[main_level]
+            loss = loss_function.binary_entropy(y[main_level], predicted)
             sel = sel_begin * (np.exp(np.log(sel_end/sel_begin)/epochs) ** epoch_index)
             a, probability, indices, reverse_indices = calculate_prob(loss, sel)
 
@@ -65,7 +66,7 @@ class training_on_batch:
                     if step_index % recomputation_freq_per_epoch == 0: 
                         ids = indices[:int(data_len * ratio_of_recomputation)]
                         r_x = x[ids]
-                        r_y = y[3][ids]
+                        r_y = y[main_level][ids]
                         r_predicted = predicted[ids]
                         r_loss = loss_function.binary_entropy(r_y, r_predicted)
                         loss[ids] = r_loss
