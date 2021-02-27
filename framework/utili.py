@@ -47,8 +47,6 @@ def explode(res, joined, groups):
     for i in range(len(groups) + 1):
         res.append(groups[:i] + joined + groups[i:])
 
-def transform():
-
 def _GetInnerGrams(result, featureList, n, cur_pos=0, indicators=None):
     if indicators is None:
         indicators = [0] * n
