@@ -27,7 +27,7 @@ def get_label_text_list(value, level_num =None, dummy=None):
     if label_list:
         if level_num:
             for label_text in label_list:
-                label_text = label_text.split(level_complement)[0]
+                label_text = label_text.split(level_complement)[0].strip()
                 label = get_label_at_least_level(label_text, level_num, dummy)
                 if label:
                     ret.append(label)
