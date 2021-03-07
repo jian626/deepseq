@@ -3,6 +3,7 @@ import numpy as np
 
 label_spliter = ';'
 level_spliter = '.'
+level_complement = '.-'
 
 def get_label_list(value):
     if value:
@@ -26,11 +27,13 @@ def get_label_text_list(value, level_num =None, dummy=None):
     if label_list:
         if level_num:
             for label_text in label_list:
+                label_text = label_text.split(level_complement)[0]
                 label = get_label_at_least_level(label_text, level_num, dummy)
                 if label:
                     ret.append(label)
         else:
             for label_text in label_list:
+                label_text = label_text.split(level_complement)[0]
                 ret.append(label_text)
     return ret
 
