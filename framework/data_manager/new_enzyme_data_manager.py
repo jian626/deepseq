@@ -8,7 +8,7 @@ from framework.data_manager import data_manager_creator
 from framework.tools import data_spliter
 
 class enzyme_data_manager:
-    name = 'undeleted_enzyme_data_manager'
+    name = 'new_enzyme_data_manager'
     def __init__(self, config):
         self.config = config
         self.config['name'] = 'enzyme_data_manager'

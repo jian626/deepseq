@@ -50,7 +50,7 @@ basic_cnn_manager: &basic_cnn_manager
 
 data_config:
     #data manager name
-    name: undeleted_enzyme_data_manager
+    name: new_enzyme_data_manager
     #file path
     #where the training data is 
     file_path: uniport-reviewed_yes_with_cluster_90.tab
