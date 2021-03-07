@@ -54,7 +54,7 @@ class enzyme_data_manager:
             res = []
             for label in label_list:
                 temp = hierarchical_learning.get_label_to_level(label, level)
-                if map_table[temp] >  threshold:
+                if temp and map_table[temp] >  threshold:
                     res.append(label)
             return res
 
