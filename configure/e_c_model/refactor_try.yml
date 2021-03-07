@@ -121,10 +121,10 @@ evaluator_manager_config:
     #evaluator manager name: current support common_evaluator_manager
     name: 'common_evaluator_manager'
     #customized batch
-    batch_generator: 
-        {name: 'homogenous_cluster_training',
-         #debug_file: 'debug_cluster.log',
-         log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
-         cluster_col_name: 'Cluster name',
-         ever_random: False 
-        }
+    #batch_generator: 
+    #    {name: 'homogenous_cluster_training',
+    #     #debug_file: 'debug_cluster.log',
+    #     log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
+    #     cluster_col_name: 'Cluster name',
+    #     ever_random: False 
+    #    }
