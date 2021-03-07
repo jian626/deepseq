@@ -201,6 +201,8 @@ class enzyme_data_manager:
             dummy_value = utili.get_table_value(self.config, 'dummy_value', None)
             df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x, level_num=level_num, dummy=dummy_value))
             df = df[df[self.label_key].apply(lambda x:len(x)>0)]
+
+        utili.print_debug_info(df, 'after deal with drop_insufficient_length_label', print_head = True)
             
         if self.config['max_len'] > 0:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
