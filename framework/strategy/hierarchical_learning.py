@@ -32,6 +32,7 @@ def get_label_text_list(value, level_num =None, dummy=None):
         else:
             for label_text in label_list:
                 ret.append(label_text)
+    print(ret)
     return ret
 
 def get_label_at_least_level(label, level_num, dummy=None):
