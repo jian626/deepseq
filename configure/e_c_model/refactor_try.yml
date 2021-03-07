@@ -60,7 +60,7 @@ data_config:
     #if true, the sequence with length insufficient for level length will be dropped
     drop_insufficient_length_label: False
     #dummy value when the label length is enough for level length and the value is used to complement.
-    #dummy_value: '-1'
+    dummy_value: '-1'
     #max length of sequence
     max_len: 1000
     #print statistics
