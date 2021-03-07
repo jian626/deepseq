@@ -21,15 +21,12 @@ def get_label_list_according_to_level(data, level):
     return ret
 
 def get_label_text_list(value, level_num =None, dummy=None):
-    print(level_num, dummy)
     ret = []
     label_list = get_label_list(value)
     if label_list:
         if level_num:
             for label_text in label_list:
-                if dummy:
-                    ret.append(get_label_at_least_level(label_text, level_num, dummy))
-                #if no dummy provided the label will be omitted
+                ret.append(get_label_at_least_level(label_text, level_num, dummy))
         else:
             for label_text in label_list:
                 ret.append(label_text)
@@ -38,7 +35,8 @@ def get_label_text_list(value, level_num =None, dummy=None):
 def get_label_at_least_level(label, level_num, dummy=None):
     l = label.split(level_spliter)
     if len(l) < level_num:
-        l +=[dummy] * (level_num - len(l))
+        if dummy:
+            l +=[dummy] * (level_num - len(l))
     return level_spliter.join(l)
     
 
