@@ -194,13 +194,14 @@ class enzyme_data_manager:
         if self.config['drop_multilabel'] > 0:
             df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
 
-        drop_insufficient_length_label = utili.get_table_value(self.config, 'drop_insufficient_length_label', None)
-        if drop_insufficient_length_label:
-            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x))
-        else:
-            dummy_value = utili.get_table_value(self.config, 'dummy_value', None)
+        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
+        equal_label_len_action = utili.get_table_value(equal_label_len, 'flag', None)
+        if equal_label_len_action == 'force_equal':
+            dummy_value = utili.get_table_value(equal_label_len, 'dummy_value', None)
             df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x, level_num=level_num, dummy=dummy_value))
             df = df[df[self.label_key].apply(lambda x:len(x)>0)]
+        else:
+            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x))
 
         utili.print_debug_info(df, 'after deal with drop_insufficient_length_label', print_head = True)
             

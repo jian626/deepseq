@@ -26,7 +26,9 @@ def get_label_text_list(value, level_num =None, dummy=None):
     if label_list:
         if level_num:
             for label_text in label_list:
-                ret.append(get_label_at_least_level(label_text, level_num, dummy))
+                label = get_label_at_least_level(label_text, level_num, dummy)
+                if label:
+                    ret.append(label)
         else:
             for label_text in label_list:
                 ret.append(label_text)
@@ -37,6 +39,8 @@ def get_label_at_least_level(label, level_num, dummy=None):
     if len(l) < level_num:
         if dummy:
             l +=[dummy] * (level_num - len(l))
+        else:
+            l = [] 
     return level_spliter.join(l)
     
 
