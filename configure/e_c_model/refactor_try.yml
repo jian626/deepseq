@@ -60,8 +60,8 @@ data_config:
     #if true, the sequence with length insufficient for level length will be dropped
     equal_label_len: 
         {
-            action: 'force_equal',
-            dummy_value: '-1'
+            action: 'force_equal'
+            #dummy_value: '-1'
 
         }
     #dummy value when the label length is enough for level length and the value is used to complement.
