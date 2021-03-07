@@ -11,8 +11,8 @@ def split(in_file, number, out_file, out_file2=None):
 
 if __name__ == '__main__':
     if len(sys.argv) == 4:
-        split(sys.argv[1], sys.argv[2], sys.argv[3])
+        split(sys.argv[1], int(sys.argv[2]), sys.argv[3])
     elif len(sys.argv) == 5:
-        split(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        split(sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4])
     else:
         print('in_file, number, out_file, out_file2=None')
