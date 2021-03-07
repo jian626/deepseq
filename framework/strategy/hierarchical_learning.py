@@ -1,6 +1,9 @@
 from tensorflow.keras.preprocessing import sequence
 import numpy as np
 
+label_spliter = ';'
+level_spliter = '.'
+
 def get_label_list(value):
     if value:
         return value.split(';')
@@ -17,21 +20,35 @@ def get_label_list_according_to_level(data, level):
             ret.append(e)
     return ret
 
-def get_label_at_least_level(label, level, dummy=None):
-    l = label.split('.')
-    if len(l) < level:
-        l +=[dummy] * (level - len(l))
-    return '.'.join(l)
+def get_label_text_list(value, level_num =None, dummy=None):
+    ret = []
+    label_list = get_label_list(value)
+    if label_list:
+        if level_num:
+            for label_text in label_list:
+                if dummy:
+                    ret.append(get_label_at_least_level(label_text, level_num, dummy))
+                #if no dummy provided the label will be omitted
+        else:
+            for label_text in label_list:
+                ret.append(label_text)
+    return ret
+
+def get_label_at_least_level(label, level_num, dummy=None):
+    l = label.split(level_spliter)
+    if len(l) < level_num:
+        l +=[dummy] * (level_num - len(l))
+    return level_spliter.join(l)
     
 
 def _get_label_to_level(label, level, dummy=None):
-    '''get EC numbers to the input level. when there is not enough, '-' is used. 
+    '''get EC numbers to the input level. when there is not enough, dummy is used. 
     '''
     l = label.split('.')
     res = []
     for index, e in enumerate(l):
         try:
-            if index < level:
+            if index <= level:
                 e = str(int(e))
                 res.append(e)
             else:
@@ -39,7 +56,7 @@ def _get_label_to_level(label, level, dummy=None):
         except:
             break
         
-    if len(res) < level:
+    if len(res) < level + 1:
         if dummy:
             res += [dummy] * (level - len(res))
         else:
@@ -63,10 +80,11 @@ def get_label_to_level(label, level, dummy=None, class_maps=None):
         if label:
             ret = _get_label_to_level(label, level, dummy)
             if class_maps:
-                if ret in class_maps[level-1]:
-                    class_maps[level-1][ret] += 1
-                else:
-                    class_maps[level-1][ret] = 1
+                if ret:
+                    if ret in class_maps[level]:
+                        class_maps[level][ret] += 1
+                    else:
+                        class_maps[level][ret] = 1
     return ret
 
 

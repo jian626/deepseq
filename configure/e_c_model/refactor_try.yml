@@ -56,8 +56,11 @@ data_config:
     file_path: uniport-reviewed_yes_with_cluster_90.tab
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
-    #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
-    apply_dummy_label: True 
+    
+    #if true, the sequence with length insufficient for level length will be dropped
+    drop_insufficient_length_label: False
+    #dummy value when the label length is enough for level length and the value is used to complement.
+    #dummy_value: '-1'
     #max length of sequence
     max_len: 1000
     #print statistics
@@ -74,7 +77,7 @@ data_config:
     level_num: 4 
     #when single task is setting, which level is the target level
     #Note:for single task only
-    target_level: 4
+    target_level: 3 
     #label filed name in the file
     label_key: 'EC number'
     #id name
@@ -98,7 +101,7 @@ model_config: *basic_cnn_manager
 evaluator_manager_config:
     print_summary: True
     #epochs
-    epochs: 30 
+    epochs: 5 
     #batch_size
     batch_size: 200 
     #print report switch

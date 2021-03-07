@@ -39,12 +39,12 @@ class enzyme_data_manager:
     def count_class_example(self, df, map_table, level):
         def apply_fun(label_list):
             for label in label_list: 
-                label = hierarchical_learning.get_label_to_level(label, level, '-')
-                if label in map_table:
-                    map_table[label] += 1
-                else:
-                    map_table[label] = 1
-
+                label = hierarchical_learning.get_label_to_level(label, level)
+                if label:
+                    if label in map_table:
+                        map_table[label] += 1
+                    else:
+                        map_table[label] = 1
         df[self.label_key].apply(lambda e:apply_fun(e))
 
     def ___apply_threshold(self, df, level, threshold):
@@ -53,7 +53,7 @@ class enzyme_data_manager:
         def delete_class_accord_threshold(label_list, threshold, map_tabel):
             res = []
             for label in label_list:
-                temp = hierarchical_learning.get_label_to_level(label, level, '-')
+                temp = hierarchical_learning.get_label_to_level(label, level)
                 if map_table[temp] >  threshold:
                     res.append(label)
             return res
@@ -71,7 +71,7 @@ class enzyme_data_manager:
         level_num = self.config['level_num']
         while True:
             for i in range(level_num-1, -1, -1):
-                df[self.label_key] = self.___apply_threshold(df, i+1, class_example_threshhold)
+                df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
             df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
             if size == df.shape[0]: 
@@ -103,7 +103,7 @@ class enzyme_data_manager:
         return df,len(field_map_to_number), field_map_to_number
 
     def get_level_labels(self, df, level, class_maps):
-        df["level%d" % level] = df[self.label_key].apply(lambda x:hierarchical_learning.get_label_to_level(x, level, 'unknown', class_maps))
+        df["level%d" % level] = df[self.label_key].apply(lambda x:hierarchical_learning.get_label_to_level(x, level, class_maps=class_maps))
         return df
 
     def map_label_set_to_one_hot(self, label_set, num_classes):
@@ -182,27 +182,26 @@ class enzyme_data_manager:
         else:
             def trans_nan(e):
                 if e is None:
-                    return 'nan_value'
+                    return nan_value 
                 else:
                     return e
             df[self.label_key] = df[self.label_key].apply(trans_nan)
 
-        
         df[self.label_key] = df[self.label_key].astype(str)
         utili.print_debug_info(df, 'after drop na', print_head = True)
-        level = self.config['level_num']
+        level_num = self.config['level_num']
         
         if self.config['drop_multilabel'] > 0:
             df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
 
-        if not self.config['apply_dummy_label']:
-            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list_according_to_level(x, level))
-            df = df[df[self.label_key].apply(lambda x:len(x)>0)]
+        drop_insufficient_length_label = utili.get_table_value(self.config, 'drop_insufficient_length_label', None)
+        if drop_insufficient_length_label:
+            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x))
         else:
-            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_list(x))
+            dummy_value = utili.get_table_value(self.config, 'dummy_value', None)
+            df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x, level_num=level_num, dummy=dummy_value))
+            df = df[df[self.label_key].apply(lambda x:len(x)>0)]
             
-        df['EC count'] = df[self.label_key].apply(lambda x:len(x))
-
         if self.config['max_len'] > 0:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
@@ -211,13 +210,13 @@ class enzyme_data_manager:
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
-        for i in range(level):
-            df = self.get_level_labels(df, i+1, self.config['class_maps'])
+        for i in range(level_num):
+            df = self.get_level_labels(df, i, self.config['class_maps'])
             utili.print_debug_info(df, 'after select to level %d' % i, print_head = True)
         
         self.config['max_category'] = []
-        for i in range(level):
-            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % (i+1), 'level%d' % i, i)
+        for i in range(level_num):
+            df, temp_max_category, temp_field_map_to_number = enzyme_data_manager.create_label_from_field(df, self.config['class_maps'],'level%d' % i, 'level%d' % i, i)
             self.config['max_category'].append(temp_max_category)
             self.config['field_map_to_number'][i] = temp_field_map_to_number
             utili.print_debug_info(df, 'after create task label to level %d' % i, print_head = True)
@@ -225,7 +224,7 @@ class enzyme_data_manager:
         
         if self.config['print_statistics']:
             print('following statistics information is based on data to use.')
-            for index in range(level):
+            for index in range(level_num):
                 sorted_k = {k: v for k, v in sorted(self.config['class_maps'][index].items(), key=lambda item: item[1])}
                 cnt = 0
                 map_cnt = {}
@@ -239,8 +238,8 @@ class enzyme_data_manager:
                 for i in range(10):
                     if i in map_cnt:
                         less_than_10 += map_cnt[i]
-                        print('level %d: %d class only have %d examples' % (index+1, map_cnt[i], i))
-                print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index+1, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
+                        print('level %d: %d class only have %d examples' % (index, map_cnt[i], i))
+                print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
         
         
         df = df.sample(frac=self.config['fraction'])
@@ -252,8 +251,6 @@ class enzyme_data_manager:
         def set_max_len(x):
             if self.config['max_len'] <len(x):
                 self.config['max_len'] = len(x)
-            
-        
         
         print('train_percent:%f' % self.config['train_percent'])
 
@@ -266,8 +263,8 @@ class enzyme_data_manager:
         if origin_training_set is None or origin_test_set is None:
             print('*************normal split processs*****************')
             training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
-            index_name = 'level%d' % (target_level - 1)
-            training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']-1])
+            index_name = 'level%d' % (target_level)
+            training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']])
         else:
             print('*****************begin to merge data***************')
             print('**********origin_training_set************')
@@ -338,8 +335,8 @@ class enzyme_data_manager:
         task_num = self.get_task_num() 
         if task_num == 1:
             target_level = self.config['target_level']
-            y_train = [y_train[target_level - 1]]
-            y_test = [y_test[target_level - 1]]
+            y_train = [y_train[target_level]]
+            y_test = [y_test[target_level]]
 
         self.x_train = x_train
         self.y_train = y_train
@@ -364,7 +361,7 @@ class enzyme_data_manager:
     def get_max_category(self):
         ret = self.config['max_category']
         if self.get_task_num() == 1:
-            ret = [self.config['max_category'][self.config['target_level']-1]]
+            ret = [self.config['max_category'][self.config['target_level']]]
         return ret
 
     def get_max_feature(self):
@@ -398,7 +395,7 @@ class enzyme_data_manager:
                 ret.append(labels)
         else:
             level_num = self.config['level_num']
-            i = level_num - 1
+            i = level_num
             if not i in number_to_field:
                 number_to_field[i] = utili.switch_key_value(self.config['field_map_to_number'][i])
             ret.append(self._one_hot_to_labels(y[0], i, number_to_field[i]))
