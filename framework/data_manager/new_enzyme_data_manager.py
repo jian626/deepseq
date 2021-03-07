@@ -203,7 +203,7 @@ class enzyme_data_manager:
         else:
             df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x))
 
-        utili.print_debug_info(df, 'after deal with drop_insufficient_length_label', print_head = True)
+        utili.print_debug_info(df, 'after deal with equal_label_len_action', print_head = True)
             
         if self.config['max_len'] > 0:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
