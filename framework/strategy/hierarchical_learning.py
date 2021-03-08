@@ -35,7 +35,7 @@ def get_label_text_list(value, level_num =None, dummy=None):
                     print('omited:', label_text)
         else:
             for label_text in label_list:
-                label_text = label_text.split(level_complement)[0]
+                label_text = label_text.split(level_complement)[0].strip()
                 ret.append(label_text)
     return ret
 
@@ -50,7 +50,8 @@ def get_label_at_least_level(label, level_num, dummy=None):
     
 
 def _get_label_to_level(label, level, dummy=None):
-    '''get EC numbers to the input level. when there is not enough, dummy is used. 
+    '''get EC numbers to the input level. when there is not enough, dummy is used.
+        in this case, if dummy is not provide, the '' is returen
     '''
     l = label.split('.')
     res = []
@@ -81,7 +82,8 @@ def get_label_to_level(label, level, dummy=None, class_maps=None):
         ret = []
         for e in label:
             res = get_label_to_level(e, level, dummy, class_maps)
-            ret.append(res)
+            if res:
+                ret.append(res)
         ret = list(set(ret))
     else:
         ret = '' 

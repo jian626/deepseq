@@ -67,17 +67,18 @@ class enzyme_data_manager:
         '''This function is used to eliminate classes with examples less than threshold
         '''
         class_example_threshhold = self.config['class_example_threshhold']
-        size = df.shape[0]
-        level_num = self.config['level_num']
-        while True:
-            for i in range(level_num-1, -1, -1):
-                df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
-            df = df[df[self.label_key].apply(lambda e:len(e)>0)]
+        if class_example_threshhold:
+            size = df.shape[0]
+            level_num = self.config['level_num']
+            while True:
+                for i in range(level_num-1, -1, -1):
+                    df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
+                df = df[df[self.label_key].apply(lambda e:len(e)>0)]
 
-            if size == df.shape[0]: 
-                break
-            else:
-                size = df.shape[0]
+                if size == df.shape[0]: 
+                    break
+                else:
+                    size = df.shape[0]
         return df
 
     def map_true_value_to_number(true_values, map_table):

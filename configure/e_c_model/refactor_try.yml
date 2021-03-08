@@ -61,8 +61,8 @@ data_config:
     #if true, the sequence with length insufficient for level length will be dropped
     equal_label_len: 
         {
-            action: 'force_equal',
-            #action: 'none'
+            #action: 'force_equal',
+            action: 'none'
             #dummy_value: '-1'
         }
     #dummy value when the label length is enough for level length and the value is used to complement.
@@ -89,7 +89,7 @@ data_config:
     #id name
     id_name: 'Entry name'
     #if the examples of a class are below this value, that examples of the class will be removed
-    class_example_threshhold: 1 
+    class_example_threshhold: 0 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
     #reuse:to reused data in files as training and testing
@@ -117,7 +117,7 @@ evaluator_manager_config:
     #batch run:this function is in experiment
     round_size: 1 
     #training model switch. when debug data, set to false, training will not be excuted
-    train_model: False 
+    train_model: True 
     #evaluator manager name: current support common_evaluator_manager
     name: 'common_evaluator_manager'
     #customized batch
