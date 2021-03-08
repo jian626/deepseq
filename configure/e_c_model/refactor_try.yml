@@ -53,7 +53,7 @@ data_config:
     name: new_enzyme_data_manager
     #file path
     #where the training data is 
-    file_path: uniprot_reviwed_yes_family.tab 
+    file_path: debug_uniprot_reviwed_yes_family.tab 
     #file_path: uniport-reviewed_yes_with_cluster_90.tab
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
@@ -61,8 +61,8 @@ data_config:
     #if true, the sequence with length insufficient for level length will be dropped
     equal_label_len: 
         {
-            #action: 'force_equal'
-            action: 'none'
+            action: 'force_equal',
+            #action: 'none'
             #dummy_value: '-1'
         }
     #dummy value when the label length is enough for level length and the value is used to complement.
@@ -96,11 +96,11 @@ data_config:
     #the last name is the config file name without .pkl
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
-    reuse_data: 
-        train: 
-            - 'debug_train.tab'
-        test:
-            - 'debug_test.tab'
+    #reuse_data: 
+    #    train: 
+    #        - 'debug_train.tab'
+    #    test:
+    #        - 'debug_test.tab'
 
 model_config: *basic_cnn_manager
 
@@ -117,7 +117,7 @@ evaluator_manager_config:
     #batch run:this function is in experiment
     round_size: 1 
     #training model switch. when debug data, set to false, training will not be excuted
-    train_model: True 
+    train_model: False 
     #evaluator manager name: current support common_evaluator_manager
     name: 'common_evaluator_manager'
     #customized batch

@@ -195,7 +195,7 @@ class enzyme_data_manager:
             df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
 
         equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
-        equal_label_len_action = utili.get_table_value(equal_label_len, 'flag', None)
+        equal_label_len_action = utili.get_table_value(equal_label_len, 'action', None)
         if equal_label_len_action == 'force_equal':
             dummy_value = utili.get_table_value(equal_label_len, 'dummy_value', None)
             df[self.label_key]= df[self.label_key].apply(lambda x:hierarchical_learning.get_label_text_list(x, level_num=level_num, dummy=dummy_value))
