@@ -62,8 +62,8 @@ data_config:
     equal_label_len: 
         {
             #action: 'force_equal',
-            action: 'none'
-            #dummy_value: '-1'
+            action: 'var_len',
+            dummy_value: '-1'
         }
     #dummy value when the label length is enough for level length and the value is used to complement.
     #dummy_value: '-1'

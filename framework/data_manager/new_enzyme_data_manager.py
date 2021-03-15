@@ -35,6 +35,8 @@ class enzyme_data_manager:
                 }
         self.training_set = None
         self.test_set = None
+        self.train_loss_weight = None
+        self.test_loss_weight = None
 
     def count_class_example(self, df, map_table, level):
         def apply_fun(label_list):
@@ -115,16 +117,115 @@ class enzyme_data_manager:
                 ret[index][e] = 1
         return ret
 
+    def get_level_label_from_df(self, df, level):
+        return df['level%d' % level]
+
+
     def get_x_from_df(self, df):
         x = df['Encode']
         x = sequence.pad_sequences(x, maxlen=self.config['max_len'], padding='post')
         return x
 
-    def get_y_from_df(self, df): 
+    def _propagada_value(self, label, level, level_num, y, field_map_to_number, index, label_ranges, value=None):
+        if level < level_num:
+            sub_range = label_ranges[level]
+            for sub_label in sub_range:
+                new_lable = label + '.' + sub_label
+                if new_lable in field_map_to_number[level]:
+                    y[level][field_map_to_number[level][new_lable]] = value 
+                    self._propagada_value(new_lable, level+1, level_num, y, field_map_to_number, index, value)
+
+    def get_y_from_df(self, df, need_weight=False):
         y = []
-        for i in range(self.config['level_num']):
+        weight = None
+
+        level_num = self.config['level_num']
+        for i in range(level_num):
             temp = self.map_label_set_to_one_hot(df['level%d' % i], self.config['max_category'][i])
             y.append(temp)
+
+        print('==============weight calculation***********************')
+
+        if need_weight:
+            weight = []
+            for i in range(level_num):
+                labels = self.get_level_label_from_df(df, i)
+                num_classes = self.config['max_category'][i]
+                temp = np.ones((len(labels), num_classes)) 
+                weight.append(temp)
+
+            ori_labels = df[self.label_key]
+            example_len = len(ori_labels)
+
+            field_map_to_number = self.config['field_map_to_number']
+            label_ranges = []
+            for level in range(level_num):
+                label_ranges.append(set())
+                for k, _ in field_map_to_number[level].items():
+                    label_ranges[level].add(k.split('.')[level])
+                    
+            for index in range(example_len):
+                labels = ori_labels.iloc[index]
+                for label in labels:
+                    for level in range(level_num):
+                        label_text = hierarchical_learning.get_label_to_level(label, level)
+                        if not label_text:
+                            self._propagada_value(label, level, level_num, weight, field_map_to_number, index, label_ranges, 0)
+                            break
+        if weight:
+            for i in range(len(weight)): 
+                y[i] = np.concatenate((y[i], weight[i]), axis=1)
+        return y, weight
+
+
+    def get_y_from_df____(self, df): 
+        '''this function should be removed when new function passed
+        '''
+        print('------------------------------------get_y_from_df----------------------***************')
+        y = []
+        apply_var_len = False
+        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
+        print('equal_label_len:', equal_label_len)
+        if equal_label_len:
+            action = utili.get_table_value(equal_label_len, 'action', None)
+            print('action:', action)
+            if action == 'var_len':
+                apply_var_len = True
+
+        level_num = self.config['level_num']
+        if apply_var_len: 
+            print('==============apply_var_len***********************')
+            for i in range(level_num):
+                labels = self.get_level_label_from_df(df, i)
+                num_classes = self.config['max_category'][i]
+                temp = np.zeros((len(labels), num_classes)) 
+                y.append(temp)
+
+            ori_labels = df[self.label_key]
+            example_len = len(ori_labels)
+
+            field_map_to_number = self.config['field_map_to_number']
+            label_ranges = []
+            for level in range(level_num):
+                label_ranges.append(set())
+                for k, _ in field_map_to_number[level].items():
+                    label_ranges[level].add(k.split('.')[level])
+                    
+
+            for index in range(example_len):
+                labels = ori_labels.iloc[index]
+                for label in labels:
+                    for level in range(level_num):
+                        label_text = hierarchical_learning.get_label_to_level(label, level)
+                        if label_text:
+                            y[level][index][field_map_to_number[level][label_text]] = 1
+                        else:
+                            self._propagada_value(label, level, level_num, y, field_map_to_number, index, label_ranges, 0)
+                            break
+        else:
+            for i in range(level_num):
+                temp = self.map_label_set_to_one_hot(df['level%d' % i], self.config['max_category'][i])
+                y.append(temp)
         return y
 
 
@@ -330,11 +431,18 @@ class enzyme_data_manager:
 
         self.training_set = training_set
         self.test_set = test_set
+
+        need_weight = False
+        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
+        if equal_label_len:
+            action = utili.get_table_value(equal_label_len, 'action', None)
+            if action == 'var_len':
+                need_weight = True
         
         x_train = self.get_x_from_df(training_set)
-        y_train = self.get_y_from_df(training_set)
+        y_train, train_loss_weight = self.get_y_from_df(training_set, need_weight)
         x_test = self.get_x_from_df(test_set)
-        y_test = self.get_y_from_df(test_set)
+        y_test, test_loss_weight = self.get_y_from_df(test_set, need_weight)
 
         task_num = self.get_task_num() 
         if task_num == 1:
@@ -344,20 +452,22 @@ class enzyme_data_manager:
 
         self.x_train = x_train
         self.y_train = y_train
+        self.train_loss_weight = train_loss_weight
         self.x_test = x_test
         self.y_test = y_test
+        self.test_loss_weight = test_loss_weight 
 
         return x_train, y_train, x_test, y_test
 
     def get_training_and_test_set(self):
-        return self.training_set, self.test_set
+        return self.training_set, self.test_set, self.train_loss_weight, self.test_loss_weight
 
 
     def get_training_data(self):
-        return self.x_train, self.y_train
+        return self.x_train, self.y_train, self.train_loss_weight
     
     def get_test_data(self):
-        return self.x_test, self.y_test
+        return self.x_test, self.y_test, self.test_loss_weight
 
     def get_task_num(self):
         return self.config['task_num']

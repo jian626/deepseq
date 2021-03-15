@@ -26,12 +26,11 @@ class common_evaluator_manager:
         epochs = self.config['epochs']
         batch_round = utili.get_table_value(self.config, 'batch_round')
 
-        x_train, y_train = self.data_manager.get_training_data()
-        x_test, y_test = self.data_manager.get_test_data()
+        x_train, y_train, train_loss_weight = self.data_manager.get_training_data()
+        x_test, y_test, test_loss_weight = self.data_manager.get_test_data()
 
         task_num = self.data_manager.get_task_num()
 
-        self.model_manager.compile()
 
         if self.config['print_summary']:
             print(self.model_manager.get_summary())
@@ -43,9 +42,10 @@ class common_evaluator_manager:
             round_size = utili.get_table_value(self.config, 'round_size', 10)
             total_size = (epochs + round_size - 1) // round_size
             for i in range(total_size):
-                self._evaluate(x_train, y_train, x_test, y_test, round_size, i)
+                self._evaluate(x_train, y_train, x_test, y_test, epochs=round_size, cur_round=i)
         else:
-            self._evaluate(x_train, y_train, x_test, y_test, epochs)
+            
+            self._evaluate(x_train, y_train, x_test, y_test,  epochs=epochs, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
 
         end = datetime.now()
         current_time = end.strftime("%H:%M:%S")
@@ -53,12 +53,13 @@ class common_evaluator_manager:
         print("total estimation time cost:", end - begin)
         print("========================done==========================")
 
-    def _evaluate(self, x_train, y_train, x_test, y_test, epochs, cur_round = None):
+    def _evaluate(self, x_train, y_train, x_test, y_test, epochs, train_loss_weight=None, test_loss_weight=None, cur_round = None):
 
         print('len(y_train)', len(y_train))
         task_num = self.data_manager.get_task_num()
         batch_size = self.config['batch_size']
 
+        self.model_manager.compile(loss_weights=train_loss_weight)
             
         if not cur_round is None:
             print('***************current runing is based on %d round, this run will has %d epochs.****************' % (cur_round, epochs))
@@ -91,7 +92,7 @@ class common_evaluator_manager:
             training_method.train()
         else:
             print('batch_generator:', 'default')
-            self.model_manager.fit(x_train, y_train, epochs, batch_size)
+            self.model_manager.fit(x_train, y_train, epochs, batch_size, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
 
         suffix = ''
         if not cur_round is None:
