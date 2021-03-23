@@ -65,13 +65,11 @@ class enzyme_data_manager:
         return df[self.label_key].apply(lambda e:delete_class_accord_threshold(e, threshold, map_table))
 
 
-    def _apply_threshold(self, df):
+    def _apply_threshold(self, df, class_example_threshhold, level_num):
         '''This function is used to eliminate classes with examples less than threshold
         '''
-        class_example_threshhold = self.config['class_example_threshhold']
         if class_example_threshhold:
             size = df.shape[0]
-            level_num = self.config['level_num']
             while True:
                 for i in range(level_num-1, -1, -1):
                     df[self.label_key] = self.___apply_threshold(df, i, class_example_threshhold)
@@ -133,7 +131,7 @@ class enzyme_data_manager:
                 new_lable = label + '.' + sub_label
                 if new_lable in field_map_to_number[level]:
                     y[level][field_map_to_number[level][new_lable]] = value 
-                    self._propagada_value(new_lable, level+1, level_num, y, field_map_to_number, index, value)
+                    self._propagada_value(new_lable, level+1, level_num, y, field_map_to_number, index, label_ranges, value)
 
     def get_y_from_df(self, df, need_weight=False):
         y = []
@@ -172,9 +170,6 @@ class enzyme_data_manager:
                         if not label_text:
                             self._propagada_value(label, level, level_num, weight, field_map_to_number, index, label_ranges, 0)
                             break
-        if weight:
-            for i in range(len(weight)): 
-                y[i] = np.concatenate((y[i], weight[i]), axis=1)
         return y, weight
 
 
@@ -296,7 +291,7 @@ class enzyme_data_manager:
         if self.config['drop_multilabel'] > 0:
             df = df[df[self.label_key].apply(lambda x: hierarchical_learning.multilabel_labels_not_greater(x, self.config['drop_multilabel']))]
 
-        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
+        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', {})
         equal_label_len_action = utili.get_table_value(equal_label_len, 'action', None)
         if equal_label_len_action == 'force_equal':
             dummy_value = utili.get_table_value(equal_label_len, 'dummy_value', None)
@@ -311,7 +306,9 @@ class enzyme_data_manager:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
 
-        df = self._apply_threshold(df)
+        class_example_threshhold = self.config['class_example_threshhold']
+
+        df = self._apply_threshold(df, class_example_threshhold, level_num)
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         
@@ -432,12 +429,7 @@ class enzyme_data_manager:
         self.training_set = training_set
         self.test_set = test_set
 
-        need_weight = False
-        equal_label_len = utili.get_table_value(self.config, 'equal_label_len', None)
-        if equal_label_len:
-            action = utili.get_table_value(equal_label_len, 'action', None)
-            if action == 'var_len':
-                need_weight = True
+        need_weight = utili.get_table_value(self.config, 'need_weight', False)
         
         x_train = self.get_x_from_df(training_set)
         y_train, train_loss_weight = self.get_y_from_df(training_set, need_weight)

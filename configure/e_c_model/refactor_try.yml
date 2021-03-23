@@ -40,7 +40,10 @@ basic_cnn_manager: &basic_cnn_manager
     #optimizer name
     optimizer: 'Adam' 
     #loss function
-    loss_function: 'binary_crossentropy'
+    loss_function: 'custom_function'
+    #loss_function: 'BinaryCrossentropy'
+    #custom_function: 'weighted_binary_entropy'
+    custom_function: 'tensorflow_binary_entropy'
     #last activation function
     last_activation: 'sigmoid'
     #early_stopping, only for single task currently
@@ -53,7 +56,9 @@ data_config:
     name: new_enzyme_data_manager
     #file path
     #where the training data is 
-    file_path: debug_uniprot_reviwed_yes_family.tab 
+    #file_path: debug_uniprot_reviwed_yes_family.tab 
+    #file_path: uniprot-reviewed_yes_cluster_by_species.tab 
+    file_path: uniport-reviewed_yes_with_cluster_90.tab 
     #file_path: uniport-reviewed_yes_with_cluster_90.tab
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
@@ -63,8 +68,9 @@ data_config:
         {
             #action: 'force_equal',
             action: 'var_len',
-            dummy_value: '-1'
+            #dummy_value: '0'
         }
+    need_weight: False
     #dummy value when the label length is enough for level length and the value is used to complement.
     #dummy_value: '-1'
     #max length of sequence
@@ -96,6 +102,12 @@ data_config:
     #the last name is the config file name without .pkl
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
+
+    reuse_data: 
+        train: 
+            - 'train_cluster_90.tab'
+        test:
+            - 'test_cluster_90.tab'
     #reuse_data: 
     #    train: 
     #        - 'debug_train.tab'
@@ -119,6 +131,20 @@ evaluator_manager_config:
     #training model switch. when debug data, set to false, training will not be excuted
     train_model: True 
     #evaluator manager name: current support common_evaluator_manager
+    #training_method:
+    #    {
+    #        name: 'training_on_similar_with_diff_fun',
+    #        cluster_entry: 'Cluster name',
+    #        function_entry: 'EC number'
+    #    }
+    batch_generator: 
+        {name: 'training_simi_diff_fun',
+         #debug_file: 'debug_cluster.log',
+         log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
+         cluster_entry: 'Cluster name',
+         function_entry: 'EC number',
+         ever_random: True 
+        }
     name: 'common_evaluator_manager'
     #customized batch
     #batch_generator: 
