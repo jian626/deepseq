@@ -131,6 +131,7 @@ evaluator_manager_config:
     #training model switch. when debug data, set to false, training will not be excuted
     train_model: True 
     #evaluator manager name: current support common_evaluator_manager
+    name: 'common_evaluator_manager'
     #training_method:
     #    {
     #        name: 'training_on_similar_with_diff_fun',
@@ -145,7 +146,6 @@ evaluator_manager_config:
          function_entry: 'EC number',
          ever_random: True 
         }
-    name: 'common_evaluator_manager'
     #customized batch
     #batch_generator: 
     #    {name: 'homogenous_cluster_training',

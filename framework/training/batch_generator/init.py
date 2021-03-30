@@ -1,3 +1,5 @@
 from framework.training.batch_generator.homogenous_cluster_training import homogenous_cluster_training 
 from framework.training.batch_generator.inhomogenous_cluster_training import inhomogenous_cluster_training 
 from framework.training.batch_generator.loss_sampling import loss_sampling 
+from framework.training.batch_generator.training_simi_diff_fun import training_simi_diff_fun
+from framework.training.batch_generator.random_fair_batch import random_fair_batch 

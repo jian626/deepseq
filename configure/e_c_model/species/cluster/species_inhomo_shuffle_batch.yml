@@ -50,7 +50,7 @@ basic_cnn_manager: &basic_cnn_manager
 
 data_config:
     #data manager name
-    name: enzyme_data_manager
+    name: new_enzyme_data_manager
     #file path
     #where the training data is 
     #file_path: uniprot-reviewed_yes_cluster_by_species.tab 
@@ -104,7 +104,7 @@ evaluator_manager_config:
     #epochs
     epochs: 30 
     #batch_size
-    batch_size: 200 
+    batch_size: 150 
     #print report switch
     print_report: True
     #batch run:this function is in experiment
@@ -121,5 +121,7 @@ evaluator_manager_config:
          #debug_file: 'debug_cluster.log',
          log_colums: ['Entry', 'Entry name', 'EC number', 'Cluster name'],
          cluster_col_name: 'Cluster name',
-         ever_random: True 
+         mix_num: 50,
+         ever_random: True,
+         function_entry: 'EC number'
         }

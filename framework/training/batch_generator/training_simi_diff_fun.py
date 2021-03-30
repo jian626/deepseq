@@ -4,7 +4,7 @@ from framework.utili import get_table_value
 import numpy as np
 import random
 import copy
-class training_simi_diff_fun(training_base):
+class training_simi_diff_fun:
     name = 'training_simi_diff_fun'
 
     def __init__(self, config, context):
@@ -24,11 +24,15 @@ class training_simi_diff_fun(training_base):
         self.batch_size = batch_size
         self.log_colums = log_colums 
 
+        cluster_training_base.__init__(self, config, context)
+
         train_set, _, _, _ = self.context['data_manager'].get_training_and_test_set()
 
-        cluster_entry = get_table_value(config, 'cluster_entry', 'Cluster name')
+        cluster_entry = get_table_value(config,'cluster_col_name', 'Cluster name')
         function_entry = get_table_value(config, 'function_entry', 'Function entry')
         print_statistics = get_table_value(config, 'print_statistics', True)
+        self.mix_num = get_table_value(config, 'mix_num', 0)
+    
         
         total_clusters = {}
         differ_clusters = set() 
@@ -66,6 +70,7 @@ class training_simi_diff_fun(training_base):
                             pair_num += 1
             id_pairs[cluster_name] = pairs
         self.id_pairs = id_pairs
+        print('**********************************id_pairs**********************:', len(id_pairs))
         self.batch_num = int(pair_num * 2 / self.batch_size)
         self.reset_samples()
 
@@ -86,7 +91,6 @@ class training_simi_diff_fun(training_base):
         id_pairs = copy.deepcopy(self.id_pairs)
         train_examples = []
         while len(id_pairs) > 0:
-            print(len(id_pairs))
             need_del = []
             for cluster_name, items in id_pairs.items():
                 item = items.pop()

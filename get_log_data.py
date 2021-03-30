@@ -27,7 +27,12 @@ def get_log_date(dir_name, field_name, level, field_num, sep=',', ext_name='.log
     name_hash = {}
     for f in listdir(dir_name):
         if isfile(join(dir_name, f)) and f.endswith(ext_name):
-            key = re.split('_\d+_', f)[0]
+            rf = f[::-1]
+            matched_list = re.findall('(_\d+_){1}', rf)
+            key = f[0: f.rfind(matched_list[0])]
+            #key = re.split('_\d+_', f)
+            print("key:", key)
+            print("matched_list:", matched_list)
             if not key in name_hash:
                 name_hash[key] = []
             name_hash[key].append(f)

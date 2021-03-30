@@ -38,13 +38,16 @@ class common_evaluator_manager:
         if not self.config['train_model']:
             return
 
+        if train_loss_weight:
+            for i in range(task_num): 
+                y_train[i] = np.concatenate((y_train[i], train_loss_weight[i]), axis=1)
+
         if batch_round:
             round_size = utili.get_table_value(self.config, 'round_size', 10)
             total_size = (epochs + round_size - 1) // round_size
             for i in range(total_size):
                 self._evaluate(x_train, y_train, x_test, y_test, epochs=round_size, cur_round=i)
         else:
-            
             self._evaluate(x_train, y_train, x_test, y_test,  epochs=epochs, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
 
         end = datetime.now()
@@ -80,7 +83,7 @@ class common_evaluator_manager:
                 context['data_manager'] = self.data_manager
                 context['model_manager'] = self.model_manager
                 self.sg = batch_generator_creator.instance.create(batch_generator_config, context)
-            self.model_manager.fit_generator(self.sg, epochs = epochs)
+            self.model_manager.fit(self.sg, epochs = epochs)
         elif 'training_method' in self.config:
             training_method_config = self.config['training_method']
             training_method_config['batch_size'] = batch_size
@@ -92,7 +95,8 @@ class common_evaluator_manager:
             training_method.train()
         else:
             print('batch_generator:', 'default')
-            self.model_manager.fit(x_train, y_train, epochs, batch_size, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
+            
+            self.model_manager.fit(x_train, y_train, epochs, batch_size)
 
         suffix = ''
         if not cur_round is None:

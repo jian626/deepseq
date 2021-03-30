@@ -11,9 +11,10 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.models import load_model
 from tensorflow import math
 from tensorflow import reduce_sum
-from tensorflow.keras.backend import int_shape
 from framework import utili
-from framework.algorithm import loss_function as my_loss
+from framework.algorithm.loss_function import get_custom_function
+
+#tf.config.run_functions_eagerly(True)
 
 class model_common_manager:
     def __init__(self, data_manager, config):
@@ -38,21 +39,10 @@ class model_common_manager:
         task_num = self.data_manager.get_task_num()
         optimizer = self.config['optimizer']
         loss_function = self.config['loss_function']
-        if loss_weights:
-            def get_loss(s_weights):
-                def cus_fun(y_true_and_weights, y_pred):
-                    rn = 31 
-                    cln = int(s_weights.shape[1])
-                    y_true = tf.slice(y_true_and_weights, [0, 0], [rn, cln])
-                    weights = tf.slice(y_true_and_weights, [0, cln], [rn, cln])
-                    return reduce_sum(math.multiply(math.add(math.multiply(y_true, math.log(y_pred)), math.multiply(math.subtract(1.0, y_true), math.log(math.subtract(1.0, y_pred)))), weights))
-                return cus_fun
-            losses = []
-            for weight in loss_weights:
-                losses.append(get_loss(weight))
-            self.get_model().compile(optimizer=optimizer, loss=losses,  metrics=['categorical_accuracy'] * task_num)
-        else:
-            self.get_model().compile(optimizer=optimizer, loss=[loss_function] * task_num , metrics=['categorical_accuracy'] * task_num)
+        if loss_function == 'custom_function':
+            name = self.config['custom_function']
+            loss_function = get_custom_function(name) 
+        self.get_model().compile(optimizer=optimizer, loss=[loss_function] * task_num , metrics='categorical_accuracy' )
 
     def fit_active_training(self, x_train, y_train, epochs, batch_size):
         active_training_config = None
@@ -65,14 +55,22 @@ class model_common_manager:
         training_loss = self.get_model().test_on_batch(x_train[:batch_size], y)
         print(training_loss)
 
-    def fit(self, x_train, y_train, epochs, batch_size, train_loss_weight=None, test_loss_weight=None):  
+    def fit(self, x_train, y_train=None, epochs=None, batch_size=None):  
         callbacks = []
         task_num = self.data_manager.get_task_num()
         if (task_num == 1) and self.config['early_stopping']:
             patience = self.config['patience']
             early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_categorical_accuracy', restore_best_weights=True, patience=patience, verbose=1)
             callbacks.append(early_stopping_callback)
-        self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        log_dir = 'model_log/'
+        model_name = utili.get_table_value(self.config,'model_name', "")
+        log_dir = log_dir + model_name + '_' + datetime.now().strftime("%Y%m%d-%H%M%S")
+        tb = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+        callbacks.append(tb)
+        if y_train:
+            self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
+        else:
+            self.get_model().fit(x_train, epochs=epochs, callbacks=callbacks)
 
     def fit_generator(self, generator, epochs):
         self.get_model().fit_generator(generator, epochs=epochs)

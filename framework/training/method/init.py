@@ -1,1 +1,2 @@
 from framework.training.method.training_on_batch import training_on_batch 
+from framework.training.method.training_on_similar_with_diff_fun import training_on_similar_with_diff_fun 

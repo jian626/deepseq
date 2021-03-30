@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import yaml
 import sys
+import os
 from framework import init 
 from framework import utili
 from datetime import datetime
@@ -20,6 +21,7 @@ def run(config_path):
 
     data_config = config['data_config']
     model_config = config['model_config']
+    model_config['model_name'] = os.path.basename(config_path).split('.')[0] 
     evaluator_manager_config = config['evaluator_manager_config']
 
     dm = data_manager_creator.instance.create(data_config)
