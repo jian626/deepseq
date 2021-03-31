@@ -16,6 +16,8 @@ class training_base(Sequence):
             self.mix_method = get_table_value(config, 'mix_method', None)
             if self.mix_method and self.mix_num > 0:
                 if self.mix_method == 'pair':
+                    self.cluster_col_name = get_table_value(config,'cluster_col_name', 'Cluster name')
+                    self.function_entry = get_table_value(config, 'function_entry', 'EC number')
                     self.get_mix_pairs() 
 
     def reset_samples(self):
@@ -38,6 +40,7 @@ class training_base(Sequence):
         end = begin + self.batch_size
         result = self.get_train_examples()[begin:end]
         if self.mix_num and self.mix_num > 0: 
+            print('mix_method:', self.mix_method)
             if self.mix_method == 'pair':
                 if self.id_pairs:
                     pairs = random.sample(self.id_pairs, self.mix_num // 2)
