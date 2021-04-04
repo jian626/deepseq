@@ -35,6 +35,8 @@ class enzyme_data_manager:
                 }
         self.training_set = None
         self.test_set = None
+        self.validation_set = None
+        self.validation_loss_weight = None
         self.train_loss_weight = None
         self.test_loss_weight = None
 
@@ -228,12 +230,21 @@ class enzyme_data_manager:
         reuse_data = self.config['reuse_data']
         training_set = pd.DataFrame()
         test_set = pd.DataFrame()
+        validation_set = pd.DataFrame()
 
         for train in reuse_data['train']:
             training_set = training_set.append(pd.read_csv(train, sep=sep))
 
         for test in reuse_data['test']:
             test_set = test_set.append(pd.read_csv(test, sep=sep))
+
+        if 'validation' in reuse_data:
+            validation_set = pd.DataFrame()
+            for validation in reuse_data['validation']:
+                validation_set = validation_set.append(pd.read_csv(validation, sep=sep))
+            print('validation is in resue_data')
+            print(validation_set)
+            print('++++++++++++++++++++++++++++++++++++++++++')
 
         print('***********training set********************')
         print(training_set.head(10))
@@ -262,9 +273,13 @@ class enzyme_data_manager:
             for i in range(level):
                 training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
                 test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
+            if validation_set:
+                for i in range(level):
+                    validation_set['level%d' % i] = validation_set['level%d' % i].apply(convert_str_to_list)
+                self.validation_set = validation_set
         else:
             df = pd.read_csv(self.config['file_path'],sep=sep)
-            training_set, test_set = self.process_df(df, training_set, test_set)
+            training_set, test_set = self.process_df(df, training_set, test_set, validation_set)
         print('***********<<<<<training set********************')
         print(training_set.head(10))
         print('***********<<<<test set********************')
@@ -272,7 +287,7 @@ class enzyme_data_manager:
             
         return training_set, test_set
 
-    def process_df(self, df, origin_training_set=None, origin_test_set=None):
+    def process_df(self, df, origin_training_set=None, origin_test_set=None, origin_validation_set=None):
         nan_value = utili.get_table_value(self.config, 'nan_value', None)
         if nan_value is None:
             df = df.dropna()
@@ -375,18 +390,24 @@ class enzyme_data_manager:
             print(origin_test_set.head(10))
             training_set = df.merge(origin_training_set[self.id_name], how='inner', on=self.id_name)
             test_set = df.merge(origin_test_set[self.id_name], how='inner', on=self.id_name)
+            if (not origin_validation_set is None) and len(origin_validation_set) > 0:
+                validation_set = df.merge(origin_validation_set[self.id_name], how='inner', on=self.id_name)
             print('**************df*********************')
             print(df.head(10))
             print('**********training_set************')
             print(training_set.head(10))
             print('**********test_set************')
             print(test_set.head(10))
+            print('************validation_set*******************')
+            print(validation_set.head(10))
             print('shapes..................')
             print(df.shape)
             print(origin_training_set.shape)
             print(origin_test_set.shape)
             print(training_set.shape)
             print(test_set.shape)
+            print(validation_set.shape)
+            self.validation_set = validation_set
 
 
         if 'save_data' in self.config:
@@ -426,6 +447,10 @@ class enzyme_data_manager:
         utili.print_debug_info(training_set, "training set", print_head=True)
         utili.print_debug_info(test_set, "test set", print_head=True)
 
+        if (not self.validation_set is None) and len(self.validation_set)>0:
+            self.validation_set['Encode'] = self.validation_set['Sequence'].apply(lambda x:utili.GetOridinalEncoding(x, feature_list, self.config['ngram']))
+            
+
         self.training_set = training_set
         self.test_set = test_set
 
@@ -435,6 +460,14 @@ class enzyme_data_manager:
         y_train, train_loss_weight = self.get_y_from_df(training_set, need_weight)
         x_test = self.get_x_from_df(test_set)
         y_test, test_loss_weight = self.get_y_from_df(test_set, need_weight)
+
+        x_validation = None
+        y_validation = None
+        validation_loss_weight = None
+        if (not self.validation_set is None) and len(self.validation_set) > 0:
+            x_validation = self.get_x_from_df(self.validation_set)
+            y_validation, validation_loss_weight = self.get_y_from_df(self.validation_set, need_weight)
+            
 
         task_num = self.get_task_num() 
         if task_num == 1:
@@ -448,6 +481,9 @@ class enzyme_data_manager:
         self.x_test = x_test
         self.y_test = y_test
         self.test_loss_weight = test_loss_weight 
+        self.x_validation = x_validation
+        self.y_validation = y_validation
+        self.validation_loss_weight = validation_loss_weight
 
         return x_train, y_train, x_test, y_test
 
@@ -460,6 +496,9 @@ class enzyme_data_manager:
     
     def get_test_data(self):
         return self.x_test, self.y_test, self.test_loss_weight
+
+    def get_validation_data(self):
+        return self.x_validation, self.y_validation, self.validation_loss_weight 
 
     def get_task_num(self):
         return self.config['task_num']

@@ -55,7 +55,7 @@ class model_common_manager:
         training_loss = self.get_model().test_on_batch(x_train[:batch_size], y)
         print(training_loss)
 
-    def fit(self, x_train, y_train=None, epochs=None, batch_size=None):  
+    def fit(self, x_train, y_train=None, epochs=None, batch_size=None, validation_data=None):  
         callbacks = []
         task_num = self.data_manager.get_task_num()
         if (task_num == 1) and self.config['early_stopping']:
@@ -67,10 +67,13 @@ class model_common_manager:
         log_dir = log_dir + model_name + '_' + datetime.now().strftime("%Y%m%d-%H%M%S")
         tb = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
         callbacks.append(tb)
-        if y_train:
-            self.get_model().fit(x_train, y_train, epochs=epochs,  batch_size=batch_size, validation_split=1/6, callbacks=callbacks)
-        else:
-            self.get_model().fit(x_train, epochs=epochs, callbacks=callbacks)
+        history = self.get_model().fit(x=x_train, y=y_train, epochs=epochs,  batch_size=batch_size, callbacks=callbacks,validation_data = validation_data)
+        history_dir = utili.get_table_value(self.config, 'history_dir', 'history_dir/')
+        utili.create_dir(history_dir)
+        file_name = history_dir + '/' +  model_name + '_' + datetime.now().strftime("%Y%m%d-%H%M%S")
+        utili.save_obj(history.history, file_name)
+
+
 
     def fit_generator(self, generator, epochs):
         self.get_model().fit_generator(generator, epochs=epochs)

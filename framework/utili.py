@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+from pathlib import Path
 
 n_gram_map = {}
 
@@ -102,11 +103,11 @@ def map_label_to_class(map_table, label):
     return ret
 
 def save_obj(obj,name):
-    with open(name + '.pkl', 'wb') as f:
+    with open(name, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(name):
-    with open(name + '.pkl', 'rb') as f:
+    with open(name, 'rb') as f:
         return pickle.load(f)
 
 def strict_identical_compare(L1, L2):
@@ -127,6 +128,10 @@ def get_table_value(table, key, default=None):
     else:
         ret = default
     return ret
+
+def create_dir(path):
+    Path(path).mkdir(parents=True, exist_ok=True) 
+
 
 def create_number_to_catogry_mapping(m):
     ret = {}

@@ -28,6 +28,7 @@ class common_evaluator_manager:
 
         x_train, y_train, train_loss_weight = self.data_manager.get_training_data()
         x_test, y_test, test_loss_weight = self.data_manager.get_test_data()
+        x_validation, y_validation, validation_loss_weight = self.data_manager.get_validation_data()
 
         task_num = self.data_manager.get_task_num()
 
@@ -42,13 +43,23 @@ class common_evaluator_manager:
             for i in range(task_num): 
                 y_train[i] = np.concatenate((y_train[i], train_loss_weight[i]), axis=1)
 
+        if validation_loss_weight:
+            for i in range(task_num): 
+                y_validation[i] = np.concatenate((y_validation[i], validation_loss_weight[i]), axis=1)
+
         if batch_round:
             round_size = utili.get_table_value(self.config, 'round_size', 10)
             total_size = (epochs + round_size - 1) // round_size
             for i in range(total_size):
                 self._evaluate(x_train, y_train, x_test, y_test, epochs=round_size, cur_round=i)
         else:
-            self._evaluate(x_train, y_train, x_test, y_test,  epochs=epochs, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
+            validation_data = None
+            print('************************validation_data*******************')
+            print(validation_data)
+            if (not x_validation is None) and len(x_validation) > 0: 
+                print('==============================validation data used======================')
+                validation_data = (x_validation, y_validation)
+            self._evaluate(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test, validation_data=validation_data,  epochs=epochs, train_loss_weight=train_loss_weight, test_loss_weight=test_loss_weight)
 
         end = datetime.now()
         current_time = end.strftime("%H:%M:%S")
@@ -56,7 +67,7 @@ class common_evaluator_manager:
         print("total estimation time cost:", end - begin)
         print("========================done==========================")
 
-    def _evaluate(self, x_train, y_train, x_test, y_test, epochs, train_loss_weight=None, test_loss_weight=None, cur_round = None):
+    def _evaluate(self, x_train, y_train, x_test, y_test, epochs, validation_data=None, train_loss_weight=None, test_loss_weight=None, cur_round = None):
 
         print('len(y_train)', len(y_train))
         task_num = self.data_manager.get_task_num()
@@ -83,7 +94,7 @@ class common_evaluator_manager:
                 context['data_manager'] = self.data_manager
                 context['model_manager'] = self.model_manager
                 self.sg = batch_generator_creator.instance.create(batch_generator_config, context)
-            self.model_manager.fit(self.sg, epochs = epochs)
+            self.model_manager.fit(self.sg, epochs = epochs, validation_data=validation_data)
         elif 'training_method' in self.config:
             training_method_config = self.config['training_method']
             training_method_config['batch_size'] = batch_size
@@ -96,7 +107,7 @@ class common_evaluator_manager:
         else:
             print('batch_generator:', 'default')
             
-            self.model_manager.fit(x_train, y_train, epochs, batch_size)
+            self.model_manager.fit(x_train=x_train, y_train=y_train, epochs=epochs, batch_size=batch_size, validation_data=validation_data)
 
         suffix = ''
         if not cur_round is None:
