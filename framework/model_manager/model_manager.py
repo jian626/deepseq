@@ -71,7 +71,9 @@ class model_common_manager:
         history_dir = utili.get_table_value(self.config, 'history_dir', 'history_dir/')
         utili.create_dir(history_dir)
         file_name = history_dir + '/' +  model_name + '_' + datetime.now().strftime("%Y%m%d-%H%M%S")
-        utili.save_obj(history.history, file_name)
+        my_history = {'epoch':history.epoch, 'history':history.history}
+        utili.save_obj(my_history, file_name)
+        #utili.save_obj(history.history, file_name)
 
 
 
