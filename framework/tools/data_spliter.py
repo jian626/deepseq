@@ -1,6 +1,14 @@
 import numpy as np
 import pandas as pd
 
+def random_split(df, train_percent):
+    df = df.reindex(np.random.permutation(df.index))
+    total = len(df)
+    train_end = int(total * train_percent)
+    train_set = df.iloc[:train_end]
+    test_set = df.iloc[train_end:]
+    return train_set, test_set
+
 def at_least_one_label_in_test_set(df,train_percent, label_name, max_category):
     training_amount = int(df.shape[0] * train_percent)
     counting_map = {}

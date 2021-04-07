@@ -33,6 +33,7 @@ class enzyme_data_manager:
         if not 'number_to_field' in self.config:
             self.config['number_to_field'] = {
                 }
+
         self.training_set = None
         self.test_set = None
         self.validation_set = None
@@ -381,7 +382,11 @@ class enzyme_data_manager:
             print('*************normal split processs*****************')
             training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
             index_name = 'level%d' % (target_level)
-            training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']])
+            split_method = utili.get_table_value(self.config, 'split_method', 'random')
+            if split_method == 'at_least_one_label': 
+                training_set, test_set = data_spliter.at_least_one_label_in_test_set(df, self.config['train_percent'], index_name, self.config['max_category'][self.config['target_level']])
+            else:
+                training_set, test_set = data_spliter.random_split(df, self.config['train_percent'])
         else:
             print('*****************begin to merge data***************')
             print('**********origin_training_set************')
