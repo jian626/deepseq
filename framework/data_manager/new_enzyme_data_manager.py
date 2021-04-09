@@ -322,9 +322,10 @@ class enzyme_data_manager:
             df = df[df['Sequence'].apply(lambda x:len(x)<=self.config['max_len'])]
             utili.print_debug_info(df, 'after drop seq more than %d ' % self.config['max_len'], print_head = True)
 
-        class_example_threshhold = self.config['class_example_threshhold']
+        class_example_threshhold = utili.get_table_value(self.config, 'class_example_threshhold', None)
 
-        df = self._apply_threshold(df, class_example_threshhold, level_num)
+        if class_example_threshhold:
+            df = self._apply_threshold(df, class_example_threshhold, level_num)
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
         

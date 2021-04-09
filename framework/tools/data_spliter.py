@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sys
 
 def random_split(df, train_percent):
     df = df.reindex(np.random.permutation(df.index))
@@ -37,3 +38,13 @@ def at_least_one_label_in_test_set(df,train_percent, label_name, max_category):
     test_set = df.iloc[training_set.shape[0]:]
     test_set = pd.concat([test_set_temp, test_set])
     return training_set, test_set
+
+def random_split_file(file_name, train_percent, train_file_name, validation_file_name):
+    df = pd.read_csv(file_name, sep='\t')
+    train_set, vali_set = random_split(df, float(train_percent)) 
+    train_set.to_csv(train_file_name, sep='\t', index=False)
+    vali_set.to_csv(validation_file_name, sep='\t', index=False)
+
+if __name__ == '__main__':
+    print('file_name, train_percent, train_file_name, validation_file_name')
+    random_split_file(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

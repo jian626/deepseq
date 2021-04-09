@@ -71,7 +71,7 @@ data_config:
     #n-gram
     ngram: 1 
     #traning percentage, validation percentage will be 1- training percentage
-    train_percent: 0.8
+    train_percent: 0.7
     #how many tasks will be 
     task_num: 4 
     #how many hieracical levels are there.
@@ -84,10 +84,12 @@ data_config:
     #id name
     id_name: 'Entry name'
     #if the examples of a class are below this value, that examples of the class will be removed
-    class_example_threshhold: 1 
+    #class_example_threshhold: 1 
 
     save_data:
-        train: test_cluser_90_x.tab
+        #train: train_cluster_90.tab
+        #test: test_cluster_90.tab
+        train: test_cluster_90_x.tab
         test: validation_cluster_90_x.tab
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
