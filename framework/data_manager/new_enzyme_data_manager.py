@@ -396,6 +396,7 @@ class enzyme_data_manager:
             print(origin_test_set.head(10))
             training_set = df.merge(origin_training_set[self.id_name], how='inner', on=self.id_name)
             test_set = df.merge(origin_test_set[self.id_name], how='inner', on=self.id_name)
+            validation_set = None
             if (not origin_validation_set is None) and len(origin_validation_set) > 0:
                 validation_set = df.merge(origin_validation_set[self.id_name], how='inner', on=self.id_name)
             print('**************df*********************')
@@ -404,16 +405,18 @@ class enzyme_data_manager:
             print(training_set.head(10))
             print('**********test_set************')
             print(test_set.head(10))
-            print('************validation_set*******************')
-            print(validation_set.head(10))
+            if not validation_set is None:
+                print('************validation_set*******************')
+                print(validation_set.head(10))
+                print(validation_set.shape)
+            self.validation_set = validation_set
             print('shapes..................')
             print(df.shape)
             print(origin_training_set.shape)
             print(origin_test_set.shape)
             print(training_set.shape)
             print(test_set.shape)
-            print(validation_set.shape)
-            self.validation_set = validation_set
+            self.df = df
 
 
         if 'save_data' in self.config:

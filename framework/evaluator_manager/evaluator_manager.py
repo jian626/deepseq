@@ -18,6 +18,7 @@ class common_evaluator_manager:
         self.evaluators = evaluators
         self.sg = None 
 
+
     def evaluate(self):
         begin = datetime.now()
         current_time = begin.strftime("%H:%M:%S")
@@ -105,6 +106,7 @@ class common_evaluator_manager:
             training_method = training_method_creator.instance.create(training_method_config, context)
             training_method.train()
         else:
+        
             print('batch_generator:', 'default')
             
             self.model_manager.fit(x_train=x_train, y_train=y_train, epochs=epochs, batch_size=batch_size, validation_data=validation_data)

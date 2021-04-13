@@ -93,11 +93,15 @@ data_config:
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     reuse_data: 
         train: 
-            - 'train_cluster_90.tab'
+            - 'train_pair_90.tab'
         test:
-            - 'test_cluster_90_x.tab'
-        validation:
-            - 'validation_cluster_90_x.tab'
+            - 'test_pair_90.tab'
+        #train: 
+        #    - 'train_cluster_90.tab'
+        #test:
+        #    - 'test_cluster_90_x.tab'
+        #validation:
+        #    - 'validation_cluster_90_x.tab'
 
 model_config: *basic_cnn_manager
 

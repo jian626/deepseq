@@ -3,6 +3,7 @@ import numpy as np
 import random
 import copy
 from framework.utili import get_table_value
+
 class training_base(Sequence):
     def __init__(self, config=None, context=None):
         if context:
@@ -96,9 +97,9 @@ class training_base(Sequence):
         for cluster_name in differ_clusters:
             cluster = total_clusters[cluster_name]
             values = list(cluster.values())
-            for i in range(len(values)):
+            for i in range(len(values)-1):
                 for item_a in values[i]:
-                    for j in range(i, len(values)):
+                    for j in range(i+1, len(values)):
                         for item_b in values[j]:
                             id_pairs.append([item_a, item_b])
                             pair_num += 1
