@@ -103,7 +103,12 @@ class enzyme_data_manager:
     def create_label_from_field(df, class_maps, field_name, label_name, index): 
         values = list(class_maps[index].keys())
         field_map_to_number = enzyme_data_manager.create_number_to_catogry_mapping(values)
-        df[label_name] = df[field_name].apply(lambda x:enzyme_data_manager.map_true_value_to_number(x, field_map_to_number))
+        new_values = df[field_name].apply(lambda x:enzyme_data_manager.map_true_value_to_number(x, field_map_to_number))
+        print('==========================new_values========================')
+        print(new_values)
+        df.loc[:, (label_name)] = new_values
+        print('===================after replace====================')
+        print(df)
         return df,len(field_map_to_number), field_map_to_number
 
     def get_level_labels(self, df, level, class_maps):
@@ -253,7 +258,9 @@ class enzyme_data_manager:
         print(test_set.head(10))
 
         if 'meta' in reuse_data:
-            config = utili.load_obj(reuse_data['meta'])
+            meta_name = reuse_data['meta'][0]
+            print('meta file is used:', meta_name)
+            config = utili.load_obj(meta_name)
             self.config['class_maps'] = config['class_maps']
             self.config['field_map_to_number'] = config['field_map_to_number']
             self.config['number_to_field'] = config['number_to_field']
@@ -274,12 +281,15 @@ class enzyme_data_manager:
             for i in range(level):
                 training_set['level%d' % i] = training_set['level%d' % i].apply(convert_str_to_list)
                 test_set['level%d' % i] = test_set['level%d' % i].apply(convert_str_to_list)
-            if validation_set:
+            if (not validation_set is None) and len(validation_set) > 0:
                 for i in range(level):
                     validation_set['level%d' % i] = validation_set['level%d' % i].apply(convert_str_to_list)
                 self.validation_set = validation_set
         else:
-            df = pd.read_csv(self.config['file_path'],sep=sep)
+            file_name = utili.get_table_value(self.config, 'file_path', None)
+            df = None
+            if not file_name is None:
+                df = pd.read_csv(self.config['file_path'],sep=sep)
             training_set, test_set = self.process_df(df, training_set, test_set, validation_set)
         print('***********<<<<<training set********************')
         print(training_set.head(10))
@@ -289,6 +299,13 @@ class enzyme_data_manager:
         return training_set, test_set
 
     def process_df(self, df, origin_training_set=None, origin_test_set=None, origin_validation_set=None):
+        has_index = False
+        if df is None:
+            df = pd.concat([origin_validation_set, origin_test_set])
+            df.drop_duplicates(subset=[self.id_name],inplace=True)
+            df.set_index(self.id_name, inplace=True)
+            has_index = True
+
         nan_value = utili.get_table_value(self.config, 'nan_value', None)
         if nan_value is None:
             df = df.dropna()
@@ -324,7 +341,7 @@ class enzyme_data_manager:
 
         class_example_threshhold = utili.get_table_value(self.config, 'class_example_threshhold', None)
 
-        if class_example_threshhold:
+        if class_example_threshhold and class_example_threshhold > 0:
             df = self._apply_threshold(df, class_example_threshhold, level_num)
 
         utili.print_debug_info(df, 'after apply threshold', print_head = True)
@@ -361,8 +378,10 @@ class enzyme_data_manager:
                 print('*level %d: %d classes less than 10, occupy %f%% of %d' % (index, less_than_10, float(less_than_10) * 100.0 / self.config['max_category'][index], self.config['max_category'][index]))
         
         
-        df = df.sample(frac=self.config['fraction'])
-        utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
+        fraction = utili.get_table_value(self.config, 'fraction', None) 
+        if fraction:
+            df = df.sample(frac=self.config['fraction'])
+            utili.print_debug_info(df, 'after sampling frac=%f' % self.config['fraction'])
         self.config['using_set_num'] = df.shape[0]
         #df = df.reindex(np.random.permutation(df.index))
         
@@ -371,8 +390,6 @@ class enzyme_data_manager:
             if self.config['max_len'] <len(x):
                 self.config['max_len'] = len(x)
         
-        print('train_percent:%f' % self.config['train_percent'])
-
         target_level = self.config['target_level']
         print('target_level:', target_level)
 
@@ -381,6 +398,7 @@ class enzyme_data_manager:
 
         if origin_training_set is None or origin_test_set is None:
             print('*************normal split processs*****************')
+            print('train_percent:%f' % self.config['train_percent'])
             training_amount = int(self.config['using_set_num'] * self.config['train_percent'])
             index_name = 'level%d' % (target_level)
             split_method = utili.get_table_value(self.config, 'split_method', 'random')
@@ -394,8 +412,15 @@ class enzyme_data_manager:
             print(origin_training_set.head(10))
             print('**********origin_test_set************')
             print(origin_test_set.head(10))
-            training_set = df.merge(origin_training_set[self.id_name], how='inner', on=self.id_name)
+            if has_index:
+                training_set = df.loc[origin_test_set[self.id_name]]
+            else:
+                training_set = df.merge(origin_training_set[self.id_name], how='inner', on=self.id_name)
             test_set = df.merge(origin_test_set[self.id_name], how='inner', on=self.id_name)
+            test_set.drop_duplicates(subset=[self.id_name],inplace=True)
+
+            training_set = training_set.loc[~training_set[self.id_name].isin(test_set[self.id_name])]
+
             validation_set = None
             if (not origin_validation_set is None) and len(origin_validation_set) > 0:
                 validation_set = df.merge(origin_validation_set[self.id_name], how='inner', on=self.id_name)

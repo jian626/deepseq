@@ -53,8 +53,8 @@ data_config:
     name: new_enzyme_data_manager
     #file path
     #where the training data is 
-    #file_path: uniprot-reviewed_yes_cluster_by_species.tab 
-    file_path: uniport-reviewed_yes_with_cluster_90.tab
+    file_path: uniprot-reviewed_yes_cluster_by_species.tab 
+    #file_path: concated.tab  
     #drop examples multi-labels more than the value. if 0, nothing will be dropped
     drop_multilabel: 0 
     #dummy label switch, if it is True. the uncertain labels like 3.2 will be deemed as a complete label I.E. 3.2.unknown.unknown
@@ -66,11 +66,11 @@ data_config:
     #print statistics
     print_statistics: True
     #how much portion of data will be used
-    fraction: 1 
+    #fraction: 1 
     #n-gram
     ngram: 1 
     #traning percentage, validation percentage will be 1- training percentage
-    train_percent: 0.7
+    #train_percent: 0.7
     #how many tasks will be 
     task_num: 4 
     #how many hieracical levels are there.
@@ -83,7 +83,7 @@ data_config:
     #id name
     id_name: 'Entry name'
     #if the examples of a class are below this value, that examples of the class will be removed
-    class_example_threshhold: 1 
+    class_example_threshhold: 0 
     #save data, if it is set, the data will be saved to files, the last one is the config file name, which save
     #object of python, and it will be saved with ending of .pkl
 
@@ -92,12 +92,14 @@ data_config:
     #data_config['reuse_data'] = {'train':'train.tab', 'test':'test.tab', 'meta':'data_config'}
     #data_config['reuse_data'] = {'test':['cerevisiae.tab', 'rat.tab', 'mouse.tab', 'thaliana.tab'], 'train':['humap.tab']}
     reuse_data: 
-        train: 
-            - 'train_pair_90.tab'
+        #train: 
+        #    - 'train_pair_90.tab'
         test:
             - 'test_pair_90.tab'
-        #train: 
-        #    - 'train_cluster_90.tab'
+        #meta:
+        #    - 'pair.meta'
+        train: 
+            - 'train_cluster_90.tab'
         #test:
         #    - 'test_cluster_90_x.tab'
         #validation:
